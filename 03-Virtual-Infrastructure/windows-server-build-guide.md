@@ -413,3 +413,10 @@ The server is now providing:
 
 This server forms the foundation for all remaining infrastructure components within the Enterprise IT Lab.
 
+## Installing and Integrating pfSense
+
+This section documents the deployment of the pfSense firewall used as the enterprise edge router for the lab environment.
+
+Reference:
+- pfsense.md
+
