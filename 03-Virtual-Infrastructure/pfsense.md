@@ -509,3 +509,31 @@ Include screenshots of:
 - Netgate Documentation
 - Oracle VirtualBox Documentation
 - Microsoft Windows Server Documentation
+
+## Firewall Rules for OPT1
+
+Issue:
+- Windows client received an IP address from DHCP.
+- Could not ping pfSense.
+- Could not reach Domain Controller.
+- No Internet connectivity.
+
+Cause:
+OPT1 had no firewall rules configured.
+pfSense blocks all traffic by default on newly created interfaces.
+
+Solution:
+Firewall → Rules → OPT1
+
+Created rule:
+
+Action: Pass
+Protocol: IPv4 Any
+Source: OPT1 subnets
+Destination: Any
+
+Result:
+- Client could ping pfSense.
+- Client could reach Domain Controller.
+- Internet connectivity restored.
+
