@@ -420,3 +420,75 @@ This section documents the deployment of the pfSense firewall used as the enterp
 Reference:
 - pfsense.md
 
+
+# Corp-FS01 - File Server
+
+## Server Role
+
+Installed:
+
+- File and Storage Services
+- File Server
+
+## Folder Structure
+
+```
+C:\Shares
+
+├── IT
+├── HR
+├── Finance
+├── Sales
+└── Public
+```
+
+## SMB Shares
+
+| Share | Share Name |
+|--------|------------|
+| IT | IT |
+| HR | HR |
+| Finance | Finance |
+| Sales | Sales |
+| Public | Public |
+
+## Share Permissions
+
+All shares use the following Share Permissions:
+
+| Group | Permission |
+|--------|------------|
+| Everyone | Full Control |
+
+NTFS permissions provide the actual security.
+
+## NTFS Permissions
+
+Department folders:
+
+- SYSTEM – Full Control
+- Administrators – Full Control
+- Domain Admins – Full Control
+- CREATOR OWNER – Full Control
+- Department Domain Local Group – Modify
+
+Example:
+
+IT Folder
+
+```
+DL_IT_RW
+      ↓
+Modify
+```
+
+Public Folder
+
+```
+DL_Public_RO
+      ↓
+Read & Execute
+```
+
+This follows Microsoft's AGDLP permission model.
+
