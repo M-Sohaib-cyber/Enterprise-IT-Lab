@@ -40,3 +40,28 @@ Best practice:
 ## AGDLP
 
 Using Global Groups and Domain Local Groups simplifies permission management and follows Microsoft's recommended enterprise design.
+
+## Future Improvement
+
+### AGDLP Group Scope
+
+During this lab, the `DL_*` groups were accidentally created as **Global Security Groups** instead of **Domain Local Security Groups**.
+
+The current implementation functions correctly in this single-domain environment because the Global groups are assigned directly to NTFS permissions.
+
+For a production Active Directory environment, these groups should be recreated as **Domain Local** groups to fully implement the Microsoft AGDLP model.
+
+Target design:
+
+```
+Accounts
+    ↓
+Global Groups (GG_*)
+    ↓
+Domain Local Groups (DL_*)
+    ↓
+NTFS Permissions
+```
+
+This improvement is planned for a future milestone.
+
