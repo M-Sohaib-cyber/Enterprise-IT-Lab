@@ -492,3 +492,54 @@ Read & Execute
 
 This follows Microsoft's AGDLP permission model.
 
+
+## Automatic Network Drive Mapping
+
+Network drives were deployed automatically using Group Policy Preferences.
+
+### GPO Details
+
+**GPO Name:** `GPO - Drive Mappings`
+
+The GPO is linked to the `Company Users` Organizational Unit.
+
+### Drive Mappings
+
+| Drive | Location | Access |
+|---|---|---|
+| `I:` | `\\Corp-FS01\IT` | Modify |
+| `P:` | `\\Corp-FS01\Public` | Read-only |
+
+The drive mappings were configured under:
+
+```text
+User Configuration
+└── Preferences
+    └── Windows Settings
+        └── Drive Maps
+```
+
+Both mappings use the **Update** action.
+
+### Testing
+
+Logged in as `CORP\jsmith`, the following tests were completed:
+
+- `I:` automatically appeared in File Explorer.
+- `P:` automatically appeared in File Explorer.
+- A test file could be created and deleted in `I:` successfully.
+- Creating a file in `P:` was denied, confirming read-only access.
+
+### Verification Screenshot
+
+![Mapped Drives on Corp-CL01](../Screenshots/Servers/File Server/03-mapped-drives-testing.png)
+
+
+### Troubleshooting
+
+During testing, the mapped drives did not initially appear because `Corp-FS01` was powered off.
+
+After starting `Corp-FS01` and refreshing Group Policy, the `I:` and `P:` drives appeared successfully.
+
+This confirmed that the Group Policy configuration was correct and the issue was caused by the file server being unavailable.
+
