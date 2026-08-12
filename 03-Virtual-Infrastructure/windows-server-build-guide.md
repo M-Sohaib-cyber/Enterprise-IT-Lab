@@ -532,7 +532,7 @@ Logged in as `CORP\jsmith`, the following tests were completed:
 
 ### Verification Screenshot
 
-![Mapped Drives on Corp-CL01](../Screenshots/Servers/File Server/03-mapped-drives-testing.png)
+![Mapped Drives on Corp-CL01](../Screenshots/Servers/File%20Server/03-mapped-drives-testing.png)
 
 
 ### Troubleshooting
