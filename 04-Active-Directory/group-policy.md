@@ -207,4 +207,4 @@ The display/lock behaviour occurred at approximately 5 minutes, which appears to
 
 ### Verification Screenshot
 
-![Workstation Security GPO Applied on Corp-CL01](../Screenshots/Active%20Directory/03-Workstation-Security-GPO.png)
+![Workstation Security GPO Applied on Corp-CL01](../Screenshots/Active%20Directory/04-Workstation-Security-GPO.png)
