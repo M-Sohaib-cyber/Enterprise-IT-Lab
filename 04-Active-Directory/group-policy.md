@@ -110,3 +110,101 @@ This confirmed that the `GPO - Company Desktop` policy was successfully applied 
 ### Verification Screenshot
 
 ![Company Wallpaper Applied](../Screenshots/Active%20Directory/Group-Policy/01-company-wallpaper-applied.png)
+
+
+## GPO - Workstation Security
+
+### Purpose
+
+Configured a workstation security policy to automatically lock inactive computers.
+
+### GPO Details
+
+**GPO Name:** `GPO - Workstation Security`  
+**Linked OU:** `Workstations`  
+**Target Computer:** `Corp-CL01`
+
+### Configuration
+
+The policy was configured using the following path:
+
+```text
+Computer Configuration
+└── Policies
+    └── Windows Settings
+        └── Security Settings
+            └── Local Policies
+                └── Security Options
+```
+
+Configured policy:
+
+```text
+Interactive logon: Machine inactivity limit
+```
+
+The policy setting was enabled and configured to:
+
+```text
+600 seconds (10 minutes)
+```
+
+### Applying the Policy
+
+On `Corp-CL01`, Group Policy was refreshed using:
+
+```cmd
+gpupdate /force
+```
+
+The Group Policy update completed successfully.
+
+### Verification
+
+The policy was verified from an elevated Command Prompt using:
+
+```cmd
+gpresult /r
+```
+
+Under:
+
+```text
+COMPUTER SETTINGS
+→ Applied Group Policy Objects
+```
+
+The following policies were applied:
+
+```text
+GPO - Workstation Security
+Default Domain Policy
+```
+
+This confirmed that `GPO - Workstation Security` was successfully applied to `Corp-CL01`.
+
+### Security Policy Verification
+
+The local security policy was exported using:
+
+```cmd
+secedit /export /cfg C:\security-policy.txt
+```
+
+The exported policy contained:
+
+```text
+InactivityTimeoutSecs=4,600
+```
+
+This confirms that the machine inactivity policy value was applied with a timeout value of `600` seconds.
+
+### Testing
+
+During testing, the workstation required authentication after inactivity.
+
+The display/lock behaviour occurred at approximately 5 minutes, which appears to be caused by a separate existing Windows display, power, or lock setting. Therefore, the 10-minute timeout was verified through the applied Group Policy results and exported security policy configuration rather than timing the lock behaviour alone.
+
+### Verification Screenshot
+
+![Workstation Security GPO Applied on Corp-CL01](../Screenshots/Active%20Directory/03-Workstation-Security-GPO.png)
