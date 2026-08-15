@@ -366,3 +366,74 @@ The account lockout policy was then tested using `CORP\jsmith`. After five faile
 The domain password policy and account lockout policy were successfully configured and tested.
 
 The test confirmed that after `5` invalid sign-in attempts, the domain account was locked. The account was then unlocked through **Active Directory Users and Computers** on `Corp-DC01`.
+
+
+## GPO - Removable Storage Restrictions
+
+### Purpose
+
+Configured a computer-based Group Policy to restrict access to removable storage devices. This helps protect endpoints by preventing users from accessing USB storage devices.
+
+### GPO Details
+
+**GPO Name:** `GPO - Removable Storage Restrictions`  
+**Linked OU:** `Workstations`  
+**Target Computer:** `CORP-CL01`
+
+### Configuration
+
+The policy was configured using the following path:
+
+```text
+Computer Configuration
+└── Policies
+    └── Administrative Templates
+        └── System
+            └── Removable Storage Access
+```
+
+Configured policy:
+
+```text
+All Removable Storage classes: Deny all access
+```
+
+The policy was set to:
+
+```text
+Enabled
+```
+
+### Applying the Policy
+
+On `Corp-CL01`, Group Policy was refreshed using:
+
+```cmd
+gpupdate /force
+```
+
+The workstation was then restarted to ensure the computer policy was fully applied.
+
+### Testing
+
+A USB flash drive was connected to `Corp-CL01` through VirtualBox.
+
+The device appeared in File Explorer as:
+
+```text
+Removable Disk (E:)
+```
+
+When access to the drive was attempted, Windows displayed:
+
+```text
+E:\ is not accessible.
+Access is denied.
+```
+
+This confirmed that the `GPO - Removable Storage Restrictions` policy was successfully applied to `CORP-CL01`.
+
+### Verification Screenshot
+
+![Removable Storage Access Denied](../Screenshots/Active%20Directory/09-Removable-Storage-Access-Denied.png)
+
