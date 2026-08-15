@@ -269,3 +269,100 @@ This confirmed that `GPO - User Restrictions` was successfully applied to users 
 ### Verification Screenshot
 
 ![Control Panel Access Blocked](../Screenshots/Active%20Directory/05-User-Restrictions-GPO.png)
+
+
+## Password and Account Lockout Policy
+
+### Purpose
+
+Configured domain password and account lockout policies through the Default Domain Policy to improve account security and protect against repeated failed sign-in attempts.
+
+### GPO Details
+
+**GPO Name:** `Default Domain Policy`  
+**Scope:** Domain-wide  
+**Test User:** `CORP\jsmith`
+
+---
+
+### Password Policy Configuration
+
+The password policy was configured using:
+
+```text
+Computer Configuration
+└── Policies
+    └── Windows Settings
+        └── Security Settings
+            └── Account Policies
+                └── Password Policy
+```
+
+The following settings were configured:
+
+- Minimum password length: `8 characters`
+- Password must meet complexity requirements: `Enabled`
+- Enforce password history: `5 passwords remembered`
+- Minimum password age: `1 day`
+- Maximum password age: `90 days`
+
+These settings apply password security requirements to domain accounts.
+
+### Password Policy Verification
+
+![Password Policy Configuration](../Screenshots/Active%20Directory/06-Password-Policy.png)
+
+---
+
+### Account Lockout Policy Configuration
+
+The account lockout policy was configured using:
+
+```text
+Computer Configuration
+└── Policies
+    └── Windows Settings
+        └── Security Settings
+            └── Account Policies
+                └── Account Lockout Policy
+```
+
+The following settings were configured:
+
+- Account lockout threshold: `5 invalid logon attempts`
+- Account lockout duration: `30 minutes`
+- Reset account lockout counter after: `30 minutes`
+
+### Testing
+
+On `Corp-CL01`, the updated Group Policy was applied using:
+
+```cmd
+gpupdate /force
+```
+
+The policy application was verified using:
+
+```cmd
+gpresult /r
+```
+
+`Default Domain Policy` appeared under the applied computer Group Policy Objects.
+
+The account lockout policy was then tested using `CORP\jsmith`. After five failed sign-in attempts, the account was locked and Windows displayed a message confirming that the account could not be logged on to because it was currently locked out.
+
+### Account Lockout Policy Verification
+
+![Account Lockout Policy Configuration](../Screenshots/Active%20Directory/07-Account-Lockout-Policy.png)
+
+### Account Lockout Test Verification
+
+![Account Locked](../Screenshots/Active%20Directory/08-Account-Locked.png)
+
+---
+
+### Result
+
+The domain password policy and account lockout policy were successfully configured and tested.
+
+The test confirmed that after `5` invalid sign-in attempts, the domain account was locked. The account was then unlocked through **Active Directory Users and Computers** on `Corp-DC01`.
