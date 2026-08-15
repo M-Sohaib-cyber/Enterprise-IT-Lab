@@ -58,4 +58,4 @@ This confirmed that the `GPO - Company Desktop` policy was successfully applied 
 
 ### Verification Screenshot
 
-![Company Wallpaper Applied](../Screenshots/Active Directory/Group-Policy/01-company-wallpaper-applied.png)
+![Company Wallpaper Applied](../Screenshots/Active%20Directory/Group-Policy/01-company-wallpaper-applied.png)
