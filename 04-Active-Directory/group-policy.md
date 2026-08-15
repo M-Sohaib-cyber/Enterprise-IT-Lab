@@ -210,3 +210,62 @@ The display/lock behaviour occurred at approximately 5 minutes, which appears to
 ![Workstation Security GPO Applied on Corp-CL01](../Screenshots/Active%20Directory/04-Workstation-Security-GPO.png)
 
 
+## GPO - User Restrictions
+
+### Purpose
+
+Configured a user restriction policy to prevent standard domain users from accessing the Control Panel and Windows Settings.
+
+### GPO Details
+
+**GPO Name:** `GPO - User Restrictions`  
+**Linked OU:** `Company Users`  
+**Test User:** `CORP\jsmith`
+
+### Configuration
+
+The policy was configured using the following path:
+
+```text
+User Configuration
+└── Policies
+    └── Administrative Templates
+        └── Control Panel
+```
+
+Configured policy:
+
+```text
+Prohibit access to Control Panel and PC settings
+```
+
+The policy was set to:
+
+```text
+Enabled
+```
+
+### Applying the Policy
+
+On `Corp-CL01`, Group Policy was refreshed using:
+
+```cmd
+gpupdate /force
+```
+
+The user then signed out and signed back in to ensure the updated user policy was applied.
+
+### Testing
+
+After signing in as `CORP\jsmith`, attempts were made to access:
+
+- Control Panel
+- Windows Settings
+
+Access was successfully blocked by Windows with a message indicating that the operation was restricted by the administrator.
+
+This confirmed that `GPO - User Restrictions` was successfully applied to users in the `Company Users` OU.
+
+### Verification Screenshot
+
+![Control Panel Access Blocked](../Screenshots/Active%20Directory/05-User-Restrictions-GPO.png)
