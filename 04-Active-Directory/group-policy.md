@@ -493,3 +493,24 @@ This confirmed that the `GPO - Removable Storage Restrictions` policy was succes
 
 ![Removable Storage Access Denied](../Screenshots/Active%20Directory/09-Removable-Storage-Access-Denied.png)
 
+
+## Local Administrator Management
+
+A Group Policy Object named `GPO - Local Administrators` was configured and linked to the `Workstations` OU.
+
+The policy adds the Active Directory security group `CORP\GG_IT` to the local `Administrators` group on domain workstations.
+
+### Configuration
+
+The policy was configured using:
+
+```text
+Computer Configuration
+└── Policies
+    └── Windows Settings
+        └── Security Settings
+            └── Restricted Groups
+                └── CORP\GG_IT
+                    Member Of → Administrators
+
+
