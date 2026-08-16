@@ -613,3 +613,81 @@ John Smith, as a member of `CORP\GG_IT`, was successfully verified as a member o
 
 This confirms that local administrator access is being centrally managed through Active Directory group membership and Group Policy.
 
+## Windows Update Management
+
+A Group Policy Object named `GPO - Windows Update Policy` was configured and linked to the `Workstations` OU.
+
+The policy manages how Windows Update behaves on domain workstations.
+
+### Configuration
+
+The following Group Policy setting was configured:
+
+```text
+Computer Configuration
+└── Policies
+    └── Administrative Templates
+        └── Windows Components
+            └── Windows Update
+                └── Configure Automatic Updates
+```
+
+The policy was set to:
+
+```text
+Enabled
+3 - Auto download and notify for install
+```
+
+This configuration allows Windows to automatically download available updates and notify the user when updates are ready to be installed.
+
+### Verification
+
+The policy was applied to `Corp-CL01` using:
+
+```cmd
+gpupdate /force
+```
+
+The applied Group Policy Objects were checked using:
+
+```cmd
+gpresult /r
+```
+
+The result confirmed that:
+
+```text
+GPO - Windows Update Policy
+```
+
+was listed under the applied computer policies.
+
+The Windows Update registry policy was then verified using:
+
+```cmd
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" /v AUOptions
+```
+
+The result showed:
+
+```text
+AUOptions    REG_DWORD    0x3
+```
+
+The value `0x3` confirms the configured setting:
+
+```text
+Auto download and notify for install
+```
+
+### Verification Screenshot
+
+![Windows Update Policy Verification](../Screenshots/Active%20Directory/16-Windows-Update-Policy-Verification.png)
+
+### Result
+
+The `GPO - Windows Update Policy` was successfully applied to `Corp-CL01`.
+
+The Windows Update configuration was verified through both the applied Group Policy results and the registry value.
+
