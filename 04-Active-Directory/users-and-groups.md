@@ -164,3 +164,89 @@ This confirmed that the user received the correct department access through Acti
 The Finance employee onboarding process was successfully completed.
 
 Sarah Ahmed was able to authenticate to the domain and access the appropriate Finance and Public resources while being denied access to the IT department share.
+
+## Employee Offboarding - Finance Department
+
+### Scenario
+
+Sarah Ahmed (`sahmed`) left the Finance department. The account was offboarded by disabling the user account, removing department access, and retaining the account in Active Directory for administrative and audit purposes.
+
+### Offboarding Actions
+
+#### 1. Created Disabled Users OU
+
+A new Organizational Unit was created:
+
+```text
+Disabled Users
+```
+
+This OU is used to store disabled employee accounts instead of deleting them immediately.
+
+#### 2. Disabled the User Account
+
+The Active Directory account for Sarah Ahmed was disabled.
+
+This prevents the user from successfully authenticating to the domain.
+
+#### 3. Moved the Account
+
+After disabling the account, Sarah Ahmed was moved from:
+
+```text
+Company Users
+```
+
+to:
+
+```text
+Disabled Users
+```
+
+#### 4. Removed Finance Group Membership
+
+Sarah Ahmed was removed from:
+
+```text
+GG_Finance
+```
+
+The user's **Member Of** tab was checked after removal and showed only:
+
+```text
+Domain Users
+```
+
+Because `GG_Finance` provided Finance department membership and was used for access control, removing Sarah from this group removed her Finance department access.
+
+### Access Verification
+
+The user account was tested after offboarding.
+
+Before the final sign-in test, the Finance drive mapping was no longer available to the user because Sarah was no longer a member of `GG_Finance`.
+
+A fresh sign-in attempt was then made using:
+
+```text
+CORP\sahmed
+```
+
+The sign-in was rejected with the following message:
+
+> Your account has been disabled. Please see your system administrator.
+
+![Disabled account login denied](../Screenshots/Active%20Directory/10-Disabled-Account-Login-Denied.png)
+
+### Result
+
+The employee offboarding process was successfully completed.
+
+Sarah Ahmed's account was:
+
+- Disabled
+- Moved to the `Disabled Users` OU
+- Removed from the `GG_Finance` security group
+- Removed from Finance drive access
+- Unable to sign in to the domain
+
+The account was retained in Active Directory rather than deleted, allowing it to remain available for administrative review or auditing if required.
