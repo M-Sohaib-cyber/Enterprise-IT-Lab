@@ -50,6 +50,62 @@ Logged in as `CORP\jsmith`, the following tests were completed:
 
 ![Mapped Drives on Corp-CL01](../Screenshots/Servers/File%20Server/03-mapped-drives-testing.png)
 
+### Finance Drive Mapping
+
+A department-specific Finance drive was added to the existing `GPO - Drive Mappings`.
+
+| Setting | Value |
+|---|---|
+| Action | `Create` |
+| Location | `\\Corp-FS01\Finance` |
+| Drive Letter | `F:` |
+| Label | `Finance` |
+
+#### Item-Level Targeting
+
+Item-level targeting was configured to ensure that only Finance users receive the Finance drive mapping.
+
+**Target security group:**
+
+```text
+CORP\GG_Finance
+```
+
+The targeting configuration works as follows:
+
+```text
+User
+  ↓
+Member of GG_Finance
+  ↓
+Item-level targeting matches
+  ↓
+F: Finance drive is mapped
+```
+
+#### Testing
+
+The mapping was tested using the Finance user:
+
+```text
+CORP\sahmed
+```
+
+After running:
+
+```cmd
+gpupdate /force
+```
+
+and signing back in, the following results were confirmed:
+
+- `F: Finance` appeared automatically in File Explorer.
+- The user successfully opened the Finance drive.
+- The user created a file in the Finance drive.
+- The user deleted the file successfully.
+- Non-Finance users do not receive the Finance drive through Item-level targeting.
+
+This confirmed that the Finance drive mapping and Item-level targeting were working correctly.
 
 ### Troubleshooting
 
