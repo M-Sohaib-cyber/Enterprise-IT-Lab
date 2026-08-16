@@ -551,3 +551,65 @@ The `GPO - Local Administrators` policy was successfully applied to `Corp-CL01`.
 
 The Active Directory security group `CORP\GG_IT` was added to the workstation's local `Administrators` group through Group Policy. This provides a centralised method for managing local administrator access on domain workstations.
 
+
+## End-to-End Local Administrator Verification
+
+The local administrator policy was tested using the domain user `CORP\jsmith`.
+
+John Smith is a member of the Active Directory security group `GG_IT`. The `GG_IT` group is configured through the `GPO - Local Administrators` policy to become a member of the local `Administrators` group on domain workstations.
+
+### Verify Domain Group Membership
+
+The user's domain group membership was verified using:
+
+```cmd
+net user jsmith /domain
+```
+
+The output confirmed that John Smith is a member of:
+
+```text
+Global Group memberships
+*Domain Users
+*GG_IT
+```
+
+### Verify Local Administrator Membership
+
+The user's current security token was checked on `Corp-CL01` using:
+
+```cmd
+whoami /groups | findstr /i "Administrators"
+```
+
+The result confirmed that John is a member of the local Administrators group:
+
+```text
+CORP-CL01\Administrators (built-in)
+Mandatory group, Enabled by default, Enabled group
+```
+
+This verified the complete access chain:
+
+```text
+John Smith
+    ↓
+CORP\GG_IT
+    ↓
+GPO - Local Administrators
+    ↓
+CORP-CL01\Administrators
+    ↓
+Local Administrator Privileges
+```
+
+### Verification Screenshot
+
+![John Smith verified as Local Administrator](../Screenshots/Active%20Directory/15-John-Smith-Local-Administrator.png)
+
+### Result
+
+John Smith, as a member of `CORP\GG_IT`, was successfully verified as a member of the local `Administrators` group on `Corp-CL01`.
+
+This confirms that local administrator access is being centrally managed through Active Directory group membership and Group Policy.
+
