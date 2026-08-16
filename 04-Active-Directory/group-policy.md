@@ -502,7 +502,7 @@ The policy adds the Active Directory security group `CORP\GG_IT` to the local `A
 
 ### Configuration
 
-The policy was configured using:
+The final working configuration used **Restricted Groups** in Group Policy:
 
 ```text
 Computer Configuration
@@ -512,5 +512,42 @@ Computer Configuration
             └── Restricted Groups
                 └── CORP\GG_IT
                     Member Of → Administrators
+```
 
+The `CORP\GG_IT` security group was configured so that it becomes a member of the local `Administrators` group on workstations affected by the GPO.
+
+This allows authorised IT users who are members of `GG_IT` to receive local administrator privileges without manually adding individual users to each workstation.
+
+### Verification
+
+The policy was applied on `Corp-CL01` using:
+
+```powershell
+gpupdate /target:computer /force
+```
+
+The local Administrators group was then checked using:
+
+```powershell
+Get-LocalGroupMember -Group "Administrators"
+```
+
+The result confirmed that `CORP\GG_IT` was successfully added to the local Administrators group:
+
+```text
+CORP\Domain Admins
+CORP\GG_IT
+CORP-CL01\Administrator
+CORP-CL01\LocalAdmin
+```
+
+### Verification Screenshot
+
+![GG_IT added to Local Administrators](../Screenshots/Active%20Directory/14-GG_IT-Local-Administrators.png)
+
+### Result
+
+The `GPO - Local Administrators` policy was successfully applied to `Corp-CL01`.
+
+The Active Directory security group `CORP\GG_IT` was added to the workstation's local `Administrators` group through Group Policy. This provides a centralised method for managing local administrator access on domain workstations.
 
