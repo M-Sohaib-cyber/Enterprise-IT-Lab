@@ -250,3 +250,78 @@ Sarah Ahmed's account was:
 - Unable to sign in to the domain
 
 The account was retained in Active Directory rather than deleted, allowing it to remain available for administrative review or auditing if required.
+
+## Helpdesk Account Recovery - Password Reset and Account Unlock
+
+### Scenario
+
+John Smith (`jsmith`) contacted the IT helpdesk after entering the wrong password multiple times.
+
+The account lockout policy configured in the domain was triggered, and the user was unable to sign in.
+
+![Account locked out](../Screenshots/Active%20Directory/11-Account-Locked-Out.png)
+
+### Helpdesk Actions
+
+#### 1. Checked and Unlocked the Account
+
+The administrator opened **Active Directory Users and Computers** and accessed the properties of the John Smith account.
+
+The account was confirmed as locked and was manually unlocked.
+
+#### 2. Reset the Password
+
+The user's password was reset to a new temporary password.
+
+The following option was enabled:
+
+```text
+User must change password at next logon
+```
+
+The account lockout status was confirmed as:
+
+```text
+Unlocked
+```
+
+![Password reset and account unlocked](../Screenshots/Active%20Directory/12-Password-Reset-And-Unlocked.png)
+
+#### 3. User Changed Password
+
+The user then signed in using the temporary password.
+
+Windows required the user to change the password before completing the sign-in.
+
+![Password change required](../Screenshots/Active%20Directory/13-Password-Change-Required.png)
+
+After entering a new password that met the domain password policy requirements, the user successfully signed in.
+
+### Verification
+
+The complete account recovery process was tested successfully:
+
+```text
+Incorrect password attempts
+        ↓
+Account locked
+        ↓
+User unable to sign in
+        ↓
+Administrator unlocks account
+        ↓
+Administrator resets password
+        ↓
+User must change password at next logon
+        ↓
+User creates new password
+        ↓
+Successful domain login
+```
+
+### Result
+
+The helpdesk account recovery process was successfully completed.
+
+The exercise demonstrated how an IT administrator can unlock a locked domain account, reset a user's password, enforce a password change at the next logon, and verify that the user can successfully regain access.
+
