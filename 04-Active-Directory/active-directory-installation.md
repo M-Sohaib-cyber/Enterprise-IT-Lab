@@ -1,245 +1,89 @@
-# Active Directory Installation
+# Active Directory Configuration Record
 
-## Document Information
+## Scope
 
-| Item | Value |
-|------|-------|
-| Document | Active Directory Installation |
-| Lab | Enterprise IT Lab |
-| Version | 1.0 |
-| Author | Mohammad Sohaib |
-| Status | Completed |
+This document records the Active Directory configuration associated with the completed `corp.internal` deployment. The authoritative server build, networking, promotion settings, and verification record are maintained in [Corp-DC01 Build and Configuration](../03-Virtual-Infrastructure/windows-server-build-guide.md).
 
----
+## Domain
 
-# Objective
+| Item | Confirmed value |
+|---|---|
+| Domain controller | `Corp-DC01` |
+| Server OS | Windows Server 2022 |
+| Forest/domain | `corp.internal` |
+| NetBIOS name | `CORP` |
+| DNS | Installed on `Corp-DC01` |
+| Global Catalog | Enabled in the deployment record |
+| Forest functional level | To verify |
+| Domain functional level | To verify |
 
-Deploy Active Directory Domain Services (AD DS), create a new Active Directory forest, configure DNS, and prepare the domain for enterprise administration.
+Older documentation contained unsupported Windows Server 2025 OS and functional-level values. Existing records also name Windows Server 2016 functional levels. The live levels must be verified before either is stated as current.
 
----
+## Recorded OU structure
 
-# Server Information
-
-| Setting | Value |
-|---------|-------|
-| Server Name | Corp-DC01 |
-| Operating System | Windows Server 2025 Evaluation |
-| Role | Domain Controller |
-| Domain | corp.internal |
-| NetBIOS Name | CORP |
-
----
-
-# Prerequisites
-
-Completed before installing Active Directory:
-
-- Windows Server installed.
-- Static IPv4 address configured.
-- Server renamed to **Corp-DC01**.
-- Latest Windows updates installed (if applicable).
-
----
-
-# Installed Roles
-
-The following Windows Server roles were installed:
-
-- Active Directory Domain Services (AD DS)
-- DNS Server
-
----
-
-# Domain Configuration
-
-| Setting | Value |
-|---------|-------|
-| Forest | corp.internal |
-| Domain | corp.internal |
-| Forest Functional Level | Windows Server 2025 |
-| Domain Functional Level | Windows Server 2025 |
-| Global Catalog | Enabled |
-| DNS | Installed Automatically |
-
----
-
-# Domain Promotion
-
-The server was promoted to the first Domain Controller in a new forest.
-
-During promotion:
-
-- New forest created.
-- Domain Name: **corp.internal**
-- DNS installed.
-- Global Catalog enabled.
-- Directory Services Restore Mode (DSRM) password configured.
-
-The server restarted successfully after promotion.
-
----
-
-# Active Directory Structure
-
-The following Organizational Units (OUs) were created:
+The repository documents this OU structure:
 
 ```text
 corp.internal
-│
-├── Admins
-│   └── IT Admins
-│
-├── Company Users
-│
-├── Groups
-│
-├── Servers
-│
-├── Service Accounts
-│
-└── Workstations
+|-- Admins
+|   `-- IT Admins
+|-- Company Users
+|-- Disabled Users
+|-- Groups
+|-- Servers
+|-- Service Accounts
+`-- Workstations
 ```
 
----
+`Disabled Users` was added during the documented employee offboarding exercise. A current AD export is not present, so exact OU distinguished names and any additional OUs remain **To verify**.
 
-# Default Containers
+## Recorded users and groups
 
-The following default containers remain in the domain:
+The repository documents:
 
-- Builtin
-- Computers
-- Domain Controllers
-- ForeignSecurityPrincipals
-- Managed Service Accounts
-- Users
+- John Smith (`jsmith`) in `Company Users`, with `GG_IT` membership
+- Sarah Ahmed (`sahmed`) created for a Finance onboarding exercise and later disabled, removed from `GG_Finance`, and moved to `Disabled Users`
+- Global groups `GG_IT`, `GG_HR`, `GG_Finance`, `GG_Sales`, and `GG_HelpDesk`
+- `DL_*` resource groups used in the file-access documentation
 
----
+The `DL_*` groups may have been created with Global rather than Domain Local scope. Their scope and nesting require later practical verification, so this document does not claim that AGDLP is correctly implemented.
 
-# User Accounts
+Detailed user, group, onboarding, offboarding, and helpdesk records remain in [Users and Groups](users-and-groups.md).
 
-Created:
+## Recorded computer objects
 
-| Display Name | Username |
-|--------------|----------|
-| John Smith | jsmith |
+| Computer | Recorded location/status |
+|---|---|
+| `Corp-DC01` | Domain controller for `corp.internal` |
+| `Corp-CL01` | Domain joined and moved to `Workstations` |
+| `Corp-FS01` | File server exists; computer-object OU To verify |
 
-The user account was created inside:
+## Documented verification
 
-```text
-Company Users
-```
+Existing documentation records:
 
----
+- Successful creation of the `corp.internal` forest/domain
+- DNS installed with AD DS
+- Successful promotion and restart of `Corp-DC01`
+- Successful join and domain login of `Corp-CL01`
+- Creation and use of OUs, users, and security groups
 
-# Security Groups
+These are existing implementation records, not new tests performed during documentation cleanup.
 
-Created Global Security Groups:
+## To verify
 
-- GG_IT
-- GG_HR
-- GG_Finance
-- GG_Sales
-- GG_HelpDesk
+- Forest and domain functional levels
+- Complete current OU, user, group, and computer inventory
+- Exact group categories, scopes, nesting, and memberships
+- `Corp-FS01` computer-object location
+- Sites and Services, replication, FSMO roles, trusts, and recovery configuration
 
----
+No unverified feature is claimed as implemented.
 
-# Group Membership
+## Related documentation
 
-John Smith
-
-Member Of:
-
-- Domain Users
-- GG_IT
-
-Role-Based Access Control (RBAC) is used throughout the environment by assigning permissions to security groups rather than directly to user accounts.
-
----
-
-# Computer Accounts
-
-## Corp-DC01
-
-Role:
-
-- Domain Controller
-
-## Corp-CL01
-
-Operating System:
-
-Windows 11 Enterprise
-
-Joined Domain:
-
-corp.internal
-
-Moved to:
-
-```text
-Workstations OU
-```
-
----
-
-# Domain Join Verification
-
-Verified successfully:
-
-- Client joined domain.
-- Domain login successful.
-- Computer account created automatically.
-- Computer moved into the Workstations OU.
-- Authentication using CORP\Administrator successful.
-
----
-
-# Best Practices Implemented
-
-- Organizational Units created before expanding the environment.
-- Department-based Security Groups created.
-- Role-Based Access Control (RBAC) adopted.
-- Workstations separated from servers.
-- Administrative accounts separated from standard user accounts.
-
----
-
-# Future Expansion
-
-The following components will be added later:
-
-- Group Policy Objects (GPO)
-- File Server
-- Roaming Profiles (optional)
-- Folder Redirection
-- Windows Server Update Services (WSUS)
-- Active Directory Certificate Services (AD CS)
-- DFS Namespace
-- PowerShell automation
-
----
-
-# Verification Checklist
-
-| Task | Status |
-|------|--------|
-| Active Directory Installed | ✅ |
-| DNS Installed | ✅ |
-| Domain Created | ✅ |
-| Domain Controller Operational | ✅ |
-| OUs Created | ✅ |
-| Security Groups Created | ✅ |
-| User Account Created | ✅ |
-| Windows Client Joined Domain | ✅ |
-| Computer Account Verified | ✅ |
-| Domain Authentication Successful | ✅ |
-
----
-
-# Lessons Learned
-
-- Active Directory should be designed before large-scale user deployment.
-- Organizational Units simplify administration and Group Policy deployment.
-- Security Groups should be used to assign permissions instead of individual user accounts.
-- Separating workstations, servers, users, and administrative accounts creates a scalable enterprise structure.
-
+- [Corp-DC01 Build and Configuration](../03-Virtual-Infrastructure/windows-server-build-guide.md)
+- [Active Directory DNS](dns.md)
+- [Users and Groups](users-and-groups.md)
+- [Group Policy](group-policy.md)
+- [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md)

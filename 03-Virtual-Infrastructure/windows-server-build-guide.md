@@ -1,545 +1,128 @@
-# Windows Server 2022 Build Guide
+# Corp-DC01 Build and Configuration
 
-## 1. Purpose
+## Purpose
 
-This document provides a step-by-step guide for building the primary Windows Server 2022 Domain Controller used in the Enterprise IT Lab.
+This is the authoritative build and configuration record for `Corp-DC01`, the Windows Server 2022 domain controller and DNS server for `corp.internal` (`CORP`). Detailed OU, user, group, and GPO information belongs in the [Active Directory documentation](../04-Active-Directory/).
 
-The guide covers the complete build process, from creating the virtual machine to promoting the server as the first Domain Controller within the `corp.internal` Active Directory forest.
+## Server inventory
 
-At the end of this guide, the server will provide the following services:
+| Setting | Recorded value |
+|---|---|
+| Hostname | `Corp-DC01` |
+| Operating system | Windows Server 2022 Standard Evaluation (Desktop Experience) |
+| Roles | Active Directory Domain Services and DNS Server |
+| IPv4 address | `10.10.20.10/24` |
+| Default gateway | `10.10.20.1` |
+| Preferred DNS | `10.10.20.10` |
+| Virtual network | `Corp-Core` |
+| Domain | `corp.internal` |
+| NetBIOS domain | `CORP` |
 
-- Active Directory Domain Services (AD DS)
-- Domain Name System (DNS)
+The current OS build number, activation state, patch level, and Active Directory functional levels remain **To verify**.
 
-This guide is intended to allow the environment to be rebuilt from scratch without referring to external documentation.
+## Virtual machine build record
 
----
-
-## 2. Prerequisites
-
-Before beginning the installation, ensure the following requirements have been completed.
-
-### 2.1 Host Machine
-
-- Windows 11 Host Operating System
-- Oracle VirtualBox installed
-- Enterprise-Lab-VMs directory created
-- Sufficient free disk space (Minimum 100 GB recommended)
-- Hardware virtualisation (Intel VT-x / AMD-V) enabled in BIOS
-
-### 2.2 Required Software
-
-| Software | Purpose |
-|----------|---------|
-| Oracle VirtualBox | Virtualisation Platform |
-| Windows Server 2022 Standard Evaluation (ISO) | Domain Controller Operating System |
-
-### 2.3 Required Virtual Networks
-
-The following NAT Network must already exist.
-
-| Network | Address Space | DHCP |
-|---------|---------------|------|
-| Corp-Core | 10.10.20.0/24 | Disabled |
-
-> **Note**
->
-> DHCP is intentionally disabled because the Windows Server will later provide DHCP services for the enterprise network.
-
----
-
-## 3. Create the Virtual Machine
-
-Open Oracle VirtualBox and select **New**.
-
-### 3.1 Virtual Machine Configuration
-
-| Setting | Value |
-|---------|-------|
-| Name | Corp-DC01 |
-| Type | Microsoft Windows |
-| Version | Windows Server 2022 (64-bit) |
-| ISO Image | Windows Server 2022 Evaluation |
-| VM Folder | Enterprise-Lab-VMs |
-
-> Enable **Skip Unattended Installation** to perform a manual installation.
-
----
-
-### 3.2 Hardware Configuration
-
-| Setting | Value |
-|---------|-------|
+| Setting | Recorded value |
+|---|---|
+| Platform | Oracle VirtualBox |
 | Memory | 4096 MB |
-| Processor | 2 vCPU |
-
----
-
-### 3.3 Storage Configuration
-
-| Setting | Value |
-|---------|-------|
-| Disk Type | VDI |
-| Allocation | Dynamically Allocated |
-| Capacity | 80 GB |
-
----
-
-## 4. Configure VirtualBox
-
-Before starting the virtual machine, review and configure the following settings.
-
-### 4.1 General Settings
-
-| Setting | Value |
-|---------|-------|
-| Shared Clipboard | Bidirectional |
-| Drag and Drop | Disabled |
-
----
-
-### 4.2 System Settings
-
-| Setting | Value |
-|---------|-------|
-| Boot Order | Optical, Hard Disk |
-| Floppy | Disabled |
-| EFI | Disabled |
+| CPU | 2 vCPU |
+| Virtual disk | 80 GB dynamically allocated VDI |
+| Video memory | 128 MB |
+| Firmware | EFI disabled |
 | TPM | None |
+| Recorded network attachment | NAT Network named `Corp-Core` |
 
----
+These values come from the existing build record. The current live VM settings and VirtualBox network attachment should be verified before treating this table as a configuration export.
 
-### 4.3 Display Settings
+## Windows Server installation
 
-| Setting | Value |
-|---------|-------|
-| Video Memory | 128 MB |
+The build record documents:
 
----
+- Windows Server 2022 Standard Evaluation with Desktop Experience
+- English language and UK keyboard selection
+- Custom installation to the 80 GB virtual disk
+- Local Administrator password configured during setup
+- Computer renamed to `Corp-DC01`
+- Static IPv4 address assigned before domain-controller promotion
 
-### 4.4 Network Configuration
+The server originally had no default gateway while pfSense was still being deployed. The current documented gateway is `10.10.20.1` on `Corp-FW01`.
 
-Configure Adapter 1 as follows.
+## Active Directory promotion
 
-| Setting | Value |
-|---------|-------|
-| Adapter | Adapter 1 |
-| Attached To | NAT Network |
-| NAT Network | Corp-Core |
-| Cable Connected | Enabled |
-
-> ⚠ Important
->
-> The Domain Controller must be connected to the **Corp-Core** network before installation begins.
-
----
-
-## 5. Install Windows Server
-
-Start the virtual machine.
-
-Boot from the Windows Server 2022 Evaluation ISO.
-
-Complete the Windows installation using the following options.
-
-### 5.1 Installation Settings
+The following promotion settings are supported by the existing records:
 
 | Setting | Value |
-|---------|-------|
-| Language | English |
-| Keyboard | UK |
-| Edition | Windows Server 2022 Standard Evaluation (Desktop Experience) |
-| Installation Type | Custom |
-
----
-
-### 5.2 Disk Selection
-
-Select the 80 GB virtual disk.
-
-No manual partitioning is required.
-
-Windows Setup will automatically create the required system partitions.
-
----
-
-### 5.3 Administrator Account
-
-Create the local Administrator password.
-
-Record the password securely for future administration.
-
-Allow Windows Setup to complete and log into the server.
-
----
-
-## 6. Initial Server Configuration
-
-After the first login, complete the following configuration tasks.
-
-### 6.1 Rename the Server
-
-Rename the computer to:
-
-```
-
-Corp-DC01
-
-```
-
-Restart the server to apply the new hostname.
-
----
-
-### 6.2 Configure Network Settings
-
-Assign the following static IPv4 configuration.
-
-| Setting | Value |
-|---------|-------|
-| IP Address | 10.10.20.10 |
-| Subnet Mask | 255.255.255.0 |
-| Default Gateway | Leave Blank |
-| Preferred DNS | 10.10.20.10 |
-
-> 💡 The default gateway will be configured later after the pfSense firewall has been deployed.
-
----
-
-### 6.3 Verify Network Configuration
-
-Open Command Prompt and run:
-
-```cmd
-ipconfig /all
-```
-
-Verify:
-
-- Static IPv4 Address
-- DNS Server
-- DHCP Disabled
-
----
-
-## 7. Install Active Directory Domain Services
-
-Open:
-
-Server Manager → Manage → Add Roles and Features
-
-Install the following roles.
-
-- Active Directory Domain Services
-- DNS Server
-
-Accept all required features.
-
-Complete the installation.
-
----
-
-### 7.1 Promote the Server
-
-Select:
-
-Promote this server to a domain controller
-
-Deployment Configuration:
-
-| Setting | Value |
-|---------|-------|
-| Deployment | Add a New Forest |
-| Root Domain | corp.internal |
-| NetBIOS | CORP |
-
----
-
-### 7.2 Domain Controller Options
-
-| Setting | Value |
-|---------|-------|
-| Forest Functional Level | Windows Server 2016 |
-| Domain Functional Level | Windows Server 2016 |
-| DNS Server | Enabled |
+|---|---|
+| Deployment | New forest |
+| Root domain | `corp.internal` |
+| NetBIOS name | `CORP` |
+| DNS Server | Installed |
 | Global Catalog | Enabled |
-| Read Only Domain Controller | Disabled |
+| Read-only domain controller | No |
+| DSRM password | Configured; value not documented |
+| Forest functional level | To verify |
+| Domain functional level | To verify |
 
-Configure the Directory Services Restore Mode (DSRM) password.
+Existing documents conflict between Windows Server 2016 and Windows Server 2025 functional levels. Neither value is presented as current until it is checked on `Corp-DC01`.
 
-Continue through the remaining wizard using the default settings.
+## DNS configuration
 
-Complete the installation and allow the server to restart automatically.
+`Corp-DC01` hosts DNS for `corp.internal` and uses `10.10.20.10` as its preferred DNS server. `Corp-CL01` is also observed using `10.10.20.10` for DNS.
 
----
+Forwarders, reverse lookup zones, detailed zone properties, aging/scavenging, and logging remain **To verify**. See [Active Directory DNS](../04-Active-Directory/dns.md).
 
-## 8. Verification
+## Documented verification
 
-After the server has restarted, verify the installation.
-
-### Verify Hostname
+The existing build and deployment records document successful checks using:
 
 ```cmd
 hostname
-```
-
-Expected output
-
-```
-
-Corp-DC01
-
-```
-
-### Verify Domain
-
-```cmd
 echo %userdomain%
-```
-
-Expected output
-
-```
-
-CORP
-
-```
-
-### Verify DNS
-
-```cmd
 nslookup corp.internal
-```
-
-Expected result
-
-```
-
-Name: corp.internal
-Address: 10.10.20.10
-
-```
-
-### Verify IP Configuration
-
-```cmd
 ipconfig /all
 ```
 
-Confirm:
-
-- Static IP Address
-- DHCP Disabled
-- DNS configured correctly
-
----
-
-## 9. Troubleshooting
-
-### Issue 1 - Windows Server Download Failed
-
-**Cause**
-
-VPN connection interrupted the Microsoft download.
-
-**Resolution**
-
-Disable the VPN and restart the download.
-
----
-
-### Issue 2 - Blue Screen During Initial Installation
-
-**Cause**
-
-Windows Server displayed a Blue Screen of Death (BSOD) during the first boot.
-
-**Resolution**
-
-The virtual machine restarted automatically and completed the installation successfully.
-
----
-
-### Issue 3 - DNS Lookup Delay
-
-**Cause**
-
-Immediately after promoting the server to a Domain Controller, the DNS service required additional time to initialise.
-
-**Resolution**
-
-Wait for the services to start completely before testing DNS resolution.
-
----
-
-### Issue 4 - Unexpected Restart Notification
-
-**Cause**
-
-Windows requested a reason for the previous unexpected shutdown after installation.
-
-**Resolution**
-
-Select **Other (Unplanned)** and continue with the server configuration.
-
----
-
-## 10. Build Summary
-
-| Item | Value |
-|------|-------|
-| Server Name | Corp-DC01 |
-| Operating System | Windows Server 2022 Standard Evaluation |
-| Domain | corp.internal |
-| NetBIOS | CORP |
-| IP Address | 10.10.20.10 |
-| RAM | 4 GB |
-| CPU | 2 vCPU |
-| Disk | 80 GB Dynamic VDI |
-| Virtual Network | Corp-Core |
-| Roles Installed | Active Directory Domain Services, DNS Server |
-
----
-
-## 11. Build Outcome
-
-The Windows Server has been successfully deployed as the first Domain Controller within the Enterprise IT Lab.
-
-The server is now providing:
-
-- Active Directory Domain Services (AD DS)
-- DNS Services
-- Authentication for the `corp.internal` domain
-
-This server forms the foundation for all remaining infrastructure components within the Enterprise IT Lab.
-
-## Installing and Integrating pfSense
-
-This section documents the deployment of the pfSense firewall used as the enterprise edge router for the lab environment.
-
-Reference:
-- pfsense.md
-
-
-# Corp-FS01 - File Server
-
-## Server Role
-
-Installed:
-
-- File and Storage Services
-- File Server
-
-## Folder Structure
-
-```
-C:\Shares
-
-├── IT
-├── HR
-├── Finance
-├── Sales
-└── Public
-```
-
-## SMB Shares
-
-| Share | Share Name |
-|--------|------------|
-| IT | IT |
-| HR | HR |
-| Finance | Finance |
-| Sales | Sales |
-| Public | Public |
-
-## Share Permissions
-
-All shares use the following Share Permissions:
-
-| Group | Permission |
-|--------|------------|
-| Everyone | Full Control |
-
-NTFS permissions provide the actual security.
-
-## NTFS Permissions
-
-Department folders:
-
-- SYSTEM – Full Control
-- Administrators – Full Control
-- Domain Admins – Full Control
-- CREATOR OWNER – Full Control
-- Department Domain Local Group – Modify
-
-Example:
-
-IT Folder
-
-```
-DL_IT_RW
-      ↓
-Modify
-```
-
-Public Folder
-
-```
-DL_Public_RO
-      ↓
-Read & Execute
-```
-
-This follows Microsoft's AGDLP permission model.
-
-
-## Automatic Network Drive Mapping
-
-Network drives were deployed automatically using Group Policy Preferences.
-
-### GPO Details
-
-**GPO Name:** `GPO - Drive Mappings`
-
-The GPO is linked to the `Company Users` Organizational Unit.
-
-### Drive Mappings
-
-| Drive | Location | Access |
-|---|---|---|
-| `I:` | `\\Corp-FS01\IT` | Modify |
-| `P:` | `\\Corp-FS01\Public` | Read-only |
-
-The drive mappings were configured under:
+The recorded expected/current identity values are:
 
 ```text
-User Configuration
-└── Preferences
-    └── Windows Settings
-        └── Drive Maps
+Hostname: Corp-DC01
+Domain/NetBIOS: CORP
+DNS domain: corp.internal
+DNS/DC address: 10.10.20.10
 ```
 
-Both mappings use the **Update** action.
+Repository documentation also records successful domain-controller promotion, DNS operation, domain join of `Corp-CL01`, and domain authentication. These statements preserve the existing test record; they are not a new live test performed during documentation cleanup.
 
-### Testing
+## Recorded build issues
 
-Logged in as `CORP\jsmith`, the following tests were completed:
+The original build guide records these issues and resolutions:
 
-- `I:` automatically appeared in File Explorer.
-- `P:` automatically appeared in File Explorer.
-- A test file could be created and deleted in `I:` successfully.
-- Creating a file in `P:` was denied, confirming read-only access.
+- A VPN interrupted the Windows Server download; the download succeeded after the VPN was disabled.
+- A blue screen occurred during initial installation; the VM restarted and completed installation.
+- DNS lookup was delayed immediately after promotion while services initialized.
+- Windows displayed an unexpected shutdown reason prompt after installation.
 
-### Verification Screenshot
+## To verify
 
-![Mapped Drives on Corp-CL01](../Screenshots/Servers/File%20Server/03-mapped-drives-testing.png)
+- Current Windows Server build, activation, and patch state
+- Forest and domain functional levels
+- Current VM CPU, memory, disk, firmware, and network settings
+- DNS forwarders, reverse zones, and detailed zone configuration
+- Backup, recovery, time synchronization, and monitoring configuration
 
+## Evidence
 
-### Troubleshooting
+- [Windows Server installed](../Screenshots/Servers/windows%20server%20installed.png)
+- [Server feature installation](../Screenshots/Servers/05-Windows%20server%20feature%20installation.png)
+- [Server name change](../Screenshots/Servers/06-Windows%20server%20name%20change.png)
+- [Server IP configuration](../Screenshots/Servers/07-Windows%20server%20internet%20protocol.png)
 
-During testing, the mapped drives did not initially appear because `Corp-FS01` was powered off.
+## Related documentation
 
-After starting `Corp-FS01` and refreshing Group Policy, the `I:` and `P:` drives appeared successfully.
-
-This confirmed that the Group Policy configuration was correct and the issue was caused by the file server being unavailable.
-
+- [Active Directory configuration record](../04-Active-Directory/active-directory-installation.md)
+- [Active Directory DNS](../04-Active-Directory/dns.md)
+- [Current network topology](../02-Network-Design/network-topology.md)
+- [IP addressing, DHCP, and DNS](../02-Network-Design/ip-addressing.md)
+- [Corp-FS01 file server](file-server.md)
+- [Corp-CL01 Windows 11 client](../05-Client-Management/windows11-client.md)

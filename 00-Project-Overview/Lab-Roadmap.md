@@ -36,7 +36,6 @@ These are verification or remediation items, not claims that the lab is currentl
 | Documentation/work item | Intended outcome |
 |---|---|
 | Evidence index | Map screenshots to systems, configuration claims, and tests. |
-| File-server document | Separate the `Corp-FS01` build and permissions record from the domain-controller guide. |
 | AD/GPO inventory | Create concise authoritative inventories for OUs, users, groups, and GPO links. |
 | Security baseline | Distinguish controls already implemented from recommendations and future remediation. |
 | PowerShell automation | Add scripts and evidence only when practical automation work is completed. |

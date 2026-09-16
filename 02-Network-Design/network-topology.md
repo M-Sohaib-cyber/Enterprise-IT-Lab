@@ -1,257 +1,56 @@
-# Enterprise Network Topology
+# Current Network Topology
 
 ## Overview
 
-This document describes the network architecture implemented within the Enterprise IT Lab.
+The Enterprise IT Lab runs in Oracle VirtualBox and uses `Corp-FW01` (pfSense) to connect the WAN, server, and client networks. Active Directory and DNS are provided by `Corp-DC01`; `Corp-CL01` is the domain-joined Windows 11 client. File sharing is provided by `Corp-FS01`, although its IP address and exact network attachment remain to verify.
 
-The objective of this design is to simulate a modern enterprise network by separating infrastructure into dedicated network segments protected by a central firewall. The environment uses Microsoft Active Directory for identity management, pfSense as the perimeter firewall, and VirtualBox as the virtualization platform.
+Authoritative addresses are maintained in [IP Addressing, DHCP, and DNS](ip-addressing.md). The logical design and naming conventions are described in the [current network plan](network-plan.md).
 
-This topology provides a scalable foundation for deploying enterprise services such as DHCP, Group Policy, File Services, WSUS, Certificate Services, and monitoring solutions.
+## Topology
 
----
-
-# Objectives
-
-The network is designed to achieve the following objectives:
-
-- Provide secure Internet connectivity
-- Deploy Microsoft Active Directory
-- Separate servers from client workstations
-- Improve security through network segmentation
-- Simulate a real enterprise infrastructure
-- Support future enterprise services
-- Provide a reproducible lab environment for learning and portfolio development
-
----
-
-# Enterprise Architecture
-
-The lab currently consists of three primary network segments.
-
-| Network | Purpose |
-|----------|---------|
-| Internet | External connectivity |
-| Corp-Core | Servers and Infrastructure |
-| Corp-Clients | Enterprise Workstations |
-
-The pfSense firewall routes traffic between all networks while enforcing security boundaries.
-
----
-
-# Current Network Topology
-
+```text
 Internet
-
-↓
-
+  |
 VirtualBox NAT
-
-↓
-
+  |
 Corp-FW01 (pfSense)
-
-├── WAN (DHCP)
-
-├── LAN (10.10.20.1/24)
-
-└── OPT1 (10.10.30.1/24)
-
-↓
-
-Corp-Core
-
-↓
-
-Corp-DC01
-
-↓
-
-Active Directory
-
-↓
-
-DNS
-
----
-
-# IP Addressing Scheme
-
-| Network | Subnet | Gateway |
-|----------|------------|------------|
-| Internet | VirtualBox NAT | DHCP |
-| Corp-Core | 10.10.20.0/24 | 10.10.20.1 |
-| Corp-Clients | 10.10.30.0/24 | 10.10.30.1 |
-
----
-
-# Device Inventory
-
-| Device | Hostname | Role | Address |
-|----------|------------|------------|------------|
-| Firewall | Corp-FW01 | pfSense | WAN DHCP |
-| Firewall | Corp-FW01 | LAN | 10.10.20.1 |
-| Firewall | Corp-FW01 | OPT1 | 10.10.30.1 |
-| Domain Controller | Corp-DC01 | Active Directory, DNS | 10.10.20.10 |
-
-Future devices
-
-| Device | Planned Role |
-|----------|------------|
-| Windows 11 Enterprise | Domain Client |
-| File Server | SMB Storage |
-| WSUS | Patch Management |
-| Certificate Authority | PKI |
-| Monitoring Server | Infrastructure Monitoring |
-
----
-
-# Network Segmentation
-
-## Internet
-
-The Internet network provides outbound connectivity through VirtualBox NAT.
-
-No internal services are hosted within this network.
-
----
-
-## Corp-Core
-
-The Corp-Core network hosts enterprise infrastructure.
-
-Current services include:
-
-- Active Directory
-- DNS
-- Windows Server Administration
-
-Future services include:
-
-- DHCP
-- File Services
-- WSUS
-- Certificate Services
-- Monitoring
-
----
-
-## Corp-Clients
-
-The Corp-Clients network is dedicated to end-user devices.
-
-Separating users from servers reduces risk and reflects enterprise best practices.
-
----
-
-# Routing Design
-
-All internal routing is performed by pfSense.
-
-| Source | Destination | Route |
-|---------|------------|------------|
-| Corp-Core | Internet | pfSense WAN |
-| Corp-Clients | Internet | pfSense WAN |
-| Corp-Clients | Domain Controller | pfSense Internal Routing |
-
-The firewall acts as the default gateway for all internal networks.
-
----
-
-# DNS Design
-
-Internal DNS is provided exclusively by Active Directory.
-
-| Service | Server |
-|----------|---------|
-| Active Directory DNS | Corp-DC01 |
-| Client DNS | Corp-DC01 |
-| External DNS | Forwarded by DNS Server |
-
-The Domain Controller uses itself as its preferred DNS server.
-
----
-
-# Security Design
-
-Security is achieved through network segmentation.
-
-Key principles include:
-
-- Dedicated firewall
-- Separate server and client networks
-- Private addressing
-- Controlled routing
-- Future firewall policies between VLANs and internal networks
-- Least privilege administration
-
----
-
-# Verification
-
-The deployment has been verified using the following tests.
-
-| Test | Status |
-|---------|---------|
-| pfSense Installed | ✅ |
-| WAN Operational | ✅ |
-| LAN Operational | ✅ |
-| OPT1 Operational | ✅ |
-| Active Directory Operational | ✅ |
-| DNS Operational | ✅ |
-| Internet Connectivity | ✅ |
-| Default Gateway Configured | ✅ |
-
----
-
-# Lessons Learned
-
-During deployment the following observations were made.
-
-- Modern Netgate Installer downloads pfSense during installation.
-- WAN connectivity is required before installation can complete.
-- Additional interfaces are assigned after installation.
-- Removing the installation ISO prevents rebooting back into the installer.
-- Network segmentation simplifies future service deployment.
-- Infrastructure documentation is significantly easier when completed immediately after deployment.
-
----
-
-# Future Expansion
-
-The following services will be added as the lab evolves.
-
-- Windows 11 Enterprise
-- DHCP Server
-- Group Policy
-- File Services
-- WSUS
-- Certificate Services
-- Print Services
-- osTicket
-- Monitoring
-- Backup
-- Security Hardening
-
----
-
-# Deployment Checklist
-
-- [x] VirtualBox Networks Created
-- [x] pfSense Installed
-- [x] WAN Configured
-- [x] LAN Configured
-- [x] OPT1 Configured
-- [x] Windows Server Installed
-- [x] Active Directory Installed
-- [x] DNS Installed
-- [x] Internet Connectivity Verified
-- [x] Documentation Updated
-
----
-
-# Related Documentation
-
-- ../03-Virtual-Infrastructure/pfsense.md
-- ../03-Virtual-Infrastructure/windows-server-build-guide.md
-- ../04-Active-Directory/domain-controller.md
-
+  |-- WAN: DHCP address - To verify
+  |-- LAN: Corp-Core / 10.10.20.1
+  |     `-- Corp-DC01 / 10.10.20.10
+  |
+  `-- OPT1: Corp-Clients / 10.10.30.1
+        `-- Corp-CL01 / observed 10.10.30.100
+
+Corp-FS01: file server / address and network attachment To verify
+```
+
+## Current components
+
+| Component | Current role | Network information |
+|---|---|---|
+| `Corp-FW01` | pfSense firewall, router, and NAT gateway | WAN via VirtualBox NAT; LAN `10.10.20.1`; OPT1 `10.10.30.1` |
+| `Corp-DC01` | Windows Server 2022 domain controller and DNS server | `10.10.20.10/24` on `Corp-Core` |
+| `Corp-FS01` | SMB file server | Address and exact attachment To verify |
+| `Corp-CL01` | Domain-joined Windows 11 client | DHCP; observed `10.10.30.100/24` on `Corp-Clients` |
+
+## Network roles
+
+- `Corp-Core` (`10.10.20.0/24`) carries server and infrastructure traffic.
+- `Corp-Clients` (`10.10.30.0/24`) carries client workstation traffic.
+- `Corp-DC01` supplies DNS for `corp.internal` at `10.10.20.10`.
+- `Corp-CL01` reports `10.10.30.1` as both its gateway and DHCP server.
+- The current DHCP provider configuration remains to verify because the existing pfSense deployment record says OPT1 DHCP was disabled.
+
+## Routing and firewall status
+
+Repository documentation records successful communication from `Corp-CL01` to the domain controller and internet after an OPT1 IPv4 Any-to-Any pass rule was added. That rule is a current lab rule, not a least-privilege design, and requires later practical review. No firewall change is made by this documentation.
+
+## Related documentation
+
+- [Current network plan](network-plan.md)
+- [IP addressing, DHCP, and DNS](ip-addressing.md)
+- [pfSense deployment](../03-Virtual-Infrastructure/pfsense.md)
+- [Firewall rules](../08-Security/firewall-rules.md)
+- [Domain controller build](../03-Virtual-Infrastructure/windows-server-build-guide.md)
+- [File server](../03-Virtual-Infrastructure/file-server.md)
+- [Windows 11 client](../05-Client-Management/windows11-client.md)
