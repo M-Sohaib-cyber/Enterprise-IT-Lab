@@ -70,13 +70,16 @@ Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 (`10.10.3
 
 Server-side options, exclusions, reservations, and lease duration remain **To verify**. See [DHCP](../04-Active-Directory/dhcp.md).
 
-## OPT1 firewall rule
+## OPT1 firewall rules
 
-The repository records that `Corp-CL01` initially obtained an address but could not reach pfSense, `Corp-DC01`, or the internet because OPT1 had no pass rule. An IPv4 Any-to-Any pass rule was then added on OPT1, after which connectivity was documented as restored.
+The repository records that `Corp-CL01` initially obtained an address but could not reach pfSense, `Corp-DC01`, or the internet because OPT1 had no pass rule. A broad pass rule restored connectivity and was later replaced by an ordered design for OPT1 (`10.10.30.0/24`):
 
-Live verification on 2026-09-16 confirmed an IPv4 allow rule from OPT1 subnets to any. The existing screenshot records protocol `Any` and description `Allow OPT1 to Any`.
+- Allow OPT1 subnets to `Corp-DC01` (`10.10.20.10`).
+- Allow OPT1 subnets to `Corp-FS01` (`10.10.20.20`) on TCP 445 / Microsoft-DS only.
+- Block OPT1 subnets from the LAN/server network (`10.10.20.0/24`).
+- Allow OPT1 subnets to any destination after the LAN block to preserve other required traffic, including internet access.
 
-This permissive rule is a known practical security concern. It is documented as the current lab state and is not presented as a hardened or least-privilege policy. No firewall rule is changed here.
+Rule order is material: the two required server exceptions precede the LAN block, and the general allow follows it. No firewall rule is changed by this documentation update.
 
 See [Firewall Rules](../08-Security/firewall-rules.md).
 
@@ -88,8 +91,10 @@ Existing documentation records successful checks for:
 - Communication between `Corp-CL01` and `Corp-DC01`
 - DNS resolution through `10.10.20.10`
 - Internet connectivity after the OPT1 pass rule was added
+- General access to `Corp-FS01` blocked, demonstrated by failed ping
+- SMB access to `Corp-FS01` over TCP 445 and Jhon's `I:` and `P:` drive mappings after Group Policy refresh
 
-The repository does not contain a current pfSense configuration export. Rule order, NAT details, logs, aliases, DNS resolver settings, and the complete ruleset remain **To verify**.
+The repository does not contain a current pfSense configuration export. NAT details, logs, aliases, DNS resolver settings, fields beyond the recorded OPT1 design, and the complete WAN/LAN rulesets remain **To verify**.
 
 ## Evidence
 

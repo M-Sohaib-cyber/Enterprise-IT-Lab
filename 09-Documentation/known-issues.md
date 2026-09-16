@@ -20,11 +20,11 @@ This is the authoritative summary of unresolved documentation and practical veri
 - **Current action:** Documentation only; no GPO or membership changed.
 - **Details:** [Group Policy Inventory](../04-Active-Directory/gpo-inventory.md)
 
-### SEC-02: Permissive OPT1 firewall rule
+### SEC-02: Permissive OPT1 firewall rule - remediated
 
-- **Verified 2026-09-16:** OPT1 currently allows IPv4 traffic from OPT1 subnets to any; earlier records document restored client connectivity.
-- **Impact:** The rule is not a least-privilege policy.
-- **Required later work:** Verify required traffic and review the complete ruleset before designing narrower rules.
+- **Current design:** Ordered OPT1 rules allow `Corp-DC01`, allow only TCP 445 to `Corp-FS01`, block the rest of `10.10.20.0/24`, and then allow other destinations.
+- **Verified result:** `Corp-CL01` retained DC/DNS and internet access; ping to `Corp-FS01` was blocked while SMB and Jhon's `I:` and `P:` mappings worked after Group Policy refresh.
+- **Remaining work:** Complete ruleset, NAT, aliases, IPv6, and logging checks remain open.
 - **Current action:** Documentation only; no firewall rule changed.
 - **Details:** [Firewall Rules](../08-Security/firewall-rules.md)
 
@@ -54,6 +54,10 @@ Live verification on 2026-09-16 found `dcdiag` generally passed, but a WinRM WSM
 
 Details: [Corp-DC01 Build and Configuration](../03-Virtual-Infrastructure/windows-server-build-guide.md)
 
+### NET-02: Temporary Corp-DC01 network profile - observed and recovered
+
+During firewall testing, `Corp-DC01` temporarily identified its network as `Private` rather than `DomainAuthenticated`. DNS and Netlogon were running, and `nltest /dsgetdc:corp.internal` succeeded. A normal restart restored `DomainAuthenticated`; client-to-DC ping and DNS resolution then worked normally. The exact cause was not proven, so this is retained as a troubleshooting observation rather than a confirmed root-cause finding.
+
 ### GPO-02: IT drive targeting - corrected during live work
 
 On 2026-09-16, `I:` was corrected to use item-level targeting for `CORP\GG_IT`. `F:` already targets `CORP\GG_Finance`. Jhon received `I:` and `P:` after `gpupdate`, with `F:` correctly absent.
@@ -66,4 +70,4 @@ Details: [Group Policy Operation and Verification](../04-Active-Directory/group-
 - **To verify:** Requires a live configuration check or stronger evidence.
 - **Remediated:** Use only after a practical change and verification evidence exist.
 
-AD-01 and GPO-02 record corrections completed during the supplied live verification work. NET-01's provider conflict is resolved; its remaining configuration checks stay open. This update changes documentation only.
+AD-01, SEC-02, and GPO-02 record corrections completed during supplied live work. NET-01's provider conflict is resolved; its remaining configuration checks stay open. This update changes documentation only.

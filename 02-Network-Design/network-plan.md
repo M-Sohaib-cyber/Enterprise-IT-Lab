@@ -49,6 +49,6 @@ Corp-FW01 (pfSense)
 
 ## Security boundary
 
-The separate subnets provide a logical boundary between server and client systems. A permissive OPT1 IPv4 allow-any rule is currently documented; it requires later practical review and is not presented as a least-privilege firewall design.
+The separate subnets provide a logical boundary between server and client systems. Ordered OPT1 rules allow access to `Corp-DC01`, allow SMB-only access to `Corp-FS01` on TCP 445, block other traffic to `10.10.20.0/24`, and then allow other destinations such as the internet.
 
 No network or firewall remediation is performed by this documentation update.

@@ -75,6 +75,8 @@ During one test, mapped drives did not appear because `Corp-FS01` was powered of
 
 The access tests above are historical. On 2026-09-16, Jhon Smith (`jsmith`) successfully received `I:` and `P:` after `gpupdate`; `F:` was correctly absent. The wallpaper file `\\Corp-FS01\Public\company-wallpaper.jpg` was successfully opened from `Corp-CL01`.
 
+After OPT1 firewall hardening, `Corp-CL01` could not ping `Corp-FS01`, while SMB access over TCP 445 and Jhon's `I:` and `P:` mapped drives continued to work after Group Policy refresh. This verifies the required file-share path without demonstrating general client-to-server access.
+
 ## To verify
 
 - Windows Server patch and activation state

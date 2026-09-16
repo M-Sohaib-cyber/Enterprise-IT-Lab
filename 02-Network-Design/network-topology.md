@@ -43,7 +43,7 @@ Corp-FS01: file server / static 10.10.20.20/24 / exact VirtualBox attachment To 
 
 ## Routing and firewall status
 
-Repository documentation records successful communication from `Corp-CL01` to the domain controller and internet after an OPT1 IPv4 Any-to-Any pass rule was added. Separately, live verification on 2026-09-16 confirmed the current OPT1 IPv4 allow rule has source OPT1 subnets and destination Any. The current rule remains an unresolved security-hardening issue requiring later practical review. No firewall change is made by this documentation.
+The original OPT1 IPv4 Any-to-Any pass rule was hardened with ordered rules: allow `Corp-DC01`, allow TCP 445 to `Corp-FS01`, block the remaining LAN/server network, then allow other destinations. Verification confirmed DC reachability, DNS, and internet access; ping to `Corp-FS01` failed while SMB and mapped drives worked. No firewall change is made by this documentation update.
 
 ## Related documentation
 

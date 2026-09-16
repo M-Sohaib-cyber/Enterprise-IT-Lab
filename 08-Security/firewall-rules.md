@@ -4,44 +4,37 @@
 
 This document records firewall behavior supported by current repository documentation and evidence. It is not a complete pfSense ruleset or a proposed redesign.
 
-## Current evidenced OPT1 rule
+## Current evidenced OPT1 rule design
 
-The repository documents an OPT1 pass rule created after `Corp-CL01` received a DHCP address but could not reach the gateway, `Corp-DC01`, or the internet.
+OPT1 serves the `10.10.30.0/24` client network. The earlier broad pass rule was subsequently hardened with the following ordered rules:
 
-| Field | Current documented value |
-|---|---|
-| Interface | OPT1 |
-| Address family | IPv4 |
-| Protocol | Any |
-| Source | OPT1 subnets (live verified 2026-09-16) |
-| Destination | Any |
-| Action | Pass |
-| Description | `Allow OPT1 to Any` |
-| Rule order | To verify |
-| Logging | To verify |
+| Order | Action | Source | Destination | Protocol/port | Purpose |
+|---|---|---|---|---|---|
+| 1 | Allow | OPT1 subnets | `Corp-DC01` (`10.10.20.10`) | Not further specified | Preserve domain-controller and DNS access |
+| 2 | Allow | OPT1 subnets | `Corp-FS01` (`10.10.20.20`) | TCP 445 / Microsoft-DS | Permit SMB file-share access only |
+| 3 | Block | OPT1 subnets | LAN/server network (`10.10.20.0/24`) | Any | Deny other client-to-server traffic |
+| 4 | Allow | OPT1 subnets | Any | Any | Preserve traffic not blocked above, including internet access |
 
-Evidence: [pfSense OPT1 rule screenshot](../Screenshots/Security/01-pfSense-firewall%20rules.png).
+The older [pfSense OPT1 rule screenshot](../Screenshots/Security/01-pfSense-firewall%20rules.png) records the previous broad rule, not this current ordered ruleset.
 
-Existing documentation records connectivity to pfSense, `Corp-DC01`, and the internet after this rule was added. Live verification on 2026-09-16 confirmed an IPv4 allow rule from OPT1 subnets to any. The screenshot shows the rule editor, so a complete ruleset, rule order, logging, and remaining fields still require verification.
+## Practical verification
 
-## Known practical security concern
+- `Corp-CL01` can reach `Corp-DC01` and resolve DNS through it.
+- `Corp-CL01` retains internet connectivity.
+- `Corp-CL01` cannot ping `Corp-FS01`, consistent with general client-to-server traffic being blocked.
+- SMB access to `Corp-FS01` works over TCP 445.
+- Jhon's `I:` (IT) and `P:` (Public) mapped drives work after Group Policy refresh.
 
-The OPT1 IPv4 allow rule from OPT1 subnets to any is permissive and does not demonstrate least-privilege filtering between client, server, and internet destinations. It remains the documented current lab rule and must not be mistaken for a hardened target policy.
-
-Practical review and remediation are intentionally deferred. No rule is changed by this documentation update.
+Together, these results demonstrate that required SMB access is allowed while general access from the client network to the server network is restricted. This update records the completed firewall work; it does not change the lab configuration.
 
 ## To verify
 
-- Complete WAN, LAN, and OPT1 rulesets
-- Rule order and enabled/disabled state of other rules
+- Complete WAN and LAN rulesets, and OPT1 fields beyond the ordered design recorded above
+- Enabled/disabled state of other rules
 - NAT rules
 - Aliases
 - IPv6 policy
 - Logging settings and recorded events
-
-## Future hardening
-
-Future practical work should review the rule using least-privilege requirements. This is a recommendation only; no replacement rules are claimed or specified here because the required traffic has not yet been verified.
 
 ## Related documentation
 

@@ -96,6 +96,8 @@ Repository documentation also records successful domain-controller promotion, DN
 
 Live verification on 2026-09-16 confirmed static `10.10.20.10/24`, gateway `10.10.20.1`, and domain `corp.internal`. DNS resolution for `corp.internal` and `Corp-DC01.corp.internal` succeeded. All five FSMO roles (Schema Master, Domain Naming Master, RID Master, PDC Emulator, and Infrastructure Master) are held by `Corp-DC01`. `dcdiag` generally passed; a WinRM WSMAN SPN warning remains for later investigation.
 
+During later firewall testing, `Corp-DC01` temporarily classified its network as `Private` rather than `DomainAuthenticated`. DNS and Netlogon services were running, and `nltest /dsgetdc:corp.internal` succeeded. A normal restart restored `DomainAuthenticated`; client-to-DC ping and DNS resolution then worked normally. The exact cause was not established, so this is recorded only as a troubleshooting observation.
+
 ## Recorded build issues
 
 The original build guide records these issues and resolutions:

@@ -69,7 +69,7 @@ Active Directory documentation also records the computer object and successful d
 
 After receiving a DHCP address, the client initially could not reach pfSense, `Corp-DC01`, or the internet. Existing documentation attributes this to the absence of a pass rule on OPT1.
 
-An OPT1 IPv4 Any-to-Any rule was added and connectivity was recorded as restored. Separately, live verification on 2026-09-16 confirmed the current OPT1 IPv4 allow rule has source OPT1 subnets and destination Any. The current rule remains an unresolved security-hardening issue and has not been changed during documentation cleanup. See [Firewall Rules](../08-Security/firewall-rules.md).
+An OPT1 IPv4 Any-to-Any rule was added and connectivity was recorded as restored. It was subsequently hardened with ordered exceptions for `Corp-DC01` and TCP 445 to `Corp-FS01`, followed by a block for the rest of `10.10.20.0/24` and then an allow for other destinations. See [Firewall Rules](../08-Security/firewall-rules.md).
 
 ## Documented verification and use
 
@@ -82,6 +82,7 @@ Repository records describe successful:
 - Internet access after the OPT1 rule was added
 - User and computer GPO application
 - Mapped-drive and file-access testing against `Corp-FS01`
+- Failed ping to `Corp-FS01` while SMB over TCP 445 and the `I:` and `P:` mappings remained functional, demonstrating restricted general server access
 
 These are preserved historical test results, not new tests performed during this documentation cleanup.
 

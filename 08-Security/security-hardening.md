@@ -9,6 +9,7 @@ This document separates controls evidenced in the current lab from unresolved co
 | Area | Current documented control | Evidence/record |
 |---|---|---|
 | Network boundary | pfSense routes the separate `Corp-Core` and `Corp-Clients` networks | [Network topology](../02-Network-Design/network-topology.md) and [pfSense record](../03-Virtual-Infrastructure/pfsense.md) |
+| Client/server filtering | Ordered OPT1 rules allow DC access and SMB-only access to `Corp-FS01`, block other LAN traffic, then allow other destinations | [Firewall rules](firewall-rules.md) |
 | Identity | Central authentication through `corp.internal` Active Directory | [AD configuration](../04-Active-Directory/active-directory-installation.md) |
 | Password policy | Complexity enabled, minimum length 8, history 5, minimum age 1 day, maximum age 90 days | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Account lockout | Five invalid attempts, 30-minute duration, 30-minute counter reset in the recorded policy | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
@@ -27,7 +28,6 @@ The authoritative issue register is [Known Issues and Verification Items](../09-
 
 - `DL_*` scopes were corrected through Universal to Domain Local and all six memberships verified on 2026-09-16. Finance/IT Modify entries are confirmed; complete ACL review remains open. IT share includes `Everyone` Full, with NTFS providing the restrictive layer.
 - `GPO - Local Administrators` intentionally grants workstation local Administrator membership to `CORP\GG_IT`; Jhon's resulting rights on `Corp-CL01` are verified. Broader least-privilege review remains open.
-- The pfSense OPT1 IPv4 allow rule from OPT1 subnets to any is permissive and not a least-privilege policy.
 - The applied 600-second inactivity value is now verified; the earlier approximately five-minute lock/display observation remains unexplained.
 - `dcdiag` generally passed but reported a WinRM WSMAN SPN warning for later investigation.
 
@@ -39,7 +39,6 @@ Future practical work may:
 
 - Review complete file ACLs, inheritance, and permissions beyond the verified Finance/IT entries.
 - Review the membership and requirement for workstation local Administrator access.
-- Verify required network traffic and replace the permissive OPT1 rule with an approved least-privilege ruleset.
 - Verify remaining DHCP options, exclusions, reservations, lease duration, and VirtualBox DHCP settings.
 - Export and review current GPO, DNS, firewall, directory, and permission state.
 - Define backup, recovery, logging, monitoring, and patch-verification requirements.
