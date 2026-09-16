@@ -1,62 +1,36 @@
-# Naming Standards
+# Naming Record
 
-## Servers
+This document records naming patterns visible in the implemented lab. It does not reserve or claim devices, users, groups, or services that have not been created.
 
-SRV-DC01
-SRV-FS01
-SRV-APP01
+## Computers and firewall
 
-## Firewall
+| Name | Recorded role |
+|---|---|
+| `Corp-FW01` | pfSense firewall/router |
+| `Corp-DC01` | Domain controller and DNS server |
+| `Corp-FS01` | File server |
+| `Corp-CL01` | Windows 11 client |
 
-FW01
-
-## Client PCs
-
-PC-HR-001
-PC-FIN-001
-PC-SALES-001
-PC-IT-001
-
-## Laptops
-
-LT-CEO-001
-LT-MGR-001
-
-## Printers
-
-PRN-HR-01
-PRN-FIN-01
-PRN-CEO-01
+The implemented names use a `Corp-` prefix, role abbreviation, and two-digit instance number. Older `SRV-*`, `FW01`, and `PC-*` values were obsolete planning examples.
 
 ## Users
 
-firstname.lastname
+Documented usernames use an initial-plus-surname pattern:
 
-Example:
-john.smith
-alice.williams
-mohammad.sohaib
+- John Smith: `jsmith`
+- Sarah Ahmed: `sahmed`
 
-## Security Groups
+No broader naming rule is claimed from two examples.
 
-GG_HR
-GG_FINANCE
-GG_SALES
-GG_IT
-GG_SECURITY
+## Groups
 
-## Shared Folders
+- Department groups use `GG_`, for example `GG_IT` and `GG_Finance`.
+- Resource groups use a `DL_` prefix and access suffix, for example `DL_IT_RW` and `DL_Public_RO`.
 
-HR
-Finance
-Sales
-IT
-Public
-Management
+The `DL_` prefix describes the intended naming pattern only. The groups were reportedly created with Global rather than Domain Local scope; see [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md).
 
-## Administrative Accounts
+## Shares
 
-administrator
-svc_backup
-svc_dhcp
-svc_dns
+Documented share names are `IT`, `HR`, `Finance`, `Sales`, and `Public`. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md).
+
+The authoritative current device and directory-object lists are the [device inventory](device-inventory.md) and [OU, User, and Group Inventory](../04-Active-Directory/users-and-groups.md).

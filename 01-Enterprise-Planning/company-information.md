@@ -1,16 +1,19 @@
-# Company Information
+# Company Scenario
 
-## Company Name: NorthTech Solutions Ltd
+## Purpose
 
-## Industry: IT Services & Cybersecurity 
+The lab uses a fictional company scenario to give the technical exercises business context. Company size and staffing values are scenario assumptions, not implemented infrastructure or verified production data.
 
-## Headquarters: Newcastle Upon Tyne, England 
+| Item | Scenario value |
+|---|---|
+| Company | NorthTech Solutions Ltd |
+| Industry | IT services and cybersecurity |
+| Location | Newcastle upon Tyne, England |
+| Employees | 250 |
+| Offices | 1 |
+| IT team | 8 |
 
-## Number of Employees: 250
-
-## Number of Offices: 1
-
-## Departments
+## Scenario departments
 
 - Executive
 - Human Resources
@@ -21,9 +24,13 @@
 - Security
 - Customer Support
 
-## IT Team: 8
+Only IT, HR, Finance, Sales, Helpdesk, and Public resource names appear in current lab documentation. The scenario list does not prove that every department has implemented users, groups, devices, or shares.
 
-## Domain Name: northtech.local
+## Lab identity
 
-## Project Goal: 
-Build and manage a secure enterprise IT infrastructure for learning, administration, automation and cybersecurity.
+- Active Directory domain: `corp.internal`
+- NetBIOS name: `CORP`
+
+The earlier `northtech.local` value was obsolete planning material and is not the current lab domain.
+
+See the [device inventory](device-inventory.md) and [project goals](../00-Project-Overview/Project-Goals.md) for implemented scope.

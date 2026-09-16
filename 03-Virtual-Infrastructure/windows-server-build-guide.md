@@ -115,8 +115,9 @@ The original build guide records these issues and resolutions:
 
 - [Windows Server installed](../Screenshots/Servers/windows%20server%20installed.png)
 - [Server feature installation](../Screenshots/Servers/05-Windows%20server%20feature%20installation.png)
-- [Server name change](../Screenshots/Servers/06-Windows%20server%20name%20change.png)
-- [Server IP configuration](../Screenshots/Servers/07-Windows%20server%20internet%20protocol.png)
+- [Pre-configuration Local Server capture](../Screenshots/Servers/06-Windows%20server%20name%20change.png)
+
+The file named `07-Windows server internet protocol.png` is a byte-for-byte duplicate of the pre-configuration capture and does not prove the final IP settings. The final hostname and address are supported by the written build record; current state remains subject to live verification. See the [Screenshot Evidence Index](../Screenshots/README.md).
 
 ## Related documentation
 

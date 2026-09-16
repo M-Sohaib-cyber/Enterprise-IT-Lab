@@ -37,8 +37,6 @@ The consolidated status and supporting links are maintained in [Known Issues and
 
 | Documentation/work item | Intended outcome |
 |---|---|
-| Evidence index | Map screenshots to systems, configuration claims, and tests. |
-| Security baseline | Distinguish controls already implemented from recommendations and future remediation. |
 | PowerShell automation | Add scripts and evidence only when practical automation work is completed. |
 | Helpdesk platform and workflows | Document only after a ticketing platform or tested workflow is implemented. |
 
