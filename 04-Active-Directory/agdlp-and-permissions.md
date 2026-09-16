@@ -15,21 +15,22 @@ Accounts
   -> NTFS permissions
 ```
 
-Examples documented in the original design include `GG_IT` to `DL_IT_RW` and `GG_Finance` to `DL_Finance_RW`. This remains the intended model, not a verified statement of current group scope or nesting.
+Examples documented in the original design include `GG_IT` to `DL_IT_RW` and `GG_Finance` to `DL_Finance_RW`. Live verification on 2026-09-16 confirmed these group scopes and nesting after correction.
 
 ## Recorded implementation
 
-The repository records that:
+Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global to Domain Local using Universal as the intermediate scope (Global -> Universal -> Domain Local). The following nesting was verified; each resource group contains the listed member:
 
-- Departmental `GG_*` groups were created as Global Security groups.
-- Resource groups with `DL_*` names were created.
-- The `DL_*` groups were accidentally created as Global Security groups rather than Domain Local Security groups.
-- The `DL_*` groups were recorded as being assigned directly to NTFS permissions in the single-domain lab.
-- Departmental and public share access was tested from `Corp-CL01`.
+| Resource group | Verified member |
+|---|---|
+| `DL_Finance_RW` | `GG_Finance` |
+| `DL_HelpDesk_RW` | `GG_HelpDesk` |
+| `DL_HR_RW` | `GG_HR` |
+| `DL_IT_RW` | `GG_IT` |
+| `DL_Public_RO` | `Domain Users` |
+| `DL_Sales_RW` | `GG_Sales` |
 
-Because the resource-group scopes are wrong for the intended model, the lab does **not** currently demonstrate a fully or correctly implemented AGDLP structure.
-
-Existing documents conflict over whether `GG_*` groups were nested into `DL_*` groups. Current group nesting and ACL entries are therefore **To verify**.
+Finance NTFS grants `DL_Finance_RW` Modify, and IT NTFS grants `DL_IT_RW` Modify. These checked paths match the intended AGDLP model; complete ACLs and other resource permissions remain **To verify**.
 
 ## Documented access tests
 
@@ -41,18 +42,16 @@ The existing records describe:
 - `CORP\sahmed` receiving the Finance drive during the onboarding exercise.
 - Successful create/delete testing on the Finance drive and access denied to the IT drive for the Finance user.
 
-These results demonstrate tested access behavior. They do not prove that the intended AGDLP nesting and group scopes were implemented correctly.
+These historical access tests are distinct from the live scope and nesting verification on 2026-09-16. During the live checks, Jhon received `I:` and `P:` after `gpupdate`, with `F:` correctly absent.
 
-## Practical issue requiring later remediation
+## Follow-up permission review
 
-Live work is required to verify group scope, nesting, and NTFS ACLs and then decide how to correct the `DL_*` groups. No group, membership, or file permission is changed by this documentation.
+The group-scope correction and nesting verification were completed during the live work on 2026-09-16. Remaining work is to review complete ACLs, inheritance, and resource permissions beyond the Finance and IT Modify entries. This documentation update changes no groups or permissions.
 
 ## To verify
 
-- Current category and scope of every `DL_*` group
-- Current `GG_*` to `DL_*` nesting
-- Exact current NTFS and share ACL entries
-- Whether documented access behavior still matches the current server
+- Complete NTFS and share ACL entries and inheritance beyond verified Finance/IT Modify entries and IT `Everyone` Full share permission
+- Current file-access behavior beyond the verified Jhon drive-mapping results
 - Whether any permissions are assigned directly to users
 
 ## Related documentation

@@ -27,10 +27,10 @@ Exact distinguished names, protection-from-deletion settings, delegation, and an
 
 | Display name | Username | Recorded OU/status | Confirmed membership or use |
 |---|---|---|---|
-| John Smith | `jsmith` | `Company Users`; enabled state To verify | `Domain Users`, `GG_IT`; used for GPO, file-access, lockout, and recovery tests |
+| Jhon Smith | `jsmith` | `Company Users`; enabled state To verify | `Domain Users`, `GG_IT`; used for GPO, file-access, lockout, and recovery tests |
 | Sarah Ahmed | `sahmed` | `Disabled Users`; documented as disabled after offboarding | `Domain Users` after removal from `GG_Finance`; used for Finance onboarding/offboarding tests |
 
-The current enabled/locked state, complete memberships, account attributes, and password state require live verification. Password values are not documented.
+Live verification on 2026-09-16 confirmed Jhon Smith (`jsmith`) is a member of `Domain Users` and `GG_IT`. `GPO - Local Administrators` intentionally adds `GG_IT` to workstation local Administrators, so Jhon receives local administrator rights on `Corp-CL01` as an IT user. Current enabled/locked state, memberships beyond those confirmed, account attributes, and password state require live verification. Password values are not documented.
 
 ## Documented global groups
 
@@ -44,18 +44,20 @@ The current enabled/locked state, complete memberships, account attributes, and 
 
 ## Documented `DL_*` resource groups
 
-| Group | Intended resource use | Recorded current scope |
-|---|---|---|
-| `DL_IT_RW` | Modify access to IT share | Reported as Global Security; live scope To verify |
-| `DL_HR_RW` | Modify access to HR share | Reported as Global Security; live scope To verify |
-| `DL_Finance_RW` | Modify access to Finance share | Reported as Global Security; live scope To verify |
-| `DL_Sales_RW` | Modify access to Sales share | Reported as Global Security; live scope To verify |
-| `DL_HelpDesk_RW` | Helpdesk resource access | Reported as Global Security; resource use To verify |
-| `DL_Public_RO` | Read access to Public share | Reported as Global Security; live scope To verify |
+Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global to Domain Local using Universal as the intermediate scope (Global -> Universal -> Domain Local). The following nesting was verified; each resource group contains the listed member:
 
-Despite the `DL_` prefix, the repository records that these groups were accidentally created as **Global Security** groups rather than **Domain Local Security** groups. Existing records also conflict over whether `GG_*` groups were nested into them or whether the `DL_*` groups were assigned directly to NTFS permissions. The actual scope, nesting, and ACL use must be verified live.
+| Resource group | Intended resource use | Verified scope | Verified member |
+|---|---|---|---|
+| `DL_Finance_RW` | Modify access to Finance share | Domain Local Security | `GG_Finance` |
+| `DL_HelpDesk_RW` | Helpdesk resource access; use To verify | Domain Local Security | `GG_HelpDesk` |
+| `DL_HR_RW` | Modify access to HR share | Domain Local Security | `GG_HR` |
+| `DL_IT_RW` | Modify access to IT share | Domain Local Security | `GG_IT` |
+| `DL_Public_RO` | Read access to Public share | Domain Local Security | `Domain Users` |
+| `DL_Sales_RW` | Modify access to Sales share | Domain Local Security | `GG_Sales` |
 
-The lab must not be described as having a fully or correctly implemented AGDLP model. See [Group-Based File Permissions](agdlp-and-permissions.md).
+Finance NTFS grants `DL_Finance_RW` Modify, and IT NTFS grants `DL_IT_RW` Modify. These checked paths match the intended AGDLP model; complete ACLs and other resource permissions remain **To verify**.
+
+`DL_HelpDesk_RW` resource use and HR, Sales, and Public ACL entries remain **To verify**. See [Group-Based File Permissions](agdlp-and-permissions.md).
 
 ## Documented computer objects
 

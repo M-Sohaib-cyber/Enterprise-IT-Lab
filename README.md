@@ -23,7 +23,7 @@ This repository documents a portfolio lab built to practise junior and graduate-
 | Client network | `10.10.30.0/24` |
 | Domain controller/DNS | `Corp-DC01` at `10.10.20.10` |
 | Active Directory | `corp.internal` / `CORP` implemented |
-| File server | `Corp-FS01`; file sharing and mapped drives implemented |
+| File server | `Corp-FS01` at static `10.10.20.20/24`; Windows Server 2022 Standard Evaluation build 20348; file sharing and mapped drives implemented |
 | Client | `Corp-CL01`; Windows 11, domain joined, observed at `10.10.30.100` |
 | Group Policy | Several policies implemented and documented |
 
@@ -49,4 +49,4 @@ This table records only work supported by existing documentation or evidence. De
 
 The core VirtualBox network, pfSense router, Active Directory domain, DNS, Windows client, file sharing, and documented GPO exercises are implemented. Items listed as **Needs Verification** or **Planned** in the [roadmap](00-Project-Overview/Lab-Roadmap.md) must not be treated as completed.
 
-Three practical items are intentionally not changed by this documentation cleanup: verification/remediation of the `DL_*` group scopes, review of the permissive OPT1 firewall rule, and review of `GG_IT` local-administrator assignment.
+Live verification on 2026-09-16 confirmed network/server details, DHCP on OPT1, AD group-scope corrections and nesting, and GPO application and drive-mapping results. The permissive OPT1 rule remains a security issue; `GG_IT` workstation local-administrator access is intentional and remains subject to later least-privilege review. The WinRM WSMAN SPN warning also remains open. See the [known issues](09-Documentation/known-issues.md) for remaining checks.

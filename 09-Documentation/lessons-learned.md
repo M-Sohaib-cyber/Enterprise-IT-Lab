@@ -16,13 +16,13 @@ This behavior is relevant when testing new group membership and file access.
 
 The file-server exercise used broad share permissions with NTFS permissions intended to control effective access. Testing both the share and NTFS result is important because effective access depends on their combination.
 
-Current ACL entries and group scopes still require live verification. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md).
+Live verification on 2026-09-16 confirmed Finance/IT NTFS Modify entries and IT share `Everyone` Full, with NTFS providing the restrictive layer. Complete ACLs and inheritance remain to verify. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md).
 
 ## Intended AGDLP model versus implementation
 
 The lab intended to use Accounts -> Global groups -> Domain Local groups -> Permissions. The `DL_*` resource groups were later recorded as having been created with Global scope instead of Domain Local scope.
 
-The single-domain access tests worked, but that does not make the implementation a correct AGDLP model. Current group scope, nesting, and ACLs must be verified before remediation.
+On 2026-09-16, all `DL_*` security groups were corrected from Global through Universal to Domain Local, all six resource-group memberships were verified, and Finance/IT NTFS Modify entries were confirmed. The original access tests alone did not establish scope/nesting; the live checks now confirm those parts of the intended model. Complete ACL review remains open.
 
 See [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md) and [Known Issues](known-issues.md).
 

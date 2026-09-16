@@ -2,7 +2,7 @@
 
 ## Status
 
-DHCP is active from the perspective of `Corp-CL01`, but the provider's live configuration has not been proven from the repository. This document records observed client values without guessing the server configuration.
+Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 (`10.10.30.1`) with pool `10.10.30.100-10.10.30.199`.
 
 Authoritative addresses are maintained in [IP Addressing, DHCP, and DNS](../02-Network-Design/ip-addressing.md).
 
@@ -22,22 +22,18 @@ The existing `ipconfig /all` screenshot for `Corp-CL01` records:
 
 Evidence: [Corp-CL01 IP configuration](../Screenshots/Verifications/01-Corp-CL01%20ipconfig.png).
 
-## Unresolved provider conflict
+## Remaining server-side verification
 
-`10.10.30.1` is the documented address of the `Corp-FW01` OPT1 interface. The original pfSense deployment record says DHCP was disabled on OPT1, while the client identifies `10.10.30.1` as its DHCP server.
+The live check resolves the older pfSense record stating OPT1 DHCP was disabled. The following remain **To verify**:
 
-The following require live practical verification:
-
-- Actual DHCP provider and service state
-- Whether pfSense or a VirtualBox service supplied the observed lease
-- Scope start and end addresses
 - Subnet, gateway, DNS, and suffix options in the server configuration
 - Exclusions and reservations
 - Lease duration
 - Whether `10.10.30.100` is dynamic or reserved
 - Whether any DHCP service exists on `Corp-Core`
+- Current VirtualBox DHCP settings
 
-The screenshot proves that a lease was received; it does not prove how the server is configured. No DHCP settings are changed by this documentation.
+The client values above remain screenshot evidence; no DHCP settings are changed by this documentation update.
 
 ## Related documentation
 

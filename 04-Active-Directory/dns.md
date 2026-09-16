@@ -30,6 +30,8 @@ ipconfig /all
 
 The recorded result for the internal domain resolves to `10.10.20.10`. Client documentation also records working DNS and domain authentication.
 
+Live verification on 2026-09-16 confirmed successful DNS resolution for both `corp.internal` and `Corp-DC01.corp.internal`.
+
 ## To verify
 
 The repository does not contain a current DNS configuration export. The following remain **To verify**:

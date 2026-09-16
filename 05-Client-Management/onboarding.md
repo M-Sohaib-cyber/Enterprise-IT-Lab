@@ -39,7 +39,7 @@ No onboarding script, ticket, approval workflow, mailbox, application account, d
 | Public drive `P:` access | Successful |
 | IT drive `I:` access | Denied |
 
-These results demonstrate the access behavior observed during the exercise. They do not prove that the intended AGDLP group scopes and nesting were correctly implemented. See [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md).
+These results demonstrate historical access behavior. Separate live verification on 2026-09-16 confirmed all `DL_*` security groups corrected through Universal to Domain Local, including `GG_Finance` nested in `DL_Finance_RW`, and Finance NTFS granting `DL_Finance_RW` Modify. The current `F:` mapping is `\\Corp-FS01\Finance` with item-level targeting for `CORP\GG_Finance`; Sarah's current access was not retested. See [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md).
 
 ## Later state
 
@@ -54,9 +54,9 @@ The repository does not contain a dedicated Sarah Ahmed screenshot for each onbo
 ## To verify
 
 - Exact account attributes at the time of onboarding
-- Current `GG_Finance` and resource-group nesting
-- Exact current Finance share ACLs
-- Current Finance drive-mapping settings and item-level targeting
+- Current `GG_Finance` user membership beyond the historical Sarah record
+- Complete Finance NTFS/share ACLs and inheritance beyond verified `DL_Finance_RW` Modify
+- Finance drive-mapping preference details beyond the confirmed path and `CORP\GG_Finance` target
 
 ## Related documentation
 

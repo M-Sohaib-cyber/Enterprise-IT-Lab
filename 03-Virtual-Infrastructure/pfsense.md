@@ -34,9 +34,11 @@ These attachment settings come from the existing deployment record. Current Virt
 
 | pfSense interface | Virtual adapter | Network | Address |
 |---|---|---|---|
-| WAN | `em0` | VirtualBox NAT | DHCP; current address To verify |
+| WAN | `em0` | VirtualBox NAT | DHCP; `10.0.2.15/24`; gateway `10.0.2.2` |
 | LAN | `em1` | `Corp-Core` | `10.10.20.1/24` |
 | OPT1 | `em2` | `Corp-Clients` | `10.10.30.1/24` |
+
+Live verification on 2026-09-16 confirmed WAN `em0`, LAN `em1` at `10.10.20.1/24`, and OPT1 `em2` at `10.10.30.1/24`.
 
 Authoritative lab addressing is maintained in [IP Addressing, DHCP, and DNS](../02-Network-Design/ip-addressing.md).
 
@@ -62,25 +64,17 @@ These values describe the recorded build. A live export or current console captu
 
 `Corp-DC01` provides DNS for `corp.internal`. pfSense routes traffic between the documented network segments and provides WAN access.
 
-## DHCP evidence conflict
+## Verified DHCP configuration
 
-The original OPT1 setup record says the DHCP server was disabled. However, the `Corp-CL01` `ipconfig /all` screenshot reports:
+Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 (`10.10.30.1`), with pool `10.10.30.100-10.10.30.199`. This resolves the older record stating OPT1 DHCP was disabled and agrees with the client evidence.
 
-- DHCP enabled: Yes
-- DHCP server: `10.10.30.1`
-- Client address: `10.10.30.100`
-- Default gateway: `10.10.30.1`
-- DNS server: `10.10.20.10`
-
-Because `10.10.30.1` is also the documented OPT1 address, the client evidence and deployment narrative conflict. The current DHCP provider, pfSense service state, scope, exclusions, reservations, and lease configuration are all **To verify**. This documentation does not resolve the conflict by assumption.
-
-See [DHCP](../04-Active-Directory/dhcp.md) for the evidence record.
+Server-side options, exclusions, reservations, and lease duration remain **To verify**. See [DHCP](../04-Active-Directory/dhcp.md).
 
 ## OPT1 firewall rule
 
 The repository records that `Corp-CL01` initially obtained an address but could not reach pfSense, `Corp-DC01`, or the internet because OPT1 had no pass rule. An IPv4 Any-to-Any pass rule was then added on OPT1, after which connectivity was documented as restored.
 
-The screenshot records an OPT1 IPv4 rule with protocol `Any` and the description `Allow OPT1 to Any`. The exact saved rule details should be confirmed from pfSense during later practical verification.
+Live verification on 2026-09-16 confirmed an IPv4 allow rule from OPT1 subnets to any. The existing screenshot records protocol `Any` and description `Allow OPT1 to Any`.
 
 This permissive rule is a known practical security concern. It is documented as the current lab state and is not presented as a hardened or least-privilege policy. No firewall rule is changed here.
 

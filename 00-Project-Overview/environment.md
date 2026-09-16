@@ -21,7 +21,7 @@ No host hardware specifications are claimed because they are not established by 
 |---|---|---|
 | `Corp-FW01` | pfSense CE on a FreeBSD-based VM | Firewall, gateway, NAT, and routing between lab networks |
 | `Corp-DC01` | Windows Server 2022 | Active Directory Domain Services and DNS |
-| `Corp-FS01` | Windows Server; edition/version to verify | SMB file sharing for departmental and public resources |
+| `Corp-FS01` | Windows Server 2022 Standard Evaluation, build 20348 | SMB file sharing for departmental and public resources |
 | `Corp-CL01` | Windows 11 Enterprise Evaluation | Domain-joined user workstation and GPO test client |
 
 Authoritative device and address details are maintained in the [device inventory](../01-Enterprise-Planning/device-inventory.md) and [IP addressing reference](../02-Network-Design/ip-addressing.md).

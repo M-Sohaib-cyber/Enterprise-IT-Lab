@@ -28,7 +28,7 @@ This index describes what the existing screenshots visibly demonstrate. A screen
 
 | Screenshot | What is visible | Claim supported | Related documentation |
 |---|---|---|---|
-| [01-pfSense-firewall rules.png](Security/01-pfSense-firewall%20rules.png) | OPT1 rule editor with IPv4, protocol Any, source Any, and description `Allow OPT1 to Any` | A permissive OPT1 rule was configured in the editor; saved state/order require live verification | [Firewall rules](../08-Security/firewall-rules.md) |
+| [01-pfSense-firewall rules.png](Security/01-pfSense-firewall%20rules.png) | OPT1 rule editor with IPv4, protocol Any, source Any, and description `Allow OPT1 to Any` | Historical permissive rule editor; live verification on 2026-09-16 confirmed the current IPv4 allow rule from OPT1 subnets to any; rule order remains to verify | [Firewall rules](../08-Security/firewall-rules.md) |
 | [01-Corp-CL01 ipconfig.png](Verifications/01-Corp-CL01%20ipconfig.png) | `Corp-CL01` `ipconfig /all` output | Domain suffix `corp.internal`, DHCP client `10.10.30.100`, gateway/DHCP server `10.10.30.1`, and DNS `10.10.20.10` | [Windows client](../05-Client-Management/windows11-client.md) |
 
 ## Server and file-service evidence

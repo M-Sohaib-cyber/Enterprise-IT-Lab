@@ -4,7 +4,7 @@
 
 `Corp-FS01` provides SMB file shares used by domain users. Departmental and public shares, access tests, and Group Policy drive mappings are documented as implemented.
 
-The server's operating system version, IP address, VirtualBox specification, and exact network attachment are **To verify**.
+Live verification on 2026-09-16 confirmed Windows Server 2022 Standard Evaluation, build 20348, domain `corp.internal`, static IPv4 `10.10.20.20/24`, gateway `10.10.20.1`, and DNS `10.10.20.10`. VirtualBox specification and exact network attachment remain **To verify**.
 
 ## Installed role
 
@@ -23,7 +23,7 @@ The documented folder root is:
 C:\Shares
 ```
 
-Recorded folders and SMB shares are:
+The share names Finance, HR, IT, Public, and Sales were confirmed live on 2026-09-16. Recorded folder paths and uses are:
 
 | Folder | Share name | Documented use |
 |---|---|---|
@@ -45,7 +45,9 @@ The existing file-server record states:
 - Department `DL_*` groups intended to receive Modify access
 - `DL_Public_RO` intended to receive Read and Execute access on `Public`
 
-The `DL_*` groups are documented elsewhere as potentially having been created with Global scope instead of Domain Local scope. Their current scope and exact ACL entries require practical verification. This document therefore does not claim that AGDLP is correctly implemented.
+Live verification on 2026-09-16 confirmed Finance NTFS grants `DL_Finance_RW` Modify and IT NTFS grants `DL_IT_RW` Modify. IT share-level permissions currently include `Everyone` Full Control; NTFS provides the restrictive permission layer. The earlier broad share-permission record above is not a live confirmation of every share ACL.
+
+All `DL_*` security groups were corrected from Global through Universal to Domain Local, and all six resource-group memberships were verified; see [Users and Groups](../04-Active-Directory/users-and-groups.md). Complete ACLs and inheritance remain to verify.
 
 ## Drive mappings
 
@@ -53,9 +55,9 @@ The existing `GPO - Drive Mappings` record documents:
 
 | Drive | UNC path | Documented targeting/access |
 |---|---|---|
-| `I:` | `\\Corp-FS01\IT` | IT access; Modify in recorded test |
+| `I:` | `\\Corp-FS01\IT` | Item-level targeting `CORP\GG_IT`, corrected during live verification; Modify in recorded test |
 | `P:` | `\\Corp-FS01\Public` | Public access; read-only in recorded test |
-| `F:` | `\\Corp-FS01\Finance` | Finance users through item-level targeting |
+| `F:` | `\\Corp-FS01\Finance` | Existing item-level targeting `CORP\GG_Finance` |
 
 Detailed GPO configuration remains in [Group Policy](../04-Active-Directory/group-policy.md).
 
@@ -71,17 +73,17 @@ Repository documentation records the following tests on `Corp-CL01`:
 
 During one test, mapped drives did not appear because `Corp-FS01` was powered off. The existing record says the drives appeared after the server was started and Group Policy was refreshed.
 
-These statements preserve existing test records; they are not new tests performed during this documentation cleanup.
+The access tests above are historical. On 2026-09-16, Jhon Smith (`jsmith`) successfully received `I:` and `P:` after `gpupdate`; `F:` was correctly absent. The wallpaper file `\\Corp-FS01\Public\company-wallpaper.jpg` was successfully opened from `Corp-CL01`.
 
 ## To verify
 
-- Windows Server edition, version, build, and patch state
-- IP address, subnet, gateway, DNS, and VirtualBox network attachment
+- Windows Server patch and activation state
+- Exact VirtualBox network attachment
 - VM CPU, memory, and disk configuration
-- Current share list and share properties
-- Exact NTFS and share ACLs, inheritance, and group scopes
+- Share properties beyond the confirmed share names and IT share permission
+- Complete NTFS and share ACLs and inheritance beyond the verified Finance/IT entries
 - Storage capacity, free space, quotas, shadow copies, backup, and recovery
-- Whether all documented mappings and tests still reflect current state
+- Current Finance-user mapping and file-access tests; current IT create/delete and Public read-only behavior
 
 ## Evidence
 

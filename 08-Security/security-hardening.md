@@ -12,34 +12,35 @@ This document separates controls evidenced in the current lab from unresolved co
 | Identity | Central authentication through `corp.internal` Active Directory | [AD configuration](../04-Active-Directory/active-directory-installation.md) |
 | Password policy | Complexity enabled, minimum length 8, history 5, minimum age 1 day, maximum age 90 days | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Account lockout | Five invalid attempts, 30-minute duration, 30-minute counter reset in the recorded policy | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
-| Workstation inactivity | GPO value recorded as 600 seconds | [GPO inventory](../04-Active-Directory/gpo-inventory.md); observed timing conflict remains |
+| Workstation inactivity | GPO value live verified as 600 seconds (10 minutes), with `InactivityTimeoutSecs = 0x258` | [GPO inventory](../04-Active-Directory/gpo-inventory.md); observed timing conflict remains |
 | User restrictions | Control Panel and PC settings access blocked in the documented test | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Removable storage | Deny-all removable-storage policy produced an access-denied test | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | File access | Departmental/public share access and denial behavior tested on `Corp-CL01` | [File server](../03-Virtual-Infrastructure/file-server.md) |
 | Windows Update | Automatic Updates option 3 recorded and verified through `AUOptions=0x3` | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Account lifecycle | Manual disable, password reset, unlock, and forced password-change exercises documented | [Offboarding](../05-Client-Management/offboarding.md) and [account recovery](../06-Helpdesk/account-recovery.md) |
 
-These are lab controls and historical test results. Current settings still require live verification where identified in the linked documents.
+These records include historical tests and the supplied live verification results from 2026-09-16. Current settings still require live verification where identified in the linked documents.
 
 ## Known issues
 
 The authoritative issue register is [Known Issues and Verification Items](../09-Documentation/known-issues.md). Current practical concerns are:
 
-- `DL_*` groups were reportedly created with Global rather than Domain Local scope, so AGDLP is not fully or correctly implemented.
-- `GPO - Local Administrators` grants broad workstation local Administrator membership to `CORP\GG_IT`.
-- The pfSense OPT1 IPv4 Any-to-Any rule is permissive and not a least-privilege policy.
-- The configured 600-second inactivity value does not match the approximately five-minute behavior observed during testing.
+- `DL_*` scopes were corrected through Universal to Domain Local and all six memberships verified on 2026-09-16. Finance/IT Modify entries are confirmed; complete ACL review remains open. IT share includes `Everyone` Full, with NTFS providing the restrictive layer.
+- `GPO - Local Administrators` intentionally grants workstation local Administrator membership to `CORP\GG_IT`; Jhon's resulting rights on `Corp-CL01` are verified. Broader least-privilege review remains open.
+- The pfSense OPT1 IPv4 allow rule from OPT1 subnets to any is permissive and not a least-privilege policy.
+- The applied 600-second inactivity value is now verified; the earlier approximately five-minute lock/display observation remains unexplained.
+- `dcdiag` generally passed but reported a WinRM WSMAN SPN warning for later investigation.
 
-None of these issues is remediated by this documentation work.
+Group corrections were completed during the supplied live work. This documentation update performs no remediation.
 
 ## Planned - not implemented
 
 Future practical work may:
 
-- Verify and remediate `DL_*` group scopes, nesting, and file ACLs.
+- Review complete file ACLs, inheritance, and permissions beyond the verified Finance/IT entries.
 - Review the membership and requirement for workstation local Administrator access.
 - Verify required network traffic and replace the permissive OPT1 rule with an approved least-privilege ruleset.
-- Resolve DHCP ownership and configuration uncertainty.
+- Verify remaining DHCP options, exclusions, reservations, lease duration, and VirtualBox DHCP settings.
 - Export and review current GPO, DNS, firewall, directory, and permission state.
 - Define backup, recovery, logging, monitoring, and patch-verification requirements.
 

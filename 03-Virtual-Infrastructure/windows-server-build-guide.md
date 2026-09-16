@@ -94,6 +94,8 @@ DNS/DC address: 10.10.20.10
 
 Repository documentation also records successful domain-controller promotion, DNS operation, domain join of `Corp-CL01`, and domain authentication. These statements preserve the existing test record; they are not a new live test performed during documentation cleanup.
 
+Live verification on 2026-09-16 confirmed static `10.10.20.10/24`, gateway `10.10.20.1`, and domain `corp.internal`. DNS resolution for `corp.internal` and `Corp-DC01.corp.internal` succeeded. All five FSMO roles (Schema Master, Domain Naming Master, RID Master, PDC Emulator, and Infrastructure Master) are held by `Corp-DC01`. `dcdiag` generally passed; a WinRM WSMAN SPN warning remains for later investigation.
+
 ## Recorded build issues
 
 The original build guide records these issues and resolutions:
@@ -110,6 +112,7 @@ The original build guide records these issues and resolutions:
 - Current VM CPU, memory, disk, firmware, and network settings
 - DNS forwarders, reverse zones, and detailed zone configuration
 - Backup, recovery, time synchronization, and monitoring configuration
+- WinRM WSMAN SPN warning reported by `dcdiag`
 
 ## Evidence
 
@@ -117,7 +120,7 @@ The original build guide records these issues and resolutions:
 - [Server feature installation](../Screenshots/Servers/05-Windows%20server%20feature%20installation.png)
 - [Pre-configuration Local Server capture](../Screenshots/Servers/06-Windows%20server%20name%20change.png)
 
-The file named `07-Windows server internet protocol.png` is a byte-for-byte duplicate of the pre-configuration capture and does not prove the final IP settings. The final hostname and address are supported by the written build record; current state remains subject to live verification. See the [Screenshot Evidence Index](../Screenshots/README.md).
+The file named `07-Windows server internet protocol.png` is a byte-for-byte duplicate of the pre-configuration capture and does not prove the final IP settings. The final hostname and address are supported by the written build record and live verification on 2026-09-16. See the [Screenshot Evidence Index](../Screenshots/README.md).
 
 ## Related documentation
 

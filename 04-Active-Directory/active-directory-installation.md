@@ -41,12 +41,12 @@ corp.internal
 
 The repository documents:
 
-- John Smith (`jsmith`) in `Company Users`, with `GG_IT` membership
+- Jhon Smith (`jsmith`) in `Company Users`, with `GG_IT` membership
 - Sarah Ahmed (`sahmed`) created for a Finance onboarding exercise and later disabled, removed from `GG_Finance`, and moved to `Disabled Users`
 - Global groups `GG_IT`, `GG_HR`, `GG_Finance`, `GG_Sales`, and `GG_HelpDesk`
 - `DL_*` resource groups used in the file-access documentation
 
-The `DL_*` groups may have been created with Global rather than Domain Local scope. Their scope and nesting require later practical verification, so this document does not claim that AGDLP is correctly implemented.
+Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global through Universal to Domain Local, with all six resource-group memberships verified. Finance and IT NTFS Modify entries were also confirmed; see [Group-Based File Permissions](agdlp-and-permissions.md). Jhon's `Domain Users` and `GG_IT` membership was confirmed.
 
 Detailed user, group, onboarding, offboarding, and helpdesk records remain in [Users and Groups](users-and-groups.md).
 
@@ -68,15 +68,16 @@ Existing documentation records:
 - Successful join and domain login of `Corp-CL01`
 - Creation and use of OUs, users, and security groups
 
-These are existing implementation records, not new tests performed during documentation cleanup.
+These are existing implementation records. Live verification on 2026-09-16 additionally confirmed all five FSMO roles on `Corp-DC01` and successful DNS resolution for `corp.internal` and `Corp-DC01.corp.internal`. `dcdiag` generally passed, with a WinRM WSMAN SPN warning remaining for investigation.
 
 ## To verify
 
 - Forest and domain functional levels
 - Complete current OU, user, group, and computer inventory
-- Exact group categories, scopes, nesting, and memberships
+- Group inventory and memberships beyond the confirmed `DL_*` scopes/nesting and Jhon's memberships
 - `Corp-FS01` computer-object location
-- Sites and Services, replication, FSMO roles, trusts, and recovery configuration
+- Sites and Services, replication configuration, trusts, and recovery configuration
+- WinRM WSMAN SPN warning
 
 No unverified feature is claimed as implemented.
 
