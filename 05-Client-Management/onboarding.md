@@ -1,0 +1,65 @@
+# Finance User Onboarding Exercise
+
+## Scope
+
+This document records the onboarding exercise performed for Sarah Ahmed. It is a historical lab procedure, not an automated workflow or proof that every recommended production onboarding control exists.
+
+## User record
+
+| Item | Recorded value |
+|---|---|
+| Display name | Sarah Ahmed |
+| Username | `sahmed` |
+| Domain | `corp.internal` (`CORP`) |
+| Initial OU | `Company Users` |
+| Department | Finance |
+| Department group | `GG_Finance` |
+| Test client | `Corp-CL01` |
+
+## Demonstrated steps
+
+The existing exercise records that:
+
+1. The `sahmed` account was created in `Company Users`.
+2. A temporary password was assigned with **User must change password at next logon** enabled.
+3. Sarah changed the temporary password during the first successful sign-in.
+4. The account was added to `GG_Finance`.
+5. The Finance drive mapping in `GPO - Drive Mappings` targeted `CORP\GG_Finance`.
+6. Sarah signed in to `Corp-CL01` using `CORP\sahmed`.
+7. Group Policy was refreshed and a new sign-in session was used before testing access.
+
+No onboarding script, ticket, approval workflow, mailbox, application account, device allocation, or other automation is evidenced and none is claimed.
+
+## Documented access results
+
+| Test | Recorded result |
+|---|---|
+| Finance drive `F:` appeared | Successful |
+| Create and delete a file on `F:` | Successful |
+| Public drive `P:` access | Successful |
+| IT drive `I:` access | Denied |
+
+These results demonstrate the access behavior observed during the exercise. They do not prove that the intended AGDLP group scopes and nesting were correctly implemented. See [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md).
+
+## Later state
+
+Sarah Ahmed was subsequently used for the documented [offboarding exercise](offboarding.md). The authoritative inventory therefore records the account's later documented state as disabled in `Disabled Users`, not as an active Finance user.
+
+## Evidence
+
+- [Generic new-user password option](../Screenshots/Active%20Directory/02-New%20user%20password%20setup.png) - this capture is not user-specific.
+
+The repository does not contain a dedicated Sarah Ahmed screenshot for each onboarding, membership, or access-test step. The demonstrated workflow is preserved from the existing written record.
+
+## To verify
+
+- Exact account attributes at the time of onboarding
+- Current `GG_Finance` and resource-group nesting
+- Exact current Finance share ACLs
+- Current Finance drive-mapping settings and item-level targeting
+
+## Related documentation
+
+- [OU, User, and Group Inventory](../04-Active-Directory/users-and-groups.md)
+- [Group Policy Inventory](../04-Active-Directory/gpo-inventory.md)
+- [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md)

@@ -1,327 +1,81 @@
-# Enterprise Group Design (AGDLP)
+# Active Directory OU, User, and Group Inventory
 
-## Group Strategy
+## Scope
 
-The lab follows the Microsoft AGDLP model for assigning permissions.
+This is the authoritative inventory of Active Directory objects named in current repository documentation or evidence. It is not a live directory export. Values that cannot be established from the repository are marked **To verify**.
 
-```
-A (Accounts)
-      ↓
-G (Global Groups)
-      ↓
-DL (Domain Local Groups)
-      ↓
-P (Permissions)
-```
+- Domain: `corp.internal`
+- NetBIOS name: `CORP`
+- Domain controller: `Corp-DC01`
 
-## Global Groups
+## Organizational units
 
-| Group | Purpose |
-|--------|---------|
-| GG_IT | IT Department |
-| GG_HR | Human Resources |
-| GG_Finance | Finance Department |
-| GG_Sales | Sales Department |
-| GG_HelpDesk | Help Desk Team |
+| OU | Parent | Documented use | Current status |
+|---|---|---|---|
+| `Admins` | Domain root | Administrative accounts | Exists in deployment record; contents To verify |
+| `IT Admins` | `Admins` | IT administrative accounts | Exists in deployment record; contents To verify |
+| `Company Users` | Domain root | Standard domain users and user-linked GPOs | Used by documented users and GPOs |
+| `Disabled Users` | Domain root | Disabled accounts retained after offboarding | Created and used during Sarah Ahmed offboarding |
+| `Groups` | Domain root | Security groups | Exists in deployment record; exact contents To verify |
+| `Servers` | Domain root | Server computer objects | Exists in deployment record; exact contents To verify |
+| `Service Accounts` | Domain root | Service accounts | Exists in deployment record; no service account is confirmed |
+| `Workstations` | Domain root | Client computer objects and computer-linked GPOs | Contains documented `Corp-CL01` object |
 
-## Domain Local Groups
+Exact distinguished names, protection-from-deletion settings, delegation, and any additional OUs remain **To verify**.
 
-| Group | Purpose |
-|--------|---------|
-| DL_IT_RW | Modify access to IT share |
-| DL_HR_RW | Modify access to HR share |
-| DL_Finance_RW | Modify access to Finance share |
-| DL_Sales_RW | Modify access to Sales share |
-| DL_HelpDesk_RW | Reserved for Help Desk resources |
-| DL_Public_RO | Read-only access to Public share |
+## Documented users
 
-## Group Nesting
+| Display name | Username | Recorded OU/status | Confirmed membership or use |
+|---|---|---|---|
+| John Smith | `jsmith` | `Company Users`; enabled state To verify | `Domain Users`, `GG_IT`; used for GPO, file-access, lockout, and recovery tests |
+| Sarah Ahmed | `sahmed` | `Disabled Users`; documented as disabled after offboarding | `Domain Users` after removal from `GG_Finance`; used for Finance onboarding/offboarding tests |
 
-| Global Group | Domain Local Group |
-|---------------|-------------------|
-| GG_IT | DL_IT_RW |
-| GG_HR | DL_HR_RW |
-| GG_Finance | DL_Finance_RW |
-| GG_Sales | DL_Sales_RW |
-| GG_HelpDesk | DL_HelpDesk_RW |
-| Domain Users | DL_Public_RO |
+The current enabled/locked state, complete memberships, account attributes, and password state require live verification. Password values are not documented.
 
-## User Membership
+## Documented global groups
 
-John Smith
+| Group | Recorded category/scope | Documented purpose | Confirmed membership |
+|---|---|---|---|
+| `GG_IT` | Global Security | IT department/access group | `jsmith` confirmed by existing command output and screenshot |
+| `GG_HR` | Global Security | Human Resources department | To verify |
+| `GG_Finance` | Global Security | Finance department and Finance drive targeting | `sahmed` was added during onboarding and removed during offboarding |
+| `GG_Sales` | Global Security | Sales department | To verify |
+| `GG_HelpDesk` | Global Security | Helpdesk team | To verify |
 
-```
-John Smith
-      ↓
-GG_IT
-      ↓
-DL_IT_RW
-```
+## Documented `DL_*` resource groups
 
-This allows John Smith to access the IT departmental share while denying access to HR, Finance and Sales.
+| Group | Intended resource use | Recorded current scope |
+|---|---|---|
+| `DL_IT_RW` | Modify access to IT share | Reported as Global Security; live scope To verify |
+| `DL_HR_RW` | Modify access to HR share | Reported as Global Security; live scope To verify |
+| `DL_Finance_RW` | Modify access to Finance share | Reported as Global Security; live scope To verify |
+| `DL_Sales_RW` | Modify access to Sales share | Reported as Global Security; live scope To verify |
+| `DL_HelpDesk_RW` | Helpdesk resource access | Reported as Global Security; resource use To verify |
+| `DL_Public_RO` | Read access to Public share | Reported as Global Security; live scope To verify |
 
-## New Employee Onboarding - Finance Department
+Despite the `DL_` prefix, the repository records that these groups were accidentally created as **Global Security** groups rather than **Domain Local Security** groups. Existing records also conflict over whether `GG_*` groups were nested into them or whether the `DL_*` groups were assigned directly to NTFS permissions. The actual scope, nesting, and ACL use must be verified live.
 
-### Scenario
+The lab must not be described as having a fully or correctly implemented AGDLP model. See [Group-Based File Permissions](agdlp-and-permissions.md).
 
-A new employee, Sarah Ahmed, joined the Finance department. The task was to create her domain account, assign the correct group memberships and permissions, and verify that she could access the appropriate company resources.
+## Documented computer objects
 
-### User Details
-
-| Setting | Value |
+| Computer | Recorded location/status |
 |---|---|
-| Name | Sarah Ahmed |
-| Username | `sahmed` |
-| Domain | `corp.internal` |
-| Department | Finance |
-| User OU | `Company Users` |
-
-### Account Creation
-
-The user account was created in **Active Directory Users and Computers** under the `Company Users` OU.
-
-The account was configured with a temporary password and **User must change password at next logon** enabled.
-
-On the first successful login, the user changed the temporary password to a new password that met the domain password policy requirements.
-
-### Department Group Membership
-
-Sarah was added to the Finance global security group:
-
-```text
-GG_Finance
-```
-
-The Finance global group was then assigned to the Finance domain local group:
-
-```text
-GG_Finance
-        ↓
-DL_Finance_RW
-```
-
-This group structure provides Finance users with read/write access to Finance resources through group-based permissions.
-
-### Finance Drive Mapping
-
-A new Finance drive mapping was added to:
-
-```text
-GPO - Drive Mappings
-```
-
-The mapping was configured as:
-
-| Setting | Value |
-|---|---|
-| Action | `Create` |
-| Location | `\\Corp-FS01\Finance` |
-| Drive Letter | `F:` |
-| Label | `Finance` |
-
-Item-level targeting was configured so that only members of the following security group receive the Finance drive:
-
-```text
-CORP\GG_Finance
-```
-
-The access structure is:
-
-```text
-Sarah Ahmed (sahmed)
-        ↓
-GG_Finance
-        ↓
-DL_Finance_RW
-        ↓
-Finance Share
-        ↓
-F: Finance Drive
-```
-
-### Testing
-
-The user logged in successfully to `Corp-CL01` as:
-
-```text
-CORP\sahmed
-```
-
-After Group Policy was refreshed and the user signed back in, the Finance drive appeared automatically in File Explorer.
-
-The following access was tested:
-
-- `F: Finance` — Access successful
-- Create file in `F:` — Successful
-- Delete file in `F:` — Successful
-- `P: Public` — Access successful
-- `I: IT` — Access denied
-
-This confirmed that the user received the correct department access through Active Directory group membership, file permissions, and Group Policy drive mapping.
-
-### Result
-
-The Finance employee onboarding process was successfully completed.
-
-Sarah Ahmed was able to authenticate to the domain and access the appropriate Finance and Public resources while being denied access to the IT department share.
-
-## Employee Offboarding - Finance Department
-
-### Scenario
-
-Sarah Ahmed (`sahmed`) left the Finance department. The account was offboarded by disabling the user account, removing department access, and retaining the account in Active Directory for administrative and audit purposes.
-
-### Offboarding Actions
-
-#### 1. Created Disabled Users OU
-
-A new Organizational Unit was created:
-
-```text
-Disabled Users
-```
-
-This OU is used to store disabled employee accounts instead of deleting them immediately.
-
-#### 2. Disabled the User Account
-
-The Active Directory account for Sarah Ahmed was disabled.
-
-This prevents the user from successfully authenticating to the domain.
-
-#### 3. Moved the Account
-
-After disabling the account, Sarah Ahmed was moved from:
-
-```text
-Company Users
-```
-
-to:
-
-```text
-Disabled Users
-```
-
-#### 4. Removed Finance Group Membership
-
-Sarah Ahmed was removed from:
-
-```text
-GG_Finance
-```
-
-The user's **Member Of** tab was checked after removal and showed only:
-
-```text
-Domain Users
-```
-
-Because `GG_Finance` provided Finance department membership and was used for access control, removing Sarah from this group removed her Finance department access.
-
-### Access Verification
-
-The user account was tested after offboarding.
-
-Before the final sign-in test, the Finance drive mapping was no longer available to the user because Sarah was no longer a member of `GG_Finance`.
-
-A fresh sign-in attempt was then made using:
-
-```text
-CORP\sahmed
-```
-
-The sign-in was rejected with the following message:
-
-> Your account has been disabled. Please see your system administrator.
-
-![Disabled account login denied](../Screenshots/Active%20Directory/10-Disabled-Account-Login-Denied.png)
-
-### Result
-
-The employee offboarding process was successfully completed.
-
-Sarah Ahmed's account was:
-
-- Disabled
-- Moved to the `Disabled Users` OU
-- Removed from the `GG_Finance` security group
-- Removed from Finance drive access
-- Unable to sign in to the domain
-
-The account was retained in Active Directory rather than deleted, allowing it to remain available for administrative review or auditing if required.
-
-## Helpdesk Account Recovery - Password Reset and Account Unlock
-
-### Scenario
-
-John Smith (`jsmith`) contacted the IT helpdesk after entering the wrong password multiple times.
-
-The account lockout policy configured in the domain was triggered, and the user was unable to sign in.
-
-![Account locked out](../Screenshots/Active%20Directory/11-Account-Locked-Out.png)
-
-### Helpdesk Actions
-
-#### 1. Checked and Unlocked the Account
-
-The administrator opened **Active Directory Users and Computers** and accessed the properties of the John Smith account.
-
-The account was confirmed as locked and was manually unlocked.
-
-#### 2. Reset the Password
-
-The user's password was reset to a new temporary password.
-
-The following option was enabled:
-
-```text
-User must change password at next logon
-```
-
-The account lockout status was confirmed as:
-
-```text
-Unlocked
-```
-
-![Password reset and account unlocked](../Screenshots/Active%20Directory/12-Password-Reset-And-Unlocked.png)
-
-#### 3. User Changed Password
-
-The user then signed in using the temporary password.
-
-Windows required the user to change the password before completing the sign-in.
-
-![Password change required](../Screenshots/Active%20Directory/13-Password-Change-Required.png)
-
-After entering a new password that met the domain password policy requirements, the user successfully signed in.
-
-### Verification
-
-The complete account recovery process was tested successfully:
-
-```text
-Incorrect password attempts
-        ↓
-Account locked
-        ↓
-User unable to sign in
-        ↓
-Administrator unlocks account
-        ↓
-Administrator resets password
-        ↓
-User must change password at next logon
-        ↓
-User creates new password
-        ↓
-Successful domain login
-```
-
-### Result
-
-The helpdesk account recovery process was successfully completed.
-
-The exercise demonstrated how an IT administrator can unlock a locked domain account, reset a user's password, enforce a password change at the next logon, and verify that the user can successfully regain access.
-
+| `Corp-DC01` | Domain controller for `corp.internal` |
+| `Corp-CL01` | Domain joined and moved to `Workstations` |
+| `Corp-FS01` | File server exists; computer-object OU To verify |
+
+## Evidence
+
+- [Groups](../Screenshots/Active%20Directory/01-Groups.png)
+- [New user password setup](../Screenshots/Active%20Directory/02-New%20user%20password%20setup.png)
+- [Adding user to group](../Screenshots/Active%20Directory/03-Adding%20user%20to%20group.png)
+- [John Smith group output](../Screenshots/Troubleshooting/01-whoami-groups.png)
+
+## Related procedures
+
+- [Finance onboarding](../05-Client-Management/onboarding.md)
+- [Finance offboarding](../05-Client-Management/offboarding.md)
+- [Account recovery](../06-Helpdesk/account-recovery.md)
+- [Group Policy inventory](gpo-inventory.md)
+- [Corp-FS01 file server](../03-Virtual-Infrastructure/file-server.md)

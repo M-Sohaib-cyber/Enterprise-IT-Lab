@@ -1,67 +1,31 @@
-# Active Directory Lessons Learned
+# Lessons Learned
 
-## Group Membership Token Refresh
+## Security-token refresh
 
-Problem:
+When a user was added to a security group, access initially remained denied because the existing logon session still used the previous security token. Signing out and signing back in refreshed the token.
 
-A user was added to a new security group but still received "Access Denied".
+The documented verification command was:
 
-Cause:
-
-Windows creates the user's security token during logon. New group memberships are not applied to the existing logon session.
-
-Resolution:
-
-Sign out and sign back in.
-
-Verification:
-
-```
+```cmd
 whoami /groups
 ```
 
-After logging back in, the new security group appeared in the user's token and access worked correctly.
+This behavior is relevant when testing new group membership and file access.
 
----
+## Share and NTFS permissions
 
-## Share Permissions vs NTFS Permissions
+The file-server exercise used broad share permissions with NTFS permissions intended to control effective access. Testing both the share and NTFS result is important because effective access depends on their combination.
 
-Share permissions determine whether a user can access the shared folder.
+Current ACL entries and group scopes still require live verification. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md).
 
-NTFS permissions determine what actions the user can perform.
+## Intended AGDLP model versus implementation
 
-Best practice:
+The lab intended to use Accounts -> Global groups -> Domain Local groups -> Permissions. The `DL_*` resource groups were later recorded as having been created with Global scope instead of Domain Local scope.
 
-- Share Permissions → Everyone = Full Control
-- NTFS Permissions → Restrict access using Domain Local Groups
+The single-domain access tests worked, but that does not make the implementation a correct AGDLP model. Current group scope, nesting, and ACLs must be verified before remediation.
 
----
+See [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md) and [Known Issues](known-issues.md).
 
-## AGDLP
+## Evidence-aware documentation
 
-Using Global Groups and Domain Local Groups simplifies permission management and follows Microsoft's recommended enterprise design.
-
-## Future Improvement
-
-### AGDLP Group Scope
-
-During this lab, the `DL_*` groups were accidentally created as **Global Security Groups** instead of **Domain Local Security Groups**.
-
-The current implementation functions correctly in this single-domain environment because the Global groups are assigned directly to NTFS permissions.
-
-For a production Active Directory environment, these groups should be recreated as **Domain Local** groups to fully implement the Microsoft AGDLP model.
-
-Target design:
-
-```
-Accounts
-    ↓
-Global Groups (GG_*)
-    ↓
-Domain Local Groups (DL_*)
-    ↓
-NTFS Permissions
-```
-
-This improvement is planned for a future milestone.
-
+Build notes, screenshots, and later exercises can conflict as a lab evolves. Current-state documents should distinguish recorded history from live-verified configuration and use **To verify** rather than resolving conflicts by assumption.

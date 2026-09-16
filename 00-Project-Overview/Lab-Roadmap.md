@@ -31,12 +31,13 @@ Status is based on documentation and evidence currently stored in this repositor
 
 These are verification or remediation items, not claims that the lab is currently broken.
 
+The consolidated status and supporting links are maintained in [Known Issues and Verification Items](../09-Documentation/known-issues.md).
+
 ## Planned
 
 | Documentation/work item | Intended outcome |
 |---|---|
 | Evidence index | Map screenshots to systems, configuration claims, and tests. |
-| AD/GPO inventory | Create concise authoritative inventories for OUs, users, groups, and GPO links. |
 | Security baseline | Distinguish controls already implemented from recommendations and future remediation. |
 | PowerShell automation | Add scripts and evidence only when practical automation work is completed. |
 | Helpdesk platform and workflows | Document only after a ticketing platform or tested workflow is implemented. |

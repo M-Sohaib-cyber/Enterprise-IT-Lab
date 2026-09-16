@@ -42,6 +42,7 @@ This table records only work supported by existing documentation or evidence. De
 - [Windows client management](05-Client-Management/)
 - [Security documentation](08-Security/)
 - [Lessons learned](09-Documentation/lessons-learned.md)
+- [Known issues and verification items](09-Documentation/known-issues.md)
 - [Screenshots and verification evidence](Screenshots/)
 
 ## Completed versus planned work
