@@ -1,34 +1,54 @@
-# Network Plan
+# Current Network Plan
 
-## Domain
-northtech.local
+## Purpose
 
-## IP Address Range
-10.10.0.0/16
+The lab separates infrastructure servers from client workstations using two VirtualBox networks routed by `Corp-FW01`. This document records the current logical design; confirmed addresses are maintained in the [IP addressing reference](ip-addressing.md).
 
-## Domain Controller
-SRV-DC01
+## Identity and naming
 
-## File Server
-SRV-FS01
+| Item | Current value |
+|---|---|
+| Active Directory domain | `corp.internal` |
+| NetBIOS domain | `CORP` |
+| Firewall/router | `Corp-FW01` |
+| Domain controller/DNS | `Corp-DC01` |
+| File server | `Corp-FS01` |
+| Windows client | `Corp-CL01` |
 
-## Firewall
-FW01 (pfSense)
+The older `northtech.local`, `SRV-*`, and `FW01` values are obsolete and must not be used as the current configuration.
 
-## Client Network
-10.10.20.0/24
+## Network separation
 
-## Server Network
-10.10.10.0/24
+| Segment | Subnet | Purpose | pfSense interface/address |
+|---|---|---|---|
+| VirtualBox NAT | Address assigned by DHCP; current value to verify | pfSense WAN and internet access | WAN / DHCP |
+| `Corp-Core` | `10.10.20.0/24` | Domain controller, DNS, and server-side infrastructure | LAN / `10.10.20.1` |
+| `Corp-Clients` | `10.10.30.0/24` | Domain-joined Windows workstations | OPT1 / `10.10.30.1` |
 
-## DNS Server
-SRV-DC01
+`Corp-DC01` and `Corp-CL01` are confirmed on their respective server and client segments. The IP address and exact attachment of `Corp-FS01` remain to be verified.
 
-## DHCP Server
-SRV-DC01
+## Service flow
 
-## Internet Access
-pfSense
+```text
+Internet
+  |
+VirtualBox NAT
+  |
+Corp-FW01 (pfSense)
+  |-- Corp-Core: 10.10.20.0/24
+  |     `-- Corp-DC01: AD DS and DNS
+  |
+  `-- Corp-Clients: 10.10.30.0/24
+        `-- Corp-CL01: domain-joined Windows 11 client
+```
 
-## Future Expansion
-Additional offices, VPN, Azure, Microsoft 365, VLANs
+- pfSense is the documented gateway and router between the lab networks.
+- `Corp-DC01` provides DNS for the Active Directory domain.
+- `Corp-CL01` uses `10.10.20.10` for DNS and `10.10.30.1` as its gateway.
+- The client reports `10.10.30.1` as its DHCP server, but the current DHCP service configuration needs verification.
+
+## Security boundary
+
+The separate subnets provide a logical boundary between server and client systems. A permissive OPT1 IPv4 allow-any rule is currently documented; it requires later practical review and is not presented as a least-privilege firewall design.
+
+No network or firewall remediation is performed by this documentation update.
