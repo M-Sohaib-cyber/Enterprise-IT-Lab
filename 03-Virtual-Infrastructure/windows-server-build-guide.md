@@ -70,7 +70,7 @@ Existing documents conflict between Windows Server 2016 and Windows Server 2025 
 
 `Corp-DC01` hosts DNS for `corp.internal` and uses `10.10.20.10` as its preferred DNS server. `Corp-CL01` is also observed using `10.10.20.10` for DNS.
 
-Forwarders, reverse lookup zones, detailed zone properties, aging/scavenging, and logging remain **To verify**. See [Active Directory DNS](../04-Active-Directory/dns.md).
+Verification on 2026-09-20 confirmed running AD-integrated forward zones `_msdcs.corp.internal` and `corp.internal` and the inspected domain/DC/client/file-server host records. No explicit DNS forwarders are configured or were added; external resolution works. An AD-integrated Primary reverse zone `20.10.10.in-addr.arpa` was created for `10.10.20.0/24`, with replication to all DNS servers on domain controllers in `corp.internal` and secure dynamic updates only. A PTR for `10.10.20.10` -> `Corp-DC01.corp.internal` was created and verified. Other zone properties, aging/scavenging, and logging remain **To verify**. See [Active Directory DNS](../04-Active-Directory/dns.md).
 
 ## Documented verification
 
@@ -107,12 +107,16 @@ The original build guide records these issues and resolutions:
 - DNS lookup was delayed immediately after promotion while services initialized.
 - Windows displayed an unexpected shutdown reason prompt after installation.
 
+## DNS verification - 2026-09-20
+
+On `Corp-DC01`, `nslookup google.com` returned external IPv4 and IPv6 records after an initial timeout using local resolver `::1`; `nslookup google.com 10.10.20.10` succeeded without the initial timeout. No cause was proven. `dcdiag /test:dns /v` reported that `corp.internal` passed test DNS, with `Corp-DC01` PASS for Auth, Basc, Forw, Del, Dyn, and RReg; the root-server tests shown also passed. These checks verify core AD/DNS functionality within the tested scope and do not resolve the earlier WinRM WSMAN SPN warning or establish an exhaustive DNS audit.
+
 ## To verify
 
 - Current Windows Server build, activation, and patch state
 - Forest and domain functional levels
 - Current VM CPU, memory, disk, firmware, and network settings
-- DNS forwarders, reverse zones, and detailed zone configuration
+- DNS settings and records beyond the verified scope, including forward-zone replication/update settings, aging/scavenging, logging, and the initial `::1` timeout
 - Backup, recovery, time synchronization, and monitoring configuration
 - WinRM WSMAN SPN warning reported by `dcdiag`
 

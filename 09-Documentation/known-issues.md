@@ -74,6 +74,14 @@ On 2026-09-16, `I:` was corrected to use item-level targeting for `CORP\GG_IT`. 
 
 Details: [Group Policy Operation and Verification](../04-Active-Directory/group-policy.md)
 
+### DNS-01: Initial local ::1 query timeout
+
+- **Observed 2026-09-20:** On `Corp-DC01`, `nslookup google.com` using the local `::1` resolver displayed an initial timeout before successfully returning external IPv4 and IPv6 records.
+- **Comparison:** `nslookup google.com 10.10.20.10` succeeded without the initial timeout. No explicit forwarders are configured or were added; external resolution works with the existing configuration.
+- **Status:** No root cause was proven. Core DNS functionality, the tested client forward/reverse lookups, and `dcdiag /test:dns /v` passed; the initial timeout remains an open observation.
+- **Remaining scope:** Uninspected records and DNS settings, including forward-zone replication/update settings, aging/scavenging, and logging, remain unverified. Only the server-network reverse zone and DC PTR are recorded as implemented.
+- **Details:** [Active Directory DNS](../04-Active-Directory/dns.md)
+
 ## Status convention
 
 - **Documented:** Supported by repository records or evidence.

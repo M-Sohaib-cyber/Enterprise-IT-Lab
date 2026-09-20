@@ -11,7 +11,7 @@ Status includes the supplied live verification results from 2026-09-16 and 2026-
 | Firewall/router | `Corp-FW01` runs pfSense with WAN, LAN, and OPT1 interfaces. |
 | Windows Server | `Corp-DC01` is documented as a Windows Server 2022 domain controller. |
 | Active Directory | The `corp.internal` forest/domain and `CORP` NetBIOS name are implemented. |
-| DNS | `Corp-DC01` provides domain DNS at `10.10.20.10`. |
+| DNS | Verified 2026-09-20: core DNS works through `Corp-DC01` at `10.10.20.10`; running AD-integrated forward zones, inspected host records, external resolution without explicit forwarders, tested client forward/reverse lookups, and successful `dcdiag /test:dns /v`. Server-network reverse zone and DC PTR implemented; see [DNS](../04-Active-Directory/dns.md). |
 | Windows client | `Corp-CL01` is joined to the domain and domain authentication was tested. |
 | File services | `Corp-FS01`, departmental SMB shares, access testing, and mapped drives are documented. |
 | Identity administration | OU, user, group, onboarding, offboarding, lockout, unlock, and password-reset exercises are documented. |
@@ -38,6 +38,7 @@ Final firewall verification on 2026-09-20 confirmed automatic outbound NAT witho
 | VirtualBox network settings | Network names are documented, but the current VirtualBox DHCP and attachment settings need an authoritative capture. |
 | AD functional levels | Existing documents conflict between Windows Server 2016 and Windows Server 2025 functional levels. |
 | File permissions | Group scopes/nesting and Finance/IT Modify entries are verified; review remaining ACLs, inheritance, and effective access. |
+| DNS review | Initial local `::1` query timeout remains unexplained despite eventual success; DNS settings/records beyond the tested scope remain open. See [DNS](../04-Active-Directory/dns.md). |
 | DC diagnostic warning | Investigate the WinRM WSMAN SPN warning from `dcdiag`. |
 | Historical inactivity timing | Applied 600 seconds is verified; explain the earlier approximately five-minute lock/display observation. |
 | Firewall policy | Ordered OPT1 server-network segmentation is verified; the final allow-to-any remains broad. Broader ruleset, aliases, individual generated NAT rules, and comprehensive IPv6 security review remain open. |

@@ -36,7 +36,7 @@ Disk size, current VM settings, adapter model, and exact VirtualBox network conf
 
 ## Network configuration
 
-The existing `ipconfig /all` screenshot records:
+The existing `ipconfig /all` screenshot records the values below. Live `ipconfig /all` verification on 2026-09-20 reconfirmed them, including host name `Corp-CL01` and primary DNS suffix `corp.internal`.
 
 | Item | Observed value |
 |---|---|
@@ -109,6 +109,10 @@ Live verification on 2026-09-16 used `gpresult` on `Corp-CL01` and for Jhon Smit
 | `F:` | `\\Corp-FS01\Finance` | Already targets `CORP\GG_Finance`; correctly absent for Jhon |
 
 These are the supplied live-check results. This documentation update changes no GPO or lab configuration.
+
+## DNS verification - 2026-09-20
+
+Client tests confirmed DNS server `Corp-DC01.corp.internal` / `10.10.20.10`: `nslookup corp.internal` returned `10.10.20.10`; `nslookup Corp-FS01.corp.internal` returned `10.10.20.20`; and `nslookup 10.10.20.10` returned `Corp-DC01.corp.internal`. The client uses `Corp-DC01` for DNS and successfully performs these forward and reverse lookups. See [Active Directory DNS](../04-Active-Directory/dns.md) for the new server-network reverse zone/PTR and diagnostic results; these checks do not establish an exhaustive DNS audit.
 
 ## To verify
 

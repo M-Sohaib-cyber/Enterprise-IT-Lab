@@ -59,16 +59,16 @@ Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 with the 
 | DNS server | `Corp-DC01` - `10.10.20.10` |
 | `Corp-DC01` preferred DNS | `10.10.20.10` |
 | `Corp-CL01` DNS | `10.10.20.10` |
-| DNS forwarders | To verify |
-| Reverse lookup zones | To verify |
+| DNS forwarders | None explicitly configured; verified 2026-09-20; external resolution works |
+| Reverse lookup zones | `20.10.10.in-addr.arpa` for `10.10.20.0/24`, created 2026-09-20; AD-integrated Primary, domain DNS/DC replication scope, secure dynamic updates only |
 
-Existing documentation records successful internal domain resolution and client DNS operation. It does not provide an authoritative current export of DNS forwarders or reverse zones.
+Verification on 2026-09-20 confirmed running AD-integrated forward zones `_msdcs.corp.internal` and `corp.internal`, with inspected host records for the domain, DC, client, and file server. The new PTR `10.10.20.10` -> `Corp-DC01.corp.internal` was verified. Client `ipconfig /all` reconfirmed the recorded DHCP address, mask, gateway, DHCP server, and DNS server, plus host name `Corp-CL01` and primary DNS suffix `corp.internal`. Client domain/file-server forward lookups and DC reverse lookup succeeded. See [Active Directory DNS](../04-Active-Directory/dns.md) for exact tests, zone settings, successful DNS diagnostics, and the unexplained initial `::1` timeout. No explicit forwarder was added; no other reverse zones or PTRs are claimed.
 
 ## Items requiring later verification
 
 - Current VirtualBox DHCP settings and pfSense DHCP options
 - DHCP exclusions, reservations, and lease duration
 - `Corp-FS01` exact VirtualBox network attachment
-- DNS forwarders and reverse lookup zones
+- DNS settings and records beyond the verified scope, including forward-zone replication/update settings, aging/scavenging, and DNS logging
 
 These are documentation gaps, not confirmed technical failures.
