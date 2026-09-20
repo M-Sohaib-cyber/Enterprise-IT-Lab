@@ -24,8 +24,18 @@ This is the authoritative summary of unresolved documentation and practical veri
 
 - **Current design:** Ordered OPT1 rules allow `Corp-DC01`, allow only TCP 445 to `Corp-FS01`, block the rest of `10.10.20.0/24`, and then allow other destinations.
 - **Verified result:** `Corp-CL01` retained DC/DNS and internet access; ping to `Corp-FS01` was blocked while SMB and Jhon's `I:` and `P:` mappings worked after Group Policy refresh.
-- **Remaining work:** Complete ruleset, NAT, aliases, IPv6, and logging checks remain open.
+- **Verified 2026-09-20:** Automatic outbound NAT and client internet connectivity confirmed without a NAT change. Per-rule logging was enabled specifically on **Block OPT1 to Server Network**; the client-to-file-server ping was blocked and fresh ICMP block entries were confirmed in `/var/log/filter.log`.
+- **Scope:** The OPT1 server-network segmentation objective is verified. The final allow-to-any rule remains broad for traffic not matched by preceding rules; the entire firewall is not established as fully hardened or least privilege. IPv6 review observed only link-local addresses on LAN/OPT1, with no routed IPv6 addressing; WAN Unique Local IPv6 does not establish public IPv6 connectivity. No IPv6 change was made.
+- **Remaining work:** Complete ruleset, individual generated NAT rules, aliases, comprehensive IPv6 security review beyond the recorded observations, and other custom-rule logging checks remain open. Remote syslog is not configured and broader monitoring is incomplete.
 - **Current action:** Documentation only; no firewall rule changed.
+- **Details:** [Firewall Rules](../08-Security/firewall-rules.md)
+
+### SEC-03: Stale pfSense GUI firewall-log display
+
+- **Observed 2026-09-20:** After enabling packet logging on **Block OPT1 to Server Network**, the GUI continued to display older 2026-09-16 entries and did not show the fresh ping-test entries.
+- **Verified result:** `tail -20 /var/log/filter.log` from the pfSense shell showed fresh 2026-09-20 entries: source `10.10.30.100`, destination `10.10.20.20`, protocol ICMP, action block. Packet blocking and logging worked.
+- **Recorded settings:** Local logging and default firewall block logging enabled; GUI display 500 entries; log retention count 7; remote syslog not configured.
+- **Status:** GUI display observation remains open. No root cause was proven; successful raw-log verification does not resolve the GUI issue.
 - **Details:** [Firewall Rules](../08-Security/firewall-rules.md)
 
 ## Verification conflicts

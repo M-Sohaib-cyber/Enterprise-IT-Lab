@@ -25,6 +25,14 @@ Live verification on 2026-09-16 confirmed LAN `em1` at `10.10.20.1/24`, OPT1 `em
 
 An observed DHCP lease is not a permanent reservation unless the server configuration confirms one. Therefore `10.10.30.100` is recorded as observed, not reserved.
 
+## Interface observations - 2026-09-20
+
+WAN IPv4 remains DHCP at `10.0.2.15/24`, gateway `10.0.2.2`. LAN is `10.10.20.1/24` and OPT1 is `10.10.30.1/24`.
+
+WAN IPv6 configuration type is DHCP6, with an observed `fd17:.../64` address and an IPv6 link-local address; DHCPv6 prefix delegation size is `/64`. The full IPv6 addresses were not supplied. The WAN address is within `fd00::/8` (Unique Local IPv6), not evidence of globally routed public IPv6 connectivity. Only IPv6 link-local addresses were observed on LAN and OPT1; no routed IPv6 addressing was observed there.
+
+The implemented server/client design and firewall segmentation are IPv4-based. No IPv6 configuration change was made; IPv6 is not documented as fully disabled. A comprehensive IPv6 security review remains open beyond these observations. See [pfSense](../03-Virtual-Infrastructure/pfsense.md).
+
 ## DHCP
 
 `Corp-CL01` reports:

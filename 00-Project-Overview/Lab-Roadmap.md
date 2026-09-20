@@ -1,6 +1,6 @@
 # Lab Roadmap
 
-Status includes the supplied live verification results from 2026-09-16 and existing repository evidence.
+Status includes the supplied live verification results from 2026-09-16 and 2026-09-20 and existing repository evidence.
 
 ## Completed
 
@@ -27,6 +27,8 @@ Live verification on 2026-09-16 also confirmed:
 - Computer/user GPO application for `Corp-CL01` and Jhon, 600-second inactivity limit and `0x258` registry value, removable-storage deny-all setting, and Windows Update mode 3.
 - Wallpaper path/file access and practical Control Panel/PC Settings block verified; I: targeting corrected to `CORP\GG_IT`, with I:/P: present and F: absent for Jhon after `gpupdate`.
 
+Final firewall verification on 2026-09-20 confirmed automatic outbound NAT without a configuration change; client DC reachability, DNS, SMB over TCP 445, and internet connectivity; and blocked ICMP to `Corp-FS01`. Logging enabled specifically on **Block OPT1 to Server Network** produced fresh raw-log block entries. The OPT1 server-network segmentation objective is verified. WAN DHCP6/Unique Local IPv6 and internal link-local-only observations were recorded without IPv6 changes. See [Firewall Rules](../08-Security/firewall-rules.md) for the results and their limits.
+
 ## Needs Verification
 
 | Item | Reason |
@@ -38,7 +40,8 @@ Live verification on 2026-09-16 also confirmed:
 | File permissions | Group scopes/nesting and Finance/IT Modify entries are verified; review remaining ACLs, inheritance, and effective access. |
 | DC diagnostic warning | Investigate the WinRM WSMAN SPN warning from `dcdiag`. |
 | Historical inactivity timing | Applied 600 seconds is verified; explain the earlier approximately five-minute lock/display observation. |
-| OPT1 firewall policy | The current allow-any rule is documented but needs later least-privilege review. |
+| Firewall policy | Ordered OPT1 server-network segmentation is verified; the final allow-to-any remains broad. Broader ruleset, aliases, individual generated NAT rules, and comprehensive IPv6 security review remain open. |
+| Firewall GUI logs | Fresh blocks were verified in `/var/log/filter.log`, but the GUI showed older entries; no root cause was proven. |
 | Local administrator delegation | Intentional `GG_IT` assignment and Jhon's local admin rights are confirmed; broader least-privilege review remains. |
 
 These are verification or remediation items, not claims that the lab is currently broken.
@@ -51,5 +54,6 @@ The consolidated status and supporting links are maintained in [Known Issues and
 |---|---|
 | PowerShell automation | Add scripts and evidence only when practical automation work is completed. |
 | Helpdesk platform and workflows | Document only after a ticketing platform or tested workflow is implemented. |
+| Centralized logging and monitoring | Remote syslog is not configured; local firewall logging verification does not complete centralized logging or broader monitoring. |
 
 No completion date is assigned to planned work until it enters an active lab batch.

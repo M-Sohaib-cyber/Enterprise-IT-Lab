@@ -42,6 +42,19 @@ Live verification on 2026-09-16 confirmed WAN `em0`, LAN `em1` at `10.10.20.1/24
 
 Authoritative lab addressing is maintained in [IP Addressing, DHCP, and DNS](../02-Network-Design/ip-addressing.md).
 
+### Interface review - 2026-09-20
+
+- WAN IPv4 configuration type: DHCP; address `10.0.2.15/24`; gateway `10.0.2.2`.
+- WAN IPv6 configuration type: DHCP6; an address in `fd17:.../64` and an IPv6 link-local address were observed. DHCPv6 prefix delegation size is `/64`. The full IPv6 addresses were not supplied.
+- LAN IPv4 address: `10.10.20.1/24`; only an IPv6 link-local address (`fe80::...`) was observed.
+- OPT1 IPv4 address: `10.10.30.1/24`; only an IPv6 link-local address (`fe80::...`) was observed.
+
+The implemented server/client design and firewall segmentation are IPv4-based. No routed IPv6 addressing was observed on LAN or OPT1. The WAN address is within `fd00::/8` (Unique Local IPv6), which is not evidence of globally routed public IPv6 connectivity. No IPv6 configuration change was made, and IPv6 is not documented as fully disabled. All other unspecified IPv6 settings remain **To verify**. A comprehensive IPv6 security review remains open beyond these observations.
+
+## Outbound NAT verification - 2026-09-20
+
+Outbound NAT mode is **Automatic outbound NAT rule generation**. `Corp-CL01` retains working internet connectivity through pfSense. No NAT configuration change was required.
+
 ## Installation record
 
 The repository records the following installation choices:
@@ -79,7 +92,7 @@ The repository records that `Corp-CL01` initially obtained an address but could 
 - Block OPT1 subnets from the LAN/server network (`10.10.20.0/24`).
 - Allow OPT1 subnets to any destination after the LAN block to preserve other required traffic, including internet access.
 
-Rule order is material: the two required server exceptions precede the LAN block, and the general allow follows it. No firewall rule is changed by this documentation update.
+This rule order was verified on 2026-09-20, with packet logging enabled on the LAN block rule. Rule order is material: the two required server exceptions precede the LAN block, and the general allow follows it. The final allow remains broad for traffic not matched by the preceding rules; the verified server-network segmentation does not establish that the entire firewall is fully hardened or least privilege. No firewall rule is changed by this documentation update.
 
 See [Firewall Rules](../08-Security/firewall-rules.md).
 
@@ -94,7 +107,9 @@ Existing documentation records successful checks for:
 - General access to `Corp-FS01` blocked, demonstrated by failed ping
 - SMB access to `Corp-FS01` over TCP 445 and Jhon's `I:` and `P:` drive mappings after Group Policy refresh
 
-The repository does not contain a current pfSense configuration export. NAT details, logs, aliases, DNS resolver settings, fields beyond the recorded OPT1 design, and the complete WAN/LAN rulesets remain **To verify**.
+Final verification on 2026-09-20 confirmed outbound NAT mode and continued client internet access. Packet logging was enabled specifically on the existing **Block OPT1 to Server Network** rule, which previously had per-rule logging disabled. A ping from `Corp-CL01` (`10.10.30.100`) to `Corp-FS01` (`10.10.20.20`) was blocked, and fresh ICMP block entries were confirmed in `/var/log/filter.log`. The GUI continued to show older 2026-09-16 entries; its display issue remains unresolved. See [Firewall Rules](../08-Security/firewall-rules.md) for the test and logging settings.
+
+The repository does not contain a current pfSense configuration export. Individual generated NAT rules, aliases, DNS resolver settings, fields beyond the recorded OPT1 design, and the complete WAN/LAN rulesets remain **To verify**. Remote syslog is not configured; broader monitoring is not complete.
 
 ## Evidence
 
