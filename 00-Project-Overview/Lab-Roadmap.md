@@ -7,6 +7,7 @@ Status includes the supplied live verification results from 2026-09-16, 2026-09-
 | Area | Evidence-supported outcome |
 |---|---|
 | Virtualization | Lab components run in Oracle VirtualBox on a Windows 11 host. |
+| Server patching and Guest Additions | Verified 2026-10-06: both servers updated successfully with post-update checks; Guest Additions and bidirectional clipboard tested; powered-off snapshots created with older snapshots retained. See [environment](environment.md#virtual-storage-and-snapshots---verified-2026-10-06) and linked server records. |
 | Network separation | `Corp-Core` (`10.10.20.0/24`) and `Corp-Clients` (`10.10.30.0/24`) are documented. |
 | Firewall/router | `Corp-FW01` runs pfSense with WAN, LAN, and OPT1 interfaces. |
 | Windows Server | `Corp-DC01` is documented as a Windows Server 2022 domain controller. |
@@ -35,8 +36,8 @@ Final firewall verification on 2026-09-20 confirmed automatic outbound NAT witho
 | Item | Reason |
 |---|---|
 | DHCP configuration | Verified 2026-10-06: OPT1 ISC DHCP options, 7200/86400-second default/maximum leases, no reservations, and successful client release/renew. Exclusions, uninspected settings, and other possible DHCP services on Corp-Core remain open. See [DHCP](../04-Active-Directory/dhcp.md). |
-| `Corp-FS01` inventory | OS/build, domain, static network settings, and share names are verified; C: NTFS capacity/free space and Healthy/OK status, share paths under C:\Shares, and absence of a separate data volume are verified 2026-10-06; the second SATA-attached 20 GB backup VDI is verified; other VM specifications, exact network attachment, patch state, and complete ACLs remain open. |
-| VirtualBox network settings | Verified 2026-10-06: both lab NAT Network prefixes, VirtualBox DHCP disabled on both, and Corp-CL01 Adapter 1 attachment/MAC/cable state. Other VM attachments and uninspected settings remain open. |
+| `Corp-FS01` inventory | OS/build, domain, static network settings, and share names are verified; C: NTFS capacity/free space and Healthy/OK status, share paths under C:\Shares, and absence of a separate data volume are verified 2026-10-06; the second SATA-attached 20 GB backup VDI is verified. RAM, CPU, `Corp-Core` attachment, installed KBs, and post-patch share/backup checks are now verified; uninspected VM settings, activation, and complete ACLs remain open. |
+| VirtualBox network settings | Verified 2026-10-06: both lab NAT Network prefixes, VirtualBox DHCP disabled on both, and Corp-CL01 Adapter 1 attachment/MAC/cable state. All four VM attachments, RAM, and CPU allocations are now verified in the [inventory](../01-Enterprise-Planning/device-inventory.md#virtualbox-baseline---verified-2026-10-06); uninspected settings remain open. |
 | File permissions | All five resource-group NTFS entries and intentional Everyone: Full share permissions are verified; Jhon tested IT read/write, Public read-only, and Finance/HR/Sales denial. Review complete ACLs, inheritance, and access for other users. |
 | DNS review | Initial local `::1` query timeout remains unexplained despite eventual success; DNS settings/records beyond the tested scope remain open. See [DNS](../04-Active-Directory/dns.md). |
 | DC diagnostic warning | Standard `dcdiag` passed all reported tests on 2026-10-06; retain the historical WinRM WSMAN SPN warning for targeted investigation because no cause or specific remediation was established. |

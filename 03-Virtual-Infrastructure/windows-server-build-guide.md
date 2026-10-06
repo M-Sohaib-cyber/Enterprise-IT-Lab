@@ -18,7 +18,7 @@ This is the authoritative build and configuration record for `Corp-DC01`, the Wi
 | Domain | `corp.internal` |
 | NetBIOS domain | `CORP` |
 
-The current OS build number, activation state, and patch level remain **To verify**.
+The current OS build number and activation state remain **To verify**. Installed KBs and post-update checks are recorded below.
 
 ## Virtual machine build record
 
@@ -33,7 +33,7 @@ The current OS build number, activation state, and patch level remain **To verif
 | TPM | None |
 | Recorded network attachment | NAT Network named `Corp-Core` |
 
-These values come from the existing build record. The current live VM settings and VirtualBox network attachment should be verified before treating this table as a configuration export.
+Memory, CPU, and the `Corp-Core` attachment were live verified on 2026-10-06. Other values remain historical build details requiring current verification. See the [environment](../00-Project-Overview/environment.md#virtual-storage-and-snapshots---verified-2026-10-06) for verified VDI, Guest Additions, and snapshot state.
 
 ## Windows Server installation
 
@@ -121,10 +121,16 @@ Standard `dcdiag` completed successfully; all reported tests passed and no faile
 
 During the supplied live work, `10.10.20.0/24` and `10.10.30.0/24` were registered to `Default-First-Site-Name`, and AD Recycle Bin was enabled for `corp.internal`. PowerShell verification confirmed both subnet associations and populated Recycle Bin `EnabledScopes`. A temporary-account restore test succeeded and the test account was deleted afterward. See [AD configuration](../04-Active-Directory/active-directory-installation.md) and [Account Recovery](../06-Helpdesk/account-recovery.md). This update records those improvements without changing live configuration.
 
+## Patch and post-update verification - 2026-10-06
+
+`Corp-DC01` was previously at a March 2022 patch baseline and updated successfully on 2026-10-06. It now shows `KB5122881`, `KB5122882`, and `KB5126050`. After updating, `dcdiag /test:dns` passed; DNS, Netlogon, and NTDS services were running. AD/DNS remained operational.
+
+During cumulative-update servicing, the VM became extremely sluggish, with TiWorker active and Defender consuming substantial memory. Resource pressure/update servicing is the observed context; no definitive root cause was established. The update completed and post-update AD/DNS checks passed. See the [issue register](../09-Documentation/known-issues.md#perf-01-dc01-sluggishness-during-update-servicing).
+
 ## To verify
 
-- Current Windows Server build, activation, and patch state
-- Current VM CPU, memory, disk, firmware, and network settings
+- Current Windows Server build and activation; patch state beyond the installed KBs verified above
+- Current VM disk capacity/allocation, firmware, and uninspected settings beyond the verified CPU, memory, attachment, and VDI/snapshot baseline
 - DNS settings and records beyond the verified scope, including forward-zone replication/update settings, aging/scavenging, logging, and the initial `::1` timeout
 - Backup, recovery beyond the tested Recycle Bin restore, time synchronization, and monitoring configuration
 - WinRM WSMAN SPN warning reported by `dcdiag`

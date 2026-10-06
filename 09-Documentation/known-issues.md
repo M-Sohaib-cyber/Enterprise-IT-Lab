@@ -48,6 +48,14 @@ This is the authoritative summary of unresolved documentation and practical veri
 - **Diagnostic observations:** No operation running from `wbadmin get status` is normal. Unsupported `wbadmin get policy` displayed help; it is not a backup failure.
 - **Details:** [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md)
 
+### SEC-04: Corp-FS01 Reputation-based protection
+
+Observed disabled on 2026-10-06; no evidence confirms subsequent enablement. Tamper Protection was enabled during the session. See [security hardening](../08-Security/security-hardening.md#defender-observations---2026-10-06).
+
+### PERF-01: DC01 sluggishness during update servicing
+
+`Corp-DC01` became extremely sluggish during cumulative-update servicing on 2026-10-06. TiWorker was active and Defender consumed substantial memory; resource pressure/update servicing is the observed context, without a proven root cause. The update completed successfully and post-update AD/DNS checks passed. `Corp-FS01` updated considerably more smoothly. See the [DC patch record](../03-Virtual-Infrastructure/windows-server-build-guide.md#patch-and-post-update-verification---2026-10-06).
+
 ## Verification conflicts
 
 ### NET-01: DHCP provider - conflict resolved

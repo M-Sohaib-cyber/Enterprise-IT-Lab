@@ -71,7 +71,6 @@ Verification on 2026-09-20 confirmed running AD-integrated forward zones `_msdcs
 
 - Uninspected DHCP/VirtualBox settings beyond the 2026-10-06 checks; both lab NAT prefixes and disabled VirtualBox DHCP are verified
 - DHCP exclusions and any other DHCP services on Corp-Core beyond the checked VirtualBox/DC sources
-- `Corp-FS01` exact VirtualBox network attachment
 - DNS settings and records beyond the verified scope, including forward-zone replication/update settings, aging/scavenging, and DNS logging
 
 These are documentation gaps, not confirmed technical failures.

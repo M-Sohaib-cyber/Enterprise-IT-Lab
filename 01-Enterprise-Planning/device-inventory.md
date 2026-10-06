@@ -14,8 +14,19 @@ This is the authoritative inventory of devices and virtual machines confirmed by
 |---|---|---|---|---|
 | `Corp-FW01` | Firewall, router, NAT, and network gateway | pfSense CE 2.8.1 documented; FreeBSD-based VM | WAN/`em0`: DHCP `10.0.2.15/24`, gateway `10.0.2.2`; LAN/`Corp-Core`: `10.10.20.1/24`; OPT1/`Corp-Clients`: `10.10.30.1/24` | Implemented |
 | `Corp-DC01` | Domain controller and DNS server | Windows Server 2022 | `10.10.20.10/24` on `Corp-Core`; gateway `10.10.20.1`; DNS `10.10.20.10` | Implemented |
-| `Corp-FS01` | SMB file server | Windows Server 2022 Standard Evaluation, build 20348 | Static `10.10.20.20/24`; gateway `10.10.20.1`; DNS `10.10.20.10`; domain `corp.internal`; exact VirtualBox attachment To verify | Implemented; inventory incomplete |
+| `Corp-FS01` | SMB file server | Windows Server 2022 Standard Evaluation, build 20348 | Static `10.10.20.20/24`; gateway `10.10.20.1`; DNS `10.10.20.10`; domain `corp.internal`; `Corp-Core` attachment verified 2026-10-06 | Implemented; inventory incomplete |
 | `Corp-CL01` | Domain-joined workstation and GPO test client | Windows 11 Enterprise Evaluation | DHCP; observed `10.10.30.100/24` on `Corp-Clients`; gateway/DHCP endpoint `10.10.30.1`; DNS `10.10.20.10` | Implemented |
+
+## VirtualBox baseline - verified 2026-10-06
+
+| VM | RAM | CPU | Network attachments |
+|---|---|---|---|
+| `Corp-FW01` | 2048 MB | 2 vCPU | NAT WAN + `Corp-Core` + `Corp-Clients` |
+| `Corp-DC01` | 4096 MB | 2 vCPU | `Corp-Core` |
+| `Corp-FS01` | 3075 MB | 2 vCPU | `Corp-Core` |
+| `Corp-CL01` | 4096 MB | 2 vCPU | `Corp-Clients` |
+
+Host hardware, VDI/snapshot state, Guest Additions, and retained snapshot metadata are recorded in the [environment](../00-Project-Overview/environment.md).
 
 ## Inventory notes
 

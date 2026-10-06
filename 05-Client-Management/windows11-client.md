@@ -32,7 +32,7 @@ The Windows edition comes from the existing deployment record. Current Windows e
 | EFI | Enabled |
 | Secure Boot | Enabled |
 
-Disk size, other current VM settings, and adapter model are **To verify**. On 2026-10-06, Adapter 1 was verified enabled, attached to **NAT Network** named `Corp-Clients`, with cable connected and MAC `08:00:27:CC:6D:95`, matching the pfSense lease. VirtualBox DHCP is disabled on this NAT Network.
+Memory (4096 MB) and CPU (2 vCPU) were verified on 2026-10-06. Disk size, other uninspected VM settings, and adapter model are **To verify**. On 2026-10-06, Adapter 1 was verified enabled, attached to **NAT Network** named `Corp-Clients`, with cable connected and MAC `08:00:27:CC:6D:95`, matching the pfSense lease. VirtualBox DHCP is disabled on this NAT Network.
 
 ## Network configuration
 
@@ -117,7 +117,7 @@ Client tests confirmed DNS server `Corp-DC01.corp.internal` / `10.10.20.10`: `ns
 ## To verify
 
 - Current Windows edition, version, build, activation, and patch state
-- Current VM CPU, memory, disk, firmware, TPM, display, and network settings beyond the verified Adapter 1 attachment, MAC, and cable state
+- Current VM disk capacity/allocation, firmware, TPM, display, and uninspected network settings beyond the verified CPU, memory, VDI/snapshot baseline, Adapter 1 attachment, MAC, and cable state
 - Current local accounts and local group membership beyond verified `GG_IT` administrator assignment
 - Detailed resultant policy settings beyond the verified GPOs/settings
 

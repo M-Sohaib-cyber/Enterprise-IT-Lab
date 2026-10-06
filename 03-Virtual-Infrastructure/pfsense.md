@@ -18,7 +18,7 @@ This document records the configuration supported by current repository document
 | Memory | 2 GB |
 | Storage | 20 GB dynamic VDI |
 
-The current pfSense version and VM resource allocation should be verified from the live VM before they are treated as an inventory export.
+CPU (2 vCPU) and memory (2048 MB) were verified on 2026-10-06; see the [device inventory](../01-Enterprise-Planning/device-inventory.md#virtualbox-baseline---verified-2026-10-06). Current pfSense version and other uninspected build settings remain to verify.
 
 ## Recorded VirtualBox adapters
 
@@ -28,7 +28,7 @@ The current pfSense version and VM resource allocation should be verified from t
 | Adapter 2 | NAT Network named `Corp-Core` | Server network |
 | Adapter 3 | NAT Network named `Corp-Clients` | Client network |
 
-These pfSense attachment settings come from the existing deployment record and remain **To verify** on the live VM. Network Manager verification on 2026-10-06 confirmed both lab NAT Network prefixes and disabled VirtualBox DHCP on each; see [DHCP verification](../04-Active-Directory/dhcp.md).
+The existing adapter order above is retained from the deployment record. Verification on 2026-10-06 confirmed the NAT WAN + `Corp-Core` + `Corp-Clients` attachments; no additional adapter details are newly claimed. Network Manager verification on 2026-10-06 confirmed both lab NAT Network prefixes and disabled VirtualBox DHCP on each; see [DHCP verification](../04-Active-Directory/dhcp.md).
 
 ## Interfaces
 

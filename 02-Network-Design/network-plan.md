@@ -25,7 +25,7 @@ The older `northtech.local`, `SRV-*`, and `FW01` values are obsolete and must no
 | `Corp-Core` | `10.10.20.0/24` | Domain controller, DNS, and server-side infrastructure | LAN / `10.10.20.1` |
 | `Corp-Clients` | `10.10.30.0/24` | Domain-joined Windows workstations | OPT1 / `10.10.30.1` |
 
-`Corp-DC01` and `Corp-CL01` are confirmed on their respective server and client segments. `Corp-FS01` is live verified at static `10.10.20.20/24`, gateway `10.10.20.1`; its exact VirtualBox attachment remains to verify.
+`Corp-DC01` and `Corp-CL01` are confirmed on their respective server and client segments. `Corp-FS01` is live verified at static `10.10.20.20/24`, gateway `10.10.20.1`; its `Corp-Core` VirtualBox attachment was verified on 2026-10-06.
 
 ## Service flow
 
@@ -36,7 +36,8 @@ VirtualBox NAT
   |
 Corp-FW01 (pfSense)
   |-- Corp-Core: 10.10.20.0/24
-  |     `-- Corp-DC01: AD DS and DNS
+  |     |-- Corp-DC01: AD DS and DNS
+  |     `-- Corp-FS01: SMB file shares
   |
   `-- Corp-Clients: 10.10.30.0/24
         `-- Corp-CL01: domain-joined Windows 11 client

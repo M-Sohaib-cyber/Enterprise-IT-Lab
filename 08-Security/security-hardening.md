@@ -24,6 +24,12 @@ This document separates controls evidenced in the current lab from unresolved co
 
 These records include historical tests and the supplied live verification results from 2026-09-16, 2026-09-20, and 2026-10-06. Current settings still require live verification where identified in the linked documents. OPT1 server-network segmentation is verified, but the final allow-to-any rule remains broad; this is not a claim that the entire firewall is fully hardened or least privilege. IPv6 interface observations do not complete a comprehensive IPv6 security review.
 
+## Defender observations - 2026-10-06
+
+Microsoft Defender Tamper Protection was enabled on `Corp-FS01` during the supplied session. Reputation-based protection was observed disabled; no existing evidence confirms it was subsequently enabled. Its enablement remains unverified.
+
+Successful server patching and post-update service checks are documented in the [DC build record](../03-Virtual-Infrastructure/windows-server-build-guide.md#patch-and-post-update-verification---2026-10-06) and [file-server record](../03-Virtual-Infrastructure/file-server.md#patch-and-post-update-verification---2026-10-06). These checks establish the listed installed KBs, without claiming complete patch compliance.
+
 ## Known issues
 
 The authoritative issue register is [Known Issues and Verification Items](../09-Documentation/known-issues.md). Current practical concerns are:

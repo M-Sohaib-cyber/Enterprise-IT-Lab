@@ -4,7 +4,7 @@
 
 `Corp-FS01` provides SMB file shares used by domain users. Departmental and public shares, access tests, and Group Policy drive mappings are documented as implemented.
 
-Live verification on 2026-09-16 confirmed Windows Server 2022 Standard Evaluation, build 20348, domain `corp.internal`, static IPv4 `10.10.20.20/24`, gateway `10.10.20.1`, and DNS `10.10.20.10`. VirtualBox specification and exact network attachment remain **To verify**.
+Live verification on 2026-09-16 confirmed Windows Server 2022 Standard Evaluation, build 20348, domain `corp.internal`, static IPv4 `10.10.20.20/24`, gateway `10.10.20.1`, and DNS `10.10.20.10`. RAM (3075 MB), CPU (2 vCPU), and `Corp-Core` attachment were verified on 2026-10-06; see the [device inventory](../01-Enterprise-Planning/device-inventory.md#virtualbox-baseline---verified-2026-10-06).
 
 ## Installed role
 
@@ -145,7 +145,7 @@ This verifies an end-to-end backup -> deletion -> recovery -> data verification 
 | 06/10/2026 04:33 | File/volume recovery |
 | 06/10/2026 04:43 | File/volume recovery |
 
-Both manual versions remained visible to `wbadmin` after schedule configuration; disk dedication did not erase these versions in the observed results. File recovery was practically tested as described above; volume recovery was reported as supported but was not practically tested.
+Both manual versions remained visible to `wbadmin` after schedule configuration; disk dedication did not erase these versions in the observed results. Post-patch verification on 2026-10-06 reconfirmed both versions were recognised and recoverable. File recovery was practically tested as described above; volume recovery was reported as supported but was not practically tested.
 
 ### Daily schedule - CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION
 
@@ -169,11 +169,16 @@ The first automatic scheduled backup has **not run yet** in the supplied verific
 
 The earlier no-backup gap is superseded by successful local manual backups and the tested file restore. First scheduled-run verification remains open. These findings do not establish offsite/cloud backup, replication, encryption, retention guarantees, or disaster recovery.
 
+## Patch and post-update verification - 2026-10-06
+
+`Corp-FS01` was previously at a March 2022 patch baseline and updated successfully on 2026-10-06. It now shows `KB5122881`, `KB5122882`, and `KB5126050`. Finance, HR, IT, Public, and Sales SMB shares remained present at the expected `C:\Shares` paths listed above. Existing Windows Server Backup versions remained recognised and recoverable; first automatic scheduled execution remains pending.
+
+The update proceeded considerably more smoothly than on `Corp-DC01`. Guest Additions, successful bidirectional clipboard testing, and the new powered-off snapshot are recorded in the [environment](../00-Project-Overview/environment.md#virtual-storage-and-snapshots---verified-2026-10-06). Defender observations are maintained in [security hardening](../08-Security/security-hardening.md#defender-observations---2026-10-06).
+
 ## To verify
 
-- Windows Server patch and activation state
-- Exact VirtualBox network attachment
-- VM CPU, memory, and system-disk configuration beyond the verified backup disk
+- Windows Server activation and patch state beyond the installed KBs verified above
+- System-disk capacity/allocation and uninspected VM settings beyond the verified CPU, memory, attachment, backup disk, and VDI/snapshot baseline
 - Share properties beyond the confirmed names, paths, and `Everyone: Full` permissions
 - Complete NTFS and share ACLs and inheritance beyond the verified entries above
 - Quotas and drive redundancy
