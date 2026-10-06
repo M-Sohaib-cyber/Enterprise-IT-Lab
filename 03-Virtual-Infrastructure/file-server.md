@@ -12,6 +12,7 @@ The existing server record documents these installed Windows Server roles/featur
 
 - File and Storage Services
 - File Server
+- Windows Server Backup (`Windows-Server-Backup`), installed during the supplied backup implementation on 2026-10-06; verified `InstallState = Installed`, with no restart required
 
 No other `Corp-FS01` role is claimed.
 
@@ -37,7 +38,7 @@ The share names Finance, HR, IT, Public, and Sales were confirmed live on 2026-0
 |---|---|---|---|---|---|
 | `C:` | NTFS | 60.32 GB | 49.2 GB | Healthy | OK |
 
-Department shares are stored under `C:\Shares` on the system volume. There is currently no separate data volume for file-server data. Physical/virtual disk configuration, volume name, drive redundancy, and quotas remain **To verify**. Backup and shadow-copy findings are recorded below; healthy storage does not establish recoverability.
+Department shares are stored under `C:\Shares` on the system volume. There is currently no separate data volume for file-server data; the second disk described below is dedicated to backup. System-disk configuration, volume name, drive redundancy, and quotas remain **To verify**.
 
 ## Recorded permissions
 
@@ -105,25 +106,78 @@ Latest supplied testing from `Corp-CL01` as `CORP\jsmith` (Jhon Smith) confirmed
 
 The temporary IT test file was removed after testing. These results verify the AGDLP/NTFS permission model end-to-end for the tested user; they do not establish access behavior for other users or a current Finance-user test.
 
-## Backup and recovery - identified gap
+## Backup and recovery - implemented and verified 2026-10-06
 
-Latest supplied verification on 2026-10-06 found:
+### Earlier gap and subsequent implementation
 
-- Windows Server Backup feature `InstallState = Available`: it is not currently installed.
-- `RegIdleBackup` exists as a built-in scheduled task; it is not a file-server backup solution.
-- `vssadmin list shadows` returned no shadow copies.
-- No backup solution for `C:\Shares` has currently been verified.
+Earlier checks on 2026-10-06 found Windows Server Backup `InstallState = Available` (not installed), no shadow copies from `vssadmin list shadows`, and no verified backup solution for `C:\Shares`. Built-in scheduled task `RegIdleBackup` existed but was not a file-server backup solution. These observations describe the state before the implementation below.
 
-Backup/recovery remains an identified improvement/gap. Backup coverage and a successful file-data restore have not been verified; backup/recovery is not complete.
+`Windows-Server-Backup` was subsequently installed successfully using `Install-WindowsFeature`. Verification showed `InstallState = Installed`; no restart was required.
+
+### Dedicated backup disk
+
+- A second VirtualBox virtual disk, `Corp-FS01-Backup.vdi`, was added to `Corp-FS01`: 20 GB virtual size, dynamically allocated VDI, attached using the SATA controller.
+- Windows detected it as Disk 1, initially RAW. Disk 1 was initialized as GPT, partitioned, initially assigned `B:`, and formatted NTFS with the initial label `FS01-Backup`. Initial usable volume size was approximately 19.98 GB.
+- The disk was later selected as a dedicated Windows Server Backup destination through the Backup Schedule Wizard. The warning that the disk would be reformatted/dedicated and normally no longer visible in File Explorer was accepted intentionally. `B:` and `FS01-Backup` describe its initial setup, not a verified current drive letter or label after dedication.
+
+### Successful manual backups
+
+A manual command-line backup of `C:\Shares` to the backup disk completed successfully using `wbadmin`. Windows created the required VSS shadow copy during the backup, and `wbadmin` reported successful completion. This supersedes the earlier pre-implementation observation of no shadow copies; it does not establish persistent user-accessible shadow copies.
+
+Windows Server Backup **Backup Once** was also tested successfully through the GUI, using a Custom configuration with `C:\Shares` selected and the local backup disk as the destination.
+
+### Deleted-file recovery test
+
+1. Created `C:\Shares\Public\recovery-test.txt` with contents `Enterprise IT Lab - Backup Recovery Test`.
+2. Created a new backup after the file existed, then deliberately deleted the file using GUI/File Explorer.
+3. Used Windows Server Backup **Recover**, selecting the most recent backup containing the file, recovery type **Files and folders**, and `recovery-test.txt`.
+4. Selected **Original location** as the recovery destination and enabled **Restore ACL permissions**.
+5. Recovery completed successfully. The restored file was verified to exist and its contents were verified as `Enterprise IT Lab - Backup Recovery Test`.
+
+This verifies an end-to-end backup -> deletion -> recovery -> data verification workflow for the tested file. Restore ACL permissions was enabled; no separate post-restore ACL comparison is claimed.
+
+### Recoverable manual versions
+
+`wbadmin get versions` showed both versions below associated with the backup disk and supporting file/volume recovery:
+
+| Version timestamp (DD/MM/YYYY) | Verified recoverability reported |
+|---|---|
+| 06/10/2026 04:33 | File/volume recovery |
+| 06/10/2026 04:43 | File/volume recovery |
+
+Both manual versions remained visible to `wbadmin` after schedule configuration; disk dedication did not erase these versions in the observed results. File recovery was practically tested as described above; volume recovery was reported as supported but was not practically tested.
+
+### Daily schedule - CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION
+
+The Backup Schedule Wizard reported that the schedule was successfully created with:
+
+| Setting | Verified configuration |
+|---|---|
+| Backup type | Custom |
+| Backup items | `C:\Shares` |
+| Frequency/time | Once daily at 23:00 |
+| Destination | Dedicated 20 GB backup disk |
+| Files excluded | None |
+| Advanced option shown during configuration | VSS Copy Backup |
+| First scheduled backup due | 06/10/2026 at 23:00 |
+
+The first automatic scheduled backup has **not run yet** in the supplied verification. Schedule creation is verified; successful automatic execution at 23:00 remains pending.
+
+### Additional verification and scope
+
+`wbadmin get status` reported no backup or recovery operation currently running, which is normal between operations. `wbadmin get policy` was attempted, but this version did not support that command and displayed supported-command help instead; this is not a backup failure.
+
+The earlier no-backup gap is superseded by successful local manual backups and the tested file restore. First scheduled-run verification remains open. These findings do not establish offsite/cloud backup, replication, encryption, retention guarantees, or disaster recovery.
 
 ## To verify
 
 - Windows Server patch and activation state
 - Exact VirtualBox network attachment
-- VM CPU, memory, and disk configuration
+- VM CPU, memory, and system-disk configuration beyond the verified backup disk
 - Share properties beyond the confirmed names, paths, and `Everyone: Full` permissions
 - Complete NTFS and share ACLs and inheritance beyond the verified entries above
-- Quotas, drive redundancy, and backup/recovery coverage and restore testing
+- Quotas and drive redundancy
+- First automatic scheduled backup execution; recovery beyond the tested file, including practical volume recovery
 - Current Finance-user mapping and file-access tests; access behavior for users beyond `CORP\jsmith`
 
 ## Evidence

@@ -26,6 +26,14 @@ On 2026-09-16, all `DL_*` security groups were corrected from Global through Uni
 
 See [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md) and [Known Issues](known-issues.md).
 
+## Backup completion and recovery evidence
+
+The earlier 2026-10-06 no-backup gap was superseded by Windows Server Backup installation, a dedicated 20 GB backup disk, successful command-line and GUI manual backups, and a real deleted-file restore. Restoring `C:\Shares\Public\recovery-test.txt` to its original location and verifying `Enterprise IT Lab - Backup Recovery Test` demonstrated backup -> deletion -> recovery -> data verification. Restore ACL permissions was enabled; a separate ACL comparison was not reported.
+
+The disk was initially `B:` / `FS01-Backup`, then dedicated through the schedule wizard with its reformat/dedication warning intentionally accepted. Both manual versions remained visible to `wbadmin` afterward. Initial disk details should not be presented as its current drive letter or label.
+
+Schedule creation does not prove automatic execution: the daily 23:00 schedule is CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION, with its first run due 06/10/2026 at 23:00 and not yet run in the supplied verification. `wbadmin get status` showing no operation is normal; unsupported `wbadmin get policy` showing help is not a backup failure. `RegIdleBackup` is not the file-server backup solution. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md) for configuration and tested scope.
+
 ## Evidence-aware documentation
 
 Build notes, screenshots, and later exercises can conflict as a lab evolves. Current-state documents should distinguish recorded history from live-verified configuration and use **To verify** rather than resolving conflicts by assumption.

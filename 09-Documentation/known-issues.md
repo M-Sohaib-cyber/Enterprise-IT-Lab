@@ -38,11 +38,14 @@ This is the authoritative summary of unresolved documentation and practical veri
 - **Status:** GUI display observation remains open. No root cause was proven; successful raw-log verification does not resolve the GUI issue.
 - **Details:** [Firewall Rules](../08-Security/firewall-rules.md)
 
-### FS-01: File-server backup/recovery - identified gap
+### FS-01: File-server backup/recovery - manual recovery verified; first scheduled run pending
 
-- **Verified 2026-10-06:** `C:` is NTFS, 60.32 GB with 49.2 GB free, Healthy/OK. All five shares are under `C:\Shares`; no separate data volume currently exists.
-- **Backup findings:** Windows Server Backup `InstallState = Available` means not installed. Built-in `RegIdleBackup` exists but is not a file-server backup solution. `vssadmin list shadows` returned no shadow copies.
-- **Status:** No backup solution for `C:\Shares` has currently been verified. Backup coverage and file-data restore testing remain an improvement/gap; recovery is not complete.
+- **Storage verified 2026-10-06:** `C:` is NTFS, 60.32 GB with 49.2 GB free, Healthy/OK. Shares remain under `C:\Shares` with no separate data volume. A second SATA-attached disk, `Corp-FS01-Backup.vdi`, is a dynamically allocated 20 GB VDI dedicated to Windows Server Backup.
+- **Earlier gap:** Windows Server Backup was Available (not installed), no shadow copies were found, and no file-server backup was verified. `RegIdleBackup` remains a built-in task, not a file-server backup solution.
+- **Implemented and verified:** Windows Server Backup is Installed with no restart required. Command-line and GUI manual backups succeeded; VSS was created during the command-line backup. Deleted `Public\recovery-test.txt` was restored to its original location with Restore ACL permissions enabled, and its contents were verified. The 06/10/2026 04:33 and 04:43 manual versions remained visible to `wbadmin` after schedule configuration.
+- **CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION:** Custom backup of `C:\Shares`, once daily at 23:00 to the dedicated disk, no exclusions, with VSS Copy Backup shown during configuration. The wizard confirmed schedule creation; first run is due 06/10/2026 at 23:00 and has not run yet in the supplied verification.
+- **Remaining scope:** Verify first automatic execution. Practical volume recovery and broader disaster recovery remain untested; no offsite/cloud, replication, encryption, or retention guarantees are established.
+- **Diagnostic observations:** No operation running from `wbadmin get status` is normal. Unsupported `wbadmin get policy` displayed help; it is not a backup failure.
 - **Details:** [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md)
 
 ## Verification conflicts

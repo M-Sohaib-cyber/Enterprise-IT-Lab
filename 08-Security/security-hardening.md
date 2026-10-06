@@ -18,10 +18,11 @@ This document separates controls evidenced in the current lab from unresolved co
 | User restrictions | Control Panel and PC settings access blocked in the documented test | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Removable storage | Deny-all removable-storage policy produced an access-denied test | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | File access | Departmental/public share access and denial behavior tested on `Corp-CL01` | [File server](../03-Virtual-Infrastructure/file-server.md) |
+| File backup/recovery | Windows Server Backup Installed; dedicated 20 GB backup VDI; manual command-line and GUI backups succeeded, and deleted-file recovery with content verification succeeded. Daily 23:00 schedule configured; first automatic run is pending. | [File server](../03-Virtual-Infrastructure/file-server.md) |
 | Windows Update | Automatic Updates option 3 recorded and verified through `AUOptions=0x3` | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Account lifecycle | Manual disable, password reset, unlock, and forced password-change exercises documented | [Offboarding](../05-Client-Management/offboarding.md) and [account recovery](../06-Helpdesk/account-recovery.md) |
 
-These records include historical tests and the supplied live verification results from 2026-09-16 and 2026-09-20. Current settings still require live verification where identified in the linked documents. OPT1 server-network segmentation is verified, but the final allow-to-any rule remains broad; this is not a claim that the entire firewall is fully hardened or least privilege. IPv6 interface observations do not complete a comprehensive IPv6 security review.
+These records include historical tests and the supplied live verification results from 2026-09-16, 2026-09-20, and 2026-10-06. Current settings still require live verification where identified in the linked documents. OPT1 server-network segmentation is verified, but the final allow-to-any rule remains broad; this is not a claim that the entire firewall is fully hardened or least privilege. IPv6 interface observations do not complete a comprehensive IPv6 security review.
 
 ## Known issues
 
@@ -43,7 +44,7 @@ Future practical work may:
 - Review the membership and requirement for workstation local Administrator access.
 - Verify DHCP exclusions and uninspected DHCP/VirtualBox settings beyond the 2026-10-06 checks; OPT1 options, lease times, absence of reservations, and disabled VirtualBox DHCP on both lab NAT networks are verified. See [DHCP](../04-Active-Directory/dhcp.md).
 - Export and review current GPO, DNS, firewall, directory, and permission state.
-- Address the file-server backup/recovery gap: Windows Server Backup is Available (not installed), no shadow copies were found, and no backup for `C:\Shares` is verified. `RegIdleBackup` is not a file-server backup solution. See [file server](../03-Virtual-Infrastructure/file-server.md).
+- Verify the first automatic file-server backup: schedule CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION, once daily at 23:00, first due 06/10/2026 at 23:00. Manual backups and a deleted-file restore are verified. Broader recovery remains untested. See [file server](../03-Virtual-Infrastructure/file-server.md).
 - Define backup, recovery, centralized logging, monitoring, and patch-verification requirements. Remote syslog is not configured; verified local firewall logging does not complete centralized logging or broader monitoring.
 
 These are planned verification or improvement activities only. No result is claimed until configuration work and evidence exist.
