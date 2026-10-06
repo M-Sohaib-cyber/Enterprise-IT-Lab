@@ -16,8 +16,8 @@ This is the authoritative reference for network addresses confirmed by repositor
 |---|---|---|---|
 | `10.10.20.1` | `Corp-FW01` LAN | Static | Consistently documented |
 | `10.10.30.1` | `Corp-FW01` OPT1 | Static | Consistently documented |
-| `10.10.20.10` | `Corp-DC01` | Static | Documented as DC and DNS address |
-| `10.10.30.100` | `Corp-CL01` | DHCP lease | Confirmed by client `ipconfig` screenshot |
+| `10.10.20.10` | `Corp-DC01` | Static | Live verified 2026-10-06; DHCP Enabled: No |
+| `10.10.30.100` | `Corp-CL01` | DHCP lease; no reservation | Live lease and release/renew verified 2026-10-06 |
 | `10.10.20.20` | `Corp-FS01` | Static | Live verified 2026-09-16 |
 | `10.0.2.15` | `Corp-FW01` WAN (`em0`) | DHCP | Live verified 2026-09-16; `/24`, gateway `10.0.2.2` |
 
@@ -45,10 +45,13 @@ The implemented server/client design and firewall segmentation are IPv4-based. N
 | Supplied gateway | `10.10.30.1` |
 | Supplied DNS server | `10.10.20.10` |
 | Scope start/end | `10.10.30.100-10.10.30.199` (live verified 2026-09-16) |
-| Exclusions/reservations | To verify |
-| Lease duration | To verify from current configuration |
+| Static mappings/reservations on OPT1 | None configured; verified 2026-10-06 |
+| Exclusions | To verify |
+| Default / maximum lease | 7200 seconds (2 hours) / 86400 seconds (24 hours); verified 2026-10-06 |
+| Observed client lease | Exactly 2 hours; pool capacity 100, one address in use |
+| Supplied domain / connection-specific DNS suffix | `corp.internal`; verified 2026-10-06 |
 
-Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 with the pool above, resolving the older disabled-service record. Client options above are observed values; server-side options remain to verify.
+Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 with the pool above, resolving the older disabled-service record. Verification on 2026-10-06 confirmed pfSense ISC DHCP on OPT1, the supplied gateway/DNS/domain options, 7200/86400-second default/maximum leases, and no OPT1 static mappings. Corp-CL01 successfully released/renewed 10.10.30.100; this observed address is not permanently reserved. VirtualBox DHCP is disabled on NAT Networks Corp-Core (10.10.20.0/24) and Corp-Clients (10.10.30.0/24). Corp-DC01 remains static at 10.10.20.10 with DHCP disabled and the Windows DHCP Server role Available, not Installed. Exclusions and uninspected settings remain to verify. See [DHCP verification](../04-Active-Directory/dhcp.md).
 
 ## DNS
 
@@ -66,8 +69,8 @@ Verification on 2026-09-20 confirmed running AD-integrated forward zones `_msdcs
 
 ## Items requiring later verification
 
-- Current VirtualBox DHCP settings and pfSense DHCP options
-- DHCP exclusions, reservations, and lease duration
+- Uninspected DHCP/VirtualBox settings beyond the 2026-10-06 checks; both lab NAT prefixes and disabled VirtualBox DHCP are verified
+- DHCP exclusions and any other DHCP services on Corp-Core beyond the checked VirtualBox/DC sources
 - `Corp-FS01` exact VirtualBox network attachment
 - DNS settings and records beyond the verified scope, including forward-zone replication/update settings, aging/scavenging, and DNS logging
 

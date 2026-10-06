@@ -34,7 +34,7 @@ Authoritative device and address details are maintained in the [device inventory
 - Client network: `Corp-Clients` - `10.10.30.0/24`
 - Internet connectivity: pfSense WAN through VirtualBox NAT
 
-The exact current VirtualBox network attachment and DHCP settings require verification; this document does not infer settings beyond the available records.
+Verification on 2026-10-06 confirmed both lab NAT Networks and their IPv4 prefixes above, with VirtualBox DHCP disabled on each. Corp-CL01 Adapter 1 uses NAT Network Corp-Clients; pfSense OPT1 supplies its tested DHCP configuration. Other VM attachments and uninspected settings remain to verify. See [DHCP verification](../04-Active-Directory/dhcp.md).
 
 ## Implemented services
 

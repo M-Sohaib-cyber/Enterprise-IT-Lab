@@ -42,7 +42,7 @@ This is the authoritative summary of unresolved documentation and practical veri
 
 ### NET-01: DHCP provider - conflict resolved
 
-Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 (`10.10.30.1`), with pool `10.10.30.100-10.10.30.199`. This resolves the older disabled-service record. Server-side options, exclusions, reservations, lease duration, and VirtualBox DHCP settings remain **To verify**.
+Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 (`10.10.30.1`), with pool `10.10.30.100-10.10.30.199`. This resolves the older disabled-service record. Verification on 2026-10-06 confirmed pfSense ISC DHCP on OPT1, the supplied gateway/DNS/domain options, 7200/86400-second default/maximum leases, and no OPT1 static mappings. Corp-CL01 successfully released/renewed 10.10.30.100; this observed address is not permanently reserved. VirtualBox DHCP is disabled on NAT Networks Corp-Core (10.10.20.0/24) and Corp-Clients (10.10.30.0/24). Corp-DC01 remains static at 10.10.20.10 with DHCP disabled and the Windows DHCP Server role Available, not Installed. Exclusions and uninspected settings remain to verify. See [DHCP verification](../04-Active-Directory/dhcp.md). Whether any other DHCP service exists on Corp-Core remains open beyond the checked VirtualBox/DC sources; these checks are not an exhaustive DHCP or VirtualBox audit.
 
 Details: [DHCP Evidence and Current Status](../04-Active-Directory/dhcp.md)
 
@@ -88,4 +88,4 @@ Details: [Group Policy Operation and Verification](../04-Active-Directory/group-
 - **To verify:** Requires a live configuration check or stronger evidence.
 - **Remediated:** Use only after a practical change and verification evidence exist.
 
-AD-01, SEC-02, and GPO-02 record corrections completed during supplied live work. NET-01's provider conflict is resolved; its remaining configuration checks stay open. This update changes documentation only.
+AD-01, SEC-02, and GPO-02 record corrections completed during supplied live work. NET-01's provider conflict and the listed 2026-10-06 checks are resolved; exclusions and uninspected configuration checks stay open. This update changes documentation only.

@@ -41,7 +41,7 @@ Future practical work may:
 
 - Review complete file ACLs, inheritance, and permissions beyond the verified Finance/IT entries.
 - Review the membership and requirement for workstation local Administrator access.
-- Verify remaining DHCP options, exclusions, reservations, lease duration, and VirtualBox DHCP settings.
+- Verify DHCP exclusions and uninspected DHCP/VirtualBox settings beyond the 2026-10-06 checks; OPT1 options, lease times, absence of reservations, and disabled VirtualBox DHCP on both lab NAT networks are verified. See [DHCP](../04-Active-Directory/dhcp.md).
 - Export and review current GPO, DNS, firewall, directory, and permission state.
 - Define backup, recovery, centralized logging, monitoring, and patch-verification requirements. Remote syslog is not configured; verified local firewall logging does not complete centralized logging or broader monitoring.
 

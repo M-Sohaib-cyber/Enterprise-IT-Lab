@@ -66,6 +66,10 @@ The following promotion settings are supported by the existing records:
 
 Existing documents conflict between Windows Server 2016 and Windows Server 2025 functional levels. Neither value is presented as current until it is checked on `Corp-DC01`.
 
+## DHCP role and static addressing verification - 2026-10-06
+
+On Corp-DC01, `Get-WindowsFeature DHCP` showed the DHCP Server role as **Available**, not **Installed**. The Windows DHCP Server role is not running. IPv4 remained `10.10.20.10` with **DHCP Enabled: No**, confirming static IPv4 configuration on Corp-Core. See [DHCP verification](../04-Active-Directory/dhcp.md).
+
 ## DNS configuration
 
 `Corp-DC01` hosts DNS for `corp.internal` and uses `10.10.20.10` as its preferred DNS server. `Corp-CL01` is also observed using `10.10.20.10` for DNS.

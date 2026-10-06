@@ -32,7 +32,7 @@ The Windows edition comes from the existing deployment record. Current Windows e
 | EFI | Enabled |
 | Secure Boot | Enabled |
 
-Disk size, current VM settings, adapter model, and exact VirtualBox network configuration are **To verify**.
+Disk size, other current VM settings, and adapter model are **To verify**. On 2026-10-06, Adapter 1 was verified enabled, attached to **NAT Network** named `Corp-Clients`, with cable connected and MAC `08:00:27:CC:6D:95`, matching the pfSense lease. VirtualBox DHCP is disabled on this NAT Network.
 
 ## Network configuration
 
@@ -50,7 +50,7 @@ The existing `ipconfig /all` screenshot records the values below. Live `ipconfig
 
 Evidence: [Corp-CL01 IP configuration](../Screenshots/Verifications/01-Corp-CL01%20ipconfig.png).
 
-`10.10.30.100` is an observed DHCP lease, not a confirmed reservation. Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 with pool `10.10.30.100-10.10.30.199`. Server-side options, exclusions, reservations, and lease duration remain **To verify**; see [DHCP evidence and status](../04-Active-Directory/dhcp.md).
+On 2026-10-06, `ipconfig /release` and successful `ipconfig /renew` returned `10.10.30.100` again. Post-renewal `ipconfig /all` confirmed DHCP enabled, IPv4 `10.10.30.100`, gateway and DHCP server `10.10.30.1`, DNS `10.10.20.10`, and connection-specific DNS suffix `corp.internal`. The pfSense lease showed hostname `Corp-CL01`, MAC `08:00:27:cc:6d:95`, and exactly 2 hours, matching the 7200-second default. No OPT1 static mapping exists, so the address is not permanently reserved or guaranteed. See [DHCP evidence and status](../04-Active-Directory/dhcp.md) for verified settings and remaining scope.
 
 ## Domain join
 
@@ -117,8 +117,7 @@ Client tests confirmed DNS server `Corp-DC01.corp.internal` / `10.10.20.10`: `ns
 ## To verify
 
 - Current Windows edition, version, build, activation, and patch state
-- Current VM CPU, memory, disk, firmware, TPM, display, and network settings
-- Whether `10.10.30.100` is reserved
+- Current VM CPU, memory, disk, firmware, TPM, display, and network settings beyond the verified Adapter 1 attachment, MAC, and cable state
 - Current local accounts and local group membership beyond verified `GG_IT` administrator assignment
 - Detailed resultant policy settings beyond the verified GPOs/settings
 

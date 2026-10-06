@@ -28,7 +28,7 @@ The current pfSense version and VM resource allocation should be verified from t
 | Adapter 2 | NAT Network named `Corp-Core` | Server network |
 | Adapter 3 | NAT Network named `Corp-Clients` | Client network |
 
-These attachment settings come from the existing deployment record. Current VirtualBox network and DHCP settings remain **To verify**.
+These pfSense attachment settings come from the existing deployment record and remain **To verify** on the live VM. Network Manager verification on 2026-10-06 confirmed both lab NAT Network prefixes and disabled VirtualBox DHCP on each; see [DHCP verification](../04-Active-Directory/dhcp.md).
 
 ## Interfaces
 
@@ -81,7 +81,7 @@ These values describe the recorded build. A live export or current console captu
 
 Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 (`10.10.30.1`), with pool `10.10.30.100-10.10.30.199`. This resolves the older record stating OPT1 DHCP was disabled and agrees with the client evidence.
 
-Server-side options, exclusions, reservations, and lease duration remain **To verify**. See [DHCP](../04-Active-Directory/dhcp.md).
+Verification on 2026-10-06 confirmed pfSense ISC DHCP on OPT1, the supplied gateway/DNS/domain options, 7200/86400-second default/maximum leases, and no OPT1 static mappings. Corp-CL01 successfully released/renewed 10.10.30.100; this observed address is not permanently reserved. VirtualBox DHCP is disabled on NAT Networks Corp-Core (10.10.20.0/24) and Corp-Clients (10.10.30.0/24). Corp-DC01 remains static at 10.10.20.10 with DHCP disabled and the Windows DHCP Server role Available, not Installed. Exclusions and uninspected settings remain to verify. See [DHCP verification](../04-Active-Directory/dhcp.md).
 
 ## OPT1 firewall rules
 

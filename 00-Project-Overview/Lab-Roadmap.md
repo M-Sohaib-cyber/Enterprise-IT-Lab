@@ -1,6 +1,6 @@
 # Lab Roadmap
 
-Status includes the supplied live verification results from 2026-09-16 and 2026-09-20 and existing repository evidence.
+Status includes the supplied live verification results from 2026-09-16, 2026-09-20, and 2026-10-06 and existing repository evidence.
 
 ## Completed
 
@@ -33,9 +33,9 @@ Final firewall verification on 2026-09-20 confirmed automatic outbound NAT witho
 
 | Item | Reason |
 |---|---|
-| DHCP configuration | Provider, enabled state, and pool are verified; server-side options, exclusions, reservations, and lease duration remain open. |
+| DHCP configuration | Verified 2026-10-06: OPT1 ISC DHCP options, 7200/86400-second default/maximum leases, no reservations, and successful client release/renew. Exclusions, uninspected settings, and other possible DHCP services on Corp-Core remain open. See [DHCP](../04-Active-Directory/dhcp.md). |
 | `Corp-FS01` inventory | OS/build, domain, static network settings, and share names are verified; VM specification, exact attachment, patch state, storage, and complete ACLs remain open. |
-| VirtualBox network settings | Network names are documented, but the current VirtualBox DHCP and attachment settings need an authoritative capture. |
+| VirtualBox network settings | Verified 2026-10-06: both lab NAT Network prefixes, VirtualBox DHCP disabled on both, and Corp-CL01 Adapter 1 attachment/MAC/cable state. Other VM attachments and uninspected settings remain open. |
 | AD functional levels | Existing documents conflict between Windows Server 2016 and Windows Server 2025 functional levels. |
 | File permissions | Group scopes/nesting and Finance/IT Modify entries are verified; review remaining ACLs, inheritance, and effective access. |
 | DNS review | Initial local `::1` query timeout remains unexplained despite eventual success; DNS settings/records beyond the tested scope remain open. See [DNS](../04-Active-Directory/dns.md). |
