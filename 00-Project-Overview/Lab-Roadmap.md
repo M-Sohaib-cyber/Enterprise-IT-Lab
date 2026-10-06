@@ -10,11 +10,11 @@ Status includes the supplied live verification results from 2026-09-16, 2026-09-
 | Network separation | `Corp-Core` (`10.10.20.0/24`) and `Corp-Clients` (`10.10.30.0/24`) are documented. |
 | Firewall/router | `Corp-FW01` runs pfSense with WAN, LAN, and OPT1 interfaces. |
 | Windows Server | `Corp-DC01` is documented as a Windows Server 2022 domain controller. |
-| Active Directory | The `corp.internal` forest/domain and `CORP` NetBIOS name are implemented. |
+| Active Directory | `corp.internal` / `CORP`; functional levels `Windows2016Forest` / `Windows2016Domain` verified 2026-10-06. Relevant OU/user/group/computer inventory, single-DC topology, no trusts, and all FSMO roles verified; standard `dcdiag` passed all reported tests. |
 | DNS | Verified 2026-09-20: core DNS works through `Corp-DC01` at `10.10.20.10`; running AD-integrated forward zones, inspected host records, external resolution without explicit forwarders, tested client forward/reverse lookups, and successful `dcdiag /test:dns /v`. Server-network reverse zone and DC PTR implemented; see [DNS](../04-Active-Directory/dns.md). |
 | Windows client | `Corp-CL01` is joined to the domain and domain authentication was tested. |
 | File services | `Corp-FS01`, departmental SMB shares, access testing, and mapped drives are documented. |
-| Identity administration | OU, user, group, onboarding, offboarding, lockout, unlock, and password-reset exercises are documented. |
+| Identity administration | OU, user, group, onboarding, offboarding, lockout, unlock, and password-reset exercises documented. On 2026-10-06, two subnet objects were registered to the single AD site and Recycle Bin enabled; a temporary-account restore succeeded and the test account was deleted afterward. See [AD configuration](../04-Active-Directory/active-directory-installation.md). |
 | Group Policy | Drive mappings, company desktop, workstation security, user restrictions, password/lockout, removable storage, local administrators, and Windows Update policies are documented. |
 
 Live verification on 2026-09-16 also confirmed:
@@ -36,10 +36,9 @@ Final firewall verification on 2026-09-20 confirmed automatic outbound NAT witho
 | DHCP configuration | Verified 2026-10-06: OPT1 ISC DHCP options, 7200/86400-second default/maximum leases, no reservations, and successful client release/renew. Exclusions, uninspected settings, and other possible DHCP services on Corp-Core remain open. See [DHCP](../04-Active-Directory/dhcp.md). |
 | `Corp-FS01` inventory | OS/build, domain, static network settings, and share names are verified; VM specification, exact attachment, patch state, storage, and complete ACLs remain open. |
 | VirtualBox network settings | Verified 2026-10-06: both lab NAT Network prefixes, VirtualBox DHCP disabled on both, and Corp-CL01 Adapter 1 attachment/MAC/cable state. Other VM attachments and uninspected settings remain open. |
-| AD functional levels | Existing documents conflict between Windows Server 2016 and Windows Server 2025 functional levels. |
 | File permissions | Group scopes/nesting and Finance/IT Modify entries are verified; review remaining ACLs, inheritance, and effective access. |
 | DNS review | Initial local `::1` query timeout remains unexplained despite eventual success; DNS settings/records beyond the tested scope remain open. See [DNS](../04-Active-Directory/dns.md). |
-| DC diagnostic warning | Investigate the WinRM WSMAN SPN warning from `dcdiag`. |
+| DC diagnostic warning | Standard `dcdiag` passed all reported tests on 2026-10-06; retain the historical WinRM WSMAN SPN warning for targeted investigation because no cause or specific remediation was established. |
 | Historical inactivity timing | Applied 600 seconds is verified; explain the earlier approximately five-minute lock/display observation. |
 | Firewall policy | Ordered OPT1 server-network segmentation is verified; the final allow-to-any remains broad. Broader ruleset, aliases, individual generated NAT rules, and comprehensive IPv6 security review remain open. |
 | Firewall GUI logs | Fresh blocks were verified in `/var/log/filter.log`, but the GUI showed older entries; no root cause was proven. |

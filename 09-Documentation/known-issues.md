@@ -46,9 +46,9 @@ Live verification on 2026-09-16 confirmed pfSense DHCP enabled on OPT1 (`10.10.3
 
 Details: [DHCP Evidence and Current Status](../04-Active-Directory/dhcp.md)
 
-### AD-02: Active Directory functional levels
+### AD-02: Active Directory functional levels - conflict resolved
 
-Older records conflict between Windows Server 2016 and Windows Server 2025 functional levels. The current forest and domain functional levels remain **To verify** on `Corp-DC01`.
+Older records conflicted between Windows Server 2016 and Windows Server 2025 functional levels. Verification on 2026-10-06 confirmed forest `corp.internal` at `Windows2016Forest` and domain `corp.internal` (NetBIOS `CORP`) at `Windows2016Domain`, resolving this conflict without a functional-level change.
 
 Details: [Corp-DC01 Build and Configuration](../03-Virtual-Infrastructure/windows-server-build-guide.md)
 
@@ -60,7 +60,7 @@ Details: [Group Policy Operation and Verification](../04-Active-Directory/group-
 
 ### AD-03: WinRM WSMAN SPN warning
 
-Live verification on 2026-09-16 found `dcdiag` generally passed, but a WinRM WSMAN SPN warning remains for later investigation. All five FSMO roles were confirmed on `Corp-DC01`; the warning is not marked resolved.
+Live verification on 2026-09-16 found `dcdiag` generally passed, but a WinRM WSMAN SPN warning remains for later investigation. All five FSMO roles were confirmed on `Corp-DC01`. On 2026-10-06, standard `dcdiag` completed successfully with all reported tests passed and no failed tests observed; all FSMO roles were reconfirmed on `Corp-DC01.corp.internal`. The historical warning is retained pending targeted investigation; its cause or specific remediation was not established.
 
 Details: [Corp-DC01 Build and Configuration](../03-Virtual-Infrastructure/windows-server-build-guide.md)
 
@@ -81,6 +81,14 @@ Details: [Group Policy Operation and Verification](../04-Active-Directory/group-
 - **Status:** No root cause was proven. Core DNS functionality, the tested client forward/reverse lookups, and `dcdiag /test:dns /v` passed; the initial timeout remains an open observation.
 - **Remaining scope:** Uninspected records and DNS settings, including forward-zone replication/update settings, aging/scavenging, and logging, remain unverified. Only the server-network reverse zone and DC PTR are recorded as implemented.
 - **Details:** [Active Directory DNS](../04-Active-Directory/dns.md)
+
+## AD verification and controlled improvements - 2026-10-06
+
+- OU structure, relevant user enabled states/locations, all listed GG_/DL_ scopes and direct memberships, enabled computer OU locations, and default domain password/lockout values were verified. Empty Admins, IT Admins, and Service Accounts OUs are reserved/unused.
+- Replication checks found no source/destination partners in this single-DC lab, as expected; multi-DC replication testing is not applicable. No AD trusts are configured.
+- **Controlled improvements completed during supplied live work:** Registered `10.10.20.0/24` and `10.10.30.0/24` to the single site `Default-First-Site-Name`, and enabled AD Recycle Bin for `corp.internal`. PowerShell confirmed both subnet associations and populated `EnabledScopes`.
+- The temporary `recovery.test` account was successfully restored to Company Users in a disabled state, then deleted again; final lookup returned object not found. Broader backup/recovery and uninspected AD settings remain open.
+- **Details:** [AD configuration](../04-Active-Directory/active-directory-installation.md), [Users and Groups](../04-Active-Directory/users-and-groups.md), and [Account Recovery](../06-Helpdesk/account-recovery.md).
 
 ## Status convention
 

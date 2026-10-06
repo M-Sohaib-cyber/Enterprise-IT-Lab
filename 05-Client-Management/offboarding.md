@@ -23,7 +23,7 @@ The Finance drive mapping was recorded as unavailable after removal from `GG_Fin
 
 Evidence: [Disabled account login denied](../Screenshots/Active%20Directory/10-Disabled-Account-Login-Denied.png).
 
-The current account state and complete memberships have not been verified from a live directory export.
+Verification on 2026-10-06 confirmed Sarah Ahmed (`sahmed`) remains disabled in `Disabled Users`, demonstrating the existing offboarding/disabled-user lifecycle. `GG_Finance` currently has no direct users. Complete current memberships and access behavior beyond these checks remain unverified.
 
 ## Recommended future improvements - not demonstrated
 
@@ -40,7 +40,6 @@ These recommendations do not change the demonstrated lab procedure.
 
 ## To verify
 
-- Whether `sahmed` remains disabled and located in `Disabled Users`
 - Current complete group membership
 - Current drive-mapping and file-access result
 - Any sessions, application accounts, data ownership, or retention controls

@@ -18,7 +18,7 @@ This is the authoritative build and configuration record for `Corp-DC01`, the Wi
 | Domain | `corp.internal` |
 | NetBIOS domain | `CORP` |
 
-The current OS build number, activation state, patch level, and Active Directory functional levels remain **To verify**.
+The current OS build number, activation state, and patch level remain **To verify**.
 
 ## Virtual machine build record
 
@@ -61,10 +61,10 @@ The following promotion settings are supported by the existing records:
 | Global Catalog | Enabled |
 | Read-only domain controller | No |
 | DSRM password | Configured; value not documented |
-| Forest functional level | To verify |
-| Domain functional level | To verify |
+| Forest functional level | `Windows2016Forest`; verified 2026-10-06 |
+| Domain functional level | `Windows2016Domain`; verified 2026-10-06 |
 
-Existing documents conflict between Windows Server 2016 and Windows Server 2025 functional levels. Neither value is presented as current until it is checked on `Corp-DC01`.
+Verification on 2026-10-06 confirmed the Windows Server 2016 forest/domain functional levels above for `corp.internal` (NetBIOS `CORP`), resolving the older conflicting records.
 
 ## DHCP role and static addressing verification - 2026-10-06
 
@@ -115,13 +115,18 @@ The original build guide records these issues and resolutions:
 
 On `Corp-DC01`, `nslookup google.com` returned external IPv4 and IPv6 records after an initial timeout using local resolver `::1`; `nslookup google.com 10.10.20.10` succeeded without the initial timeout. No cause was proven. `dcdiag /test:dns /v` reported that `corp.internal` passed test DNS, with `Corp-DC01` PASS for Auth, Basc, Forw, Del, Dyn, and RReg; the root-server tests shown also passed. These checks verify core AD/DNS functionality within the tested scope and do not resolve the earlier WinRM WSMAN SPN warning or establish an exhaustive DNS audit.
 
+## AD verification and controlled improvements - 2026-10-06
+
+Standard `dcdiag` completed successfully; all reported tests passed and no failed tests were observed. All five FSMO roles were reconfirmed on `Corp-DC01.corp.internal`. The single-DC topology has no replication partners, as expected, and no configured AD trusts. The earlier WinRM WSMAN SPN warning remains a historical observation pending targeted investigation.
+
+During the supplied live work, `10.10.20.0/24` and `10.10.30.0/24` were registered to `Default-First-Site-Name`, and AD Recycle Bin was enabled for `corp.internal`. PowerShell verification confirmed both subnet associations and populated Recycle Bin `EnabledScopes`. A temporary-account restore test succeeded and the test account was deleted afterward. See [AD configuration](../04-Active-Directory/active-directory-installation.md) and [Account Recovery](../06-Helpdesk/account-recovery.md). This update records those improvements without changing live configuration.
+
 ## To verify
 
 - Current Windows Server build, activation, and patch state
-- Forest and domain functional levels
 - Current VM CPU, memory, disk, firmware, and network settings
 - DNS settings and records beyond the verified scope, including forward-zone replication/update settings, aging/scavenging, logging, and the initial `::1` timeout
-- Backup, recovery, time synchronization, and monitoring configuration
+- Backup, recovery beyond the tested Recycle Bin restore, time synchronization, and monitoring configuration
 - WinRM WSMAN SPN warning reported by `dcdiag`
 
 ## Evidence

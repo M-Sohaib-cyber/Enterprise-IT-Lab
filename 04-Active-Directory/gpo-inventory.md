@@ -2,7 +2,7 @@
 
 ## Scope
 
-This inventory includes repository records and supplied live verification results from 2026-09-16. It is not a live Group Policy export. Current version numbers, security filtering, delegation, WMI filters, enforcement, inheritance, and enabled state remain **To verify** unless stated otherwise.
+This inventory includes repository records and supplied live verification results from 2026-09-16 and default domain password/lockout policy verification from 2026-10-06. It is not a live Group Policy export. Current version numbers, security filtering, delegation, WMI filters, enforcement, inheritance, and enabled state remain **To verify** unless stated otherwise.
 
 - Domain: `corp.internal`
 - Test client: `Corp-CL01`
@@ -15,7 +15,7 @@ This inventory includes repository records and supplied live verification result
 | `GPO - Company Desktop` | `Company Users` | Wallpaper `\\Corp-FS01\Public\company-wallpaper.jpg` | Live: GPO applies for Jhon; file opened from `Corp-CL01` | Other settings To verify |
 | `GPO - Workstation Security` | `Workstations` | Machine inactivity limit verified as 600 seconds (10 minutes) | Live `gpresult`; `InactivityTimeoutSecs = 0x258` on `Corp-CL01` | Separate display/lock behavior occurred at about five minutes |
 | `GPO - User Restrictions` | `Company Users` | Prohibits access to Control Panel and PC settings | Live: applies for Jhon; Control Panel/PC Settings block practically tested successfully | Current filtering and complete settings To verify |
-| `Default Domain Policy` | Domain-wide | Password and account-lockout settings listed below | Policy screenshots and five-failure lockout test recorded | Current live values To verify |
+| `Default Domain Policy` | Domain-wide | Password and account-lockout settings listed below | Policy screenshots and historical five-failure lockout test; listed domain policy values verified 2026-10-06 | Other settings and GPO metadata To verify |
 | `GPO - Removable Storage Restrictions` | `Workstations` | `All Removable Storage classes: Deny all access` enabled | Live: enabled setting and computer GPO application confirmed; historical USB denial test | Current filtering and exceptions To verify |
 | `GPO - Local Administrators` | `Workstations` | Restricted Groups adds `CORP\GG_IT` to local `Administrators` | Live: intentional `GG_IT` assignment confirmed; Jhon receives local admin rights | Broad local-administrator assignment is a known security concern |
 | `GPO - Windows Update Policy` | `Workstations` | Configure Automatic Updates option 3: auto-download and notify for install | Live: computer GPO applies and mode 3 confirmed; historical `AUOptions=0x3` | Other Windows Update settings To verify |
@@ -26,7 +26,7 @@ This inventory includes repository records and supplied live verification result
 
 For Jhon Smith (`jsmith`), `gpresult` confirmed these user GPOs: `GPO - Drive Mappings`, `GPO - Company Desktop`, and `GPO - User Restrictions`. See [Group Policy Operation and Verification](group-policy.md) for the checked settings and mapping results.
 
-## Default Domain Policy settings recorded
+## Default domain password/lockout policy - verified 2026-10-06
 
 | Setting | Recorded value |
 |---|---|
@@ -39,7 +39,7 @@ For Jhon Smith (`jsmith`), `gpresult` confirmed these user GPOs: `GPO - Drive Ma
 | Account lockout duration | 30 minutes |
 | Reset lockout counter | 30 minutes |
 
-These are historical documented values, not a current policy export. The lockout behavior was tested with `CORP\jsmith`.
+Supplied live verification on 2026-10-06 confirmed all eight default domain password/lockout values above, including the 30-minute lockout observation/reset window. They agree with the historical documented settings. The historical lockout behavior was tested with `CORP\jsmith`; no new lockout test or policy change is claimed.
 
 ## Evidence by GPO
 
@@ -64,7 +64,6 @@ These are historical documented values, not a current policy export. The lockout
 - Complete configured settings rather than the major settings recorded here
 - Resultant set of policy for other accounts/computers and detailed settings beyond the verified results
 - Drive-mapping preferences beyond confirmed paths and I:/F: targeting
-- Current Default Domain Policy values
 
 ## Related documentation
 

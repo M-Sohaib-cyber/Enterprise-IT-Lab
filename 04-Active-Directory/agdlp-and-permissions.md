@@ -19,7 +19,7 @@ Examples documented in the original design include `GG_IT` to `DL_IT_RW` and `GG
 
 ## Recorded implementation
 
-Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global to Domain Local using Universal as the intermediate scope (Global -> Universal -> Domain Local). The following nesting was verified; each resource group contains the listed member:
+Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global to Domain Local using Universal as the intermediate scope (Global -> Universal -> Domain Local). Verification on 2026-10-06 reconfirmed all six listed `DL_*` groups as DomainLocal Security groups and the following direct nesting; each resource group contains the listed member:
 
 | Resource group | Verified member |
 |---|---|
@@ -31,6 +31,8 @@ Live verification on 2026-09-16 confirmed all `DL_*` security groups were correc
 | `DL_Sales_RW` | `GG_Sales` |
 
 Finance NTFS grants `DL_Finance_RW` Modify, and IT NTFS grants `DL_IT_RW` Modify. These checked paths match the intended AGDLP model; complete ACLs and other resource permissions remain **To verify**.
+
+All five listed department `GG_*` groups are Global Security groups, verified 2026-10-06. `GG_IT` directly contains Jhon Smith and Mohammad Sohail; `GG_Finance`, `GG_HelpDesk`, `GG_HR`, and `GG_Sales` currently have no direct users. These inventory checks do not verify additional ACLs or new file-access behavior. See [Users and Groups](users-and-groups.md).
 
 ## Documented access tests
 

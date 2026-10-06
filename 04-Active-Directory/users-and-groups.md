@@ -10,16 +10,19 @@ This is the authoritative inventory of Active Directory objects named in current
 
 ## Organizational units
 
+All OUs listed below were verified on 2026-10-06, including `IT Admins` nested beneath `Admins`.
+
 | OU | Parent | Documented use | Current status |
 |---|---|---|---|
-| `Admins` | Domain root | Administrative accounts | Exists in deployment record; contents To verify |
-| `IT Admins` | `Admins` | IT administrative accounts | Exists in deployment record; contents To verify |
+| `Admins` | Domain root | Administrative accounts | Verified 2026-10-06; no user accounts, reserved/unused |
+| `IT Admins` | `Admins` | IT administrative accounts | Verified 2026-10-06; no user accounts, reserved/unused |
 | `Company Users` | Domain root | Standard domain users and user-linked GPOs | Used by documented users and GPOs |
 | `Disabled Users` | Domain root | Disabled accounts retained after offboarding | Created and used during Sarah Ahmed offboarding |
 | `Groups` | Domain root | Security groups | Exists in deployment record; exact contents To verify |
-| `Servers` | Domain root | Server computer objects | Exists in deployment record; exact contents To verify |
-| `Service Accounts` | Domain root | Service accounts | Exists in deployment record; no service account is confirmed |
-| `Workstations` | Domain root | Client computer objects and computer-linked GPOs | Contains documented `Corp-CL01` object |
+| `Servers` | Domain root | Server computer objects | Contains enabled `CORP-FS01`, verified 2026-10-06; other contents To verify |
+| `Service Accounts` | Domain root | Service accounts | Verified 2026-10-06; no user accounts, reserved/unused |
+| `Workstations` | Domain root | Client computer objects and computer-linked GPOs | Contains enabled `CORP-CL01`; verified 2026-10-06 |
+| `Domain Controllers` | Domain root | Domain-controller computer objects | Contains enabled `CORP-DC01`; verified 2026-10-06 |
 
 Exact distinguished names, protection-from-deletion settings, delegation, and any additional OUs remain **To verify**.
 
@@ -27,24 +30,27 @@ Exact distinguished names, protection-from-deletion settings, delegation, and an
 
 | Display name | Username | Recorded OU/status | Confirmed membership or use |
 |---|---|---|---|
-| Jhon Smith | `jsmith` | `Company Users`; enabled state To verify | `Domain Users`, `GG_IT`; used for GPO, file-access, lockout, and recovery tests |
-| Sarah Ahmed | `sahmed` | `Disabled Users`; documented as disabled after offboarding | `Domain Users` after removal from `GG_Finance`; used for Finance onboarding/offboarding tests |
+| Jhon Smith | `jsmith` | `Company Users`; enabled, verified 2026-10-06 | `Domain Users`, `GG_IT`; used for GPO, file-access, lockout, and recovery tests |
+| Mohammad Sohail | `msohail` | `Company Users`; enabled, verified 2026-10-06 | Direct member of `GG_IT` |
+| Sarah Ahmed | `sahmed` | `Disabled Users`; disabled, verified 2026-10-06 | `Domain Users` after removal from `GG_Finance`; used for Finance onboarding/offboarding tests |
 
-Live verification on 2026-09-16 confirmed Jhon Smith (`jsmith`) is a member of `Domain Users` and `GG_IT`. `GPO - Local Administrators` intentionally adds `GG_IT` to workstation local Administrators, so Jhon receives local administrator rights on `Corp-CL01` as an IT user. Current enabled/locked state, memberships beyond those confirmed, account attributes, and password state require live verification. Password values are not documented.
+Live verification on 2026-09-16 confirmed Jhon Smith (`jsmith`) is a member of `Domain Users` and `GG_IT`. `GPO - Local Administrators` intentionally adds `GG_IT` to workstation local Administrators, so Jhon receives local administrator rights on `Corp-CL01` as an IT user. Verification on 2026-10-06 confirmed the enabled states and OU locations above, with Administrator enabled and Guest and krbtgt disabled. Sarah is the existing disabled lab account demonstrating the offboarding/disabled-user lifecycle. Locked state, memberships beyond those confirmed, other account attributes, and password state remain to verify. Password values are not documented.
 
-## Documented global groups
+## Verified global groups - 2026-10-06
+
+All five listed `GG_*` groups were verified as Global Security groups. Empty direct-user memberships are recorded as observed; no additional users are inferred.
 
 | Group | Recorded category/scope | Documented purpose | Confirmed membership |
 |---|---|---|---|
-| `GG_IT` | Global Security | IT department/access group | `jsmith` confirmed by existing command output and screenshot |
-| `GG_HR` | Global Security | Human Resources department | To verify |
-| `GG_Finance` | Global Security | Finance department and Finance drive targeting | `sahmed` was added during onboarding and removed during offboarding |
-| `GG_Sales` | Global Security | Sales department | To verify |
-| `GG_HelpDesk` | Global Security | Helpdesk team | To verify |
+| `GG_IT` | Global Security | IT department/access group | Direct users: Jhon Smith (`jsmith`) and Mohammad Sohail (`msohail`); verified 2026-10-06 |
+| `GG_HR` | Global Security | Human Resources department | No direct users; verified 2026-10-06 |
+| `GG_Finance` | Global Security | Finance department and Finance drive targeting | No direct users, verified 2026-10-06; `sahmed` was added during onboarding and removed during offboarding |
+| `GG_Sales` | Global Security | Sales department | No direct users; verified 2026-10-06 |
+| `GG_HelpDesk` | Global Security | Helpdesk team | No direct users; verified 2026-10-06 |
 
 ## Documented `DL_*` resource groups
 
-Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global to Domain Local using Universal as the intermediate scope (Global -> Universal -> Domain Local). The following nesting was verified; each resource group contains the listed member:
+Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global to Domain Local using Universal as the intermediate scope (Global -> Universal -> Domain Local). Verification on 2026-10-06 reconfirmed all six listed `DL_*` groups as DomainLocal Security groups and the following direct nesting; each resource group contains the listed member:
 
 | Resource group | Intended resource use | Verified scope | Verified member |
 |---|---|---|---|
@@ -63,9 +69,9 @@ Finance NTFS grants `DL_Finance_RW` Modify, and IT NTFS grants `DL_IT_RW` Modify
 
 | Computer | Recorded location/status |
 |---|---|
-| `Corp-DC01` | Domain controller for `corp.internal` |
-| `Corp-CL01` | Domain joined and moved to `Workstations` |
-| `Corp-FS01` | File server exists; computer-object OU To verify |
+| `CORP-DC01` | Enabled; `Domain Controllers` OU; verified 2026-10-06 |
+| `CORP-CL01` | Enabled; `Workstations` OU; verified 2026-10-06 |
+| `CORP-FS01` | Enabled; `Servers` OU; verified 2026-10-06 |
 
 ## Evidence
 
