@@ -61,9 +61,9 @@ Live verification on 2026-09-16 confirmed all `DL_*` security groups were correc
 | `DL_Public_RO` | Read access to Public share | Domain Local Security | `Domain Users` |
 | `DL_Sales_RW` | Modify access to Sales share | Domain Local Security | `GG_Sales` |
 
-Finance NTFS grants `DL_Finance_RW` Modify, and IT NTFS grants `DL_IT_RW` Modify. These checked paths match the intended AGDLP model; complete ACLs and other resource permissions remain **To verify**.
+Latest supplied verification on 2026-10-06 confirmed Finance `DL_Finance_RW`, HR `DL_HR_RW`, IT `DL_IT_RW`, and Sales `DL_Sales_RW` with Modify, and Public `DL_Public_RO` with Read & Execute. All five shares intentionally grant `Everyone: Full`; NTFS is the authorization layer. `SYSTEM`, `BUILTIN\Administrators`, and `Domain Admins` retain appropriate administrative permissions. Complete ACLs and inheritance beyond these entries remain **To verify**.
 
-`DL_HelpDesk_RW` resource use and HR, Sales, and Public ACL entries remain **To verify**. See [Group-Based File Permissions](agdlp-and-permissions.md).
+`DL_HelpDesk_RW` resource use and complete ACLs/inheritance beyond the verified entries remain **To verify**. See [Group-Based File Permissions](agdlp-and-permissions.md).
 
 ## Documented computer objects
 

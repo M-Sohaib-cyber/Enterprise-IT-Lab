@@ -16,7 +16,7 @@ This behavior is relevant when testing new group membership and file access.
 
 The file-server exercise used broad share permissions with NTFS permissions intended to control effective access. Testing both the share and NTFS result is important because effective access depends on their combination.
 
-Live verification on 2026-09-16 confirmed Finance/IT NTFS Modify entries and IT share `Everyone` Full, with NTFS providing the restrictive layer. Complete ACLs and inheritance remain to verify. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md).
+Live verification on 2026-09-16 confirmed Finance/IT NTFS Modify entries and IT share `Everyone` Full, with NTFS providing the restrictive layer. Latest supplied verification on 2026-10-06 confirmed all five resource-group NTFS entries and intentional `Everyone: Full` on all five shares. Jhon tested IT read/write, Public read with write denied, and Finance/HR/Sales denial, verifying the model end-to-end for this user. Complete ACLs and inheritance remain to verify. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md).
 
 ## Intended AGDLP model versus implementation
 

@@ -27,7 +27,7 @@ These records include historical tests and the supplied live verification result
 
 The authoritative issue register is [Known Issues and Verification Items](../09-Documentation/known-issues.md). Current practical concerns are:
 
-- `DL_*` scopes were corrected through Universal to Domain Local and all six memberships verified on 2026-09-16. Finance/IT Modify entries are confirmed; complete ACL review remains open. IT share includes `Everyone` Full, with NTFS providing the restrictive layer.
+- `DL_*` scopes were corrected through Universal to Domain Local and all six memberships verified on 2026-09-16. Latest 2026-10-06 checks confirm all five resource-group NTFS entries and intentional `Everyone: Full` share permissions, with NTFS providing authorization. Jhon tested IT read/write, Public read-only, and Finance/HR/Sales denial; complete ACL/inheritance review remains open.
 - `GPO - Local Administrators` intentionally grants workstation local Administrator membership to `CORP\GG_IT`; Jhon's resulting rights on `Corp-CL01` are verified. Broader least-privilege review remains open.
 - The applied 600-second inactivity value is now verified; the earlier approximately five-minute lock/display observation remains unexplained.
 - `dcdiag` generally passed but reported a WinRM WSMAN SPN warning for later investigation.
@@ -39,10 +39,11 @@ Group corrections were completed during the supplied live work. This documentati
 
 Future practical work may:
 
-- Review complete file ACLs, inheritance, and permissions beyond the verified Finance/IT entries.
+- Review complete file ACLs, inheritance, and permissions beyond the five verified resource-group entries, and test access for other users.
 - Review the membership and requirement for workstation local Administrator access.
 - Verify DHCP exclusions and uninspected DHCP/VirtualBox settings beyond the 2026-10-06 checks; OPT1 options, lease times, absence of reservations, and disabled VirtualBox DHCP on both lab NAT networks are verified. See [DHCP](../04-Active-Directory/dhcp.md).
 - Export and review current GPO, DNS, firewall, directory, and permission state.
+- Address the file-server backup/recovery gap: Windows Server Backup is Available (not installed), no shadow copies were found, and no backup for `C:\Shares` is verified. `RegIdleBackup` is not a file-server backup solution. See [file server](../03-Virtual-Infrastructure/file-server.md).
 - Define backup, recovery, centralized logging, monitoring, and patch-verification requirements. Remote syslog is not configured; verified local firewall logging does not complete centralized logging or broader monitoring.
 
 These are planned verification or improvement activities only. No result is claimed until configuration work and evidence exist.

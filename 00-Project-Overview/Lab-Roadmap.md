@@ -34,9 +34,9 @@ Final firewall verification on 2026-09-20 confirmed automatic outbound NAT witho
 | Item | Reason |
 |---|---|
 | DHCP configuration | Verified 2026-10-06: OPT1 ISC DHCP options, 7200/86400-second default/maximum leases, no reservations, and successful client release/renew. Exclusions, uninspected settings, and other possible DHCP services on Corp-Core remain open. See [DHCP](../04-Active-Directory/dhcp.md). |
-| `Corp-FS01` inventory | OS/build, domain, static network settings, and share names are verified; VM specification, exact attachment, patch state, storage, and complete ACLs remain open. |
+| `Corp-FS01` inventory | OS/build, domain, static network settings, and share names are verified; C: NTFS capacity/free space and Healthy/OK status, share paths under C:\Shares, and absence of a separate data volume are verified 2026-10-06; VM specification, exact attachment, patch state, and complete ACLs remain open. |
 | VirtualBox network settings | Verified 2026-10-06: both lab NAT Network prefixes, VirtualBox DHCP disabled on both, and Corp-CL01 Adapter 1 attachment/MAC/cable state. Other VM attachments and uninspected settings remain open. |
-| File permissions | Group scopes/nesting and Finance/IT Modify entries are verified; review remaining ACLs, inheritance, and effective access. |
+| File permissions | All five resource-group NTFS entries and intentional Everyone: Full share permissions are verified; Jhon tested IT read/write, Public read-only, and Finance/HR/Sales denial. Review complete ACLs, inheritance, and access for other users. |
 | DNS review | Initial local `::1` query timeout remains unexplained despite eventual success; DNS settings/records beyond the tested scope remain open. See [DNS](../04-Active-Directory/dns.md). |
 | DC diagnostic warning | Standard `dcdiag` passed all reported tests on 2026-10-06; retain the historical WinRM WSMAN SPN warning for targeted investigation because no cause or specific remediation was established. |
 | Historical inactivity timing | Applied 600 seconds is verified; explain the earlier approximately five-minute lock/display observation. |
@@ -52,6 +52,7 @@ The consolidated status and supporting links are maintained in [Known Issues and
 
 | Documentation/work item | Intended outcome |
 |---|---|
+| File-server backup/recovery | No verified backup for `C:\Shares`; Windows Server Backup is Available (not installed), no shadow copies were found, and `RegIdleBackup` is not a file-server backup solution. Establish backup coverage and verify restore capability. See [file server](../03-Virtual-Infrastructure/file-server.md). |
 | PowerShell automation | Add scripts and evidence only when practical automation work is completed. |
 | Helpdesk platform and workflows | Document only after a ticketing platform or tested workflow is implemented. |
 | Centralized logging and monitoring | Remote syslog is not configured; local firewall logging verification does not complete centralized logging or broader monitoring. |

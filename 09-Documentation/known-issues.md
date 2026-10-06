@@ -7,7 +7,7 @@ This is the authoritative summary of unresolved documentation and practical veri
 ### AD-01: `DL_*` group scopes - remediated during live work
 
 - **Verified 2026-09-16:** All `DL_*` security groups corrected from Global through Universal to Domain Local; all six resource-group memberships verified.
-- **Permissions verified:** Finance `DL_Finance_RW` Modify and IT `DL_IT_RW` Modify. IT share includes `Everyone` Full; NTFS provides the restrictive permission layer.
+- **Permissions verified:** Latest checks confirm Finance/HR/IT/Sales resource-group Modify and Public `DL_Public_RO` Read & Execute. All five shares intentionally grant `Everyone: Full`; NTFS provides authorization. Jhon tested IT read/write, Public read with write denied, and denial to Finance/HR/Sales; the temporary IT file was removed.
 - **Remaining work:** Review complete ACLs, inheritance, and resource permissions beyond these checked entries.
 - **Current action:** Records the completed live correction; this documentation update changes no groups or permissions.
 - **Details:** [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md)
@@ -37,6 +37,13 @@ This is the authoritative summary of unresolved documentation and practical veri
 - **Recorded settings:** Local logging and default firewall block logging enabled; GUI display 500 entries; log retention count 7; remote syslog not configured.
 - **Status:** GUI display observation remains open. No root cause was proven; successful raw-log verification does not resolve the GUI issue.
 - **Details:** [Firewall Rules](../08-Security/firewall-rules.md)
+
+### FS-01: File-server backup/recovery - identified gap
+
+- **Verified 2026-10-06:** `C:` is NTFS, 60.32 GB with 49.2 GB free, Healthy/OK. All five shares are under `C:\Shares`; no separate data volume currently exists.
+- **Backup findings:** Windows Server Backup `InstallState = Available` means not installed. Built-in `RegIdleBackup` exists but is not a file-server backup solution. `vssadmin list shadows` returned no shadow copies.
+- **Status:** No backup solution for `C:\Shares` has currently been verified. Backup coverage and file-data restore testing remain an improvement/gap; recovery is not complete.
+- **Details:** [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md)
 
 ## Verification conflicts
 

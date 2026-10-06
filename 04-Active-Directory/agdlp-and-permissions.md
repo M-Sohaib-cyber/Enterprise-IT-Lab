@@ -30,7 +30,7 @@ Live verification on 2026-09-16 confirmed all `DL_*` security groups were correc
 | `DL_Public_RO` | `Domain Users` |
 | `DL_Sales_RW` | `GG_Sales` |
 
-Finance NTFS grants `DL_Finance_RW` Modify, and IT NTFS grants `DL_IT_RW` Modify. These checked paths match the intended AGDLP model; complete ACLs and other resource permissions remain **To verify**.
+Latest supplied verification on 2026-10-06 confirmed Finance `DL_Finance_RW`, HR `DL_HR_RW`, IT `DL_IT_RW`, and Sales `DL_Sales_RW` with Modify, and Public `DL_Public_RO` with Read & Execute. All five shares intentionally grant `Everyone: Full`; NTFS is the authorization layer. `SYSTEM`, `BUILTIN\Administrators`, and `Domain Admins` retain appropriate administrative permissions. Complete ACLs and inheritance beyond these entries remain **To verify**.
 
 All five listed department `GG_*` groups are Global Security groups, verified 2026-10-06. `GG_IT` directly contains Jhon Smith and Mohammad Sohail; `GG_Finance`, `GG_HelpDesk`, `GG_HR`, and `GG_Sales` currently have no direct users. These inventory checks do not verify additional ACLs or new file-access behavior. See [Users and Groups](users-and-groups.md).
 
@@ -46,14 +46,16 @@ The existing records describe:
 
 These historical access tests are distinct from the live scope and nesting verification on 2026-09-16. During the live checks, Jhon received `I:` and `P:` after `gpupdate`, with `F:` correctly absent.
 
+Latest supplied testing on 2026-10-06 from `Corp-CL01` as `CORP\jsmith` (Jhon Smith) confirmed IT read/write, Public read with write denied, and access denied to Finance, HR, and Sales, all as intended. The temporary IT test file was removed. This verifies the AGDLP/NTFS model end-to-end for this user; other users were not tested in these latest checks.
+
 ## Follow-up permission review
 
-The group-scope correction and nesting verification were completed during the live work on 2026-09-16. Remaining work is to review complete ACLs, inheritance, and resource permissions beyond the Finance and IT Modify entries. This documentation update changes no groups or permissions.
+The group-scope correction and nesting verification were completed during the live work on 2026-09-16. Remaining work is to review complete ACLs, inheritance, and access behavior for other users beyond the verified entries and latest Jhon tests. This documentation update changes no groups or permissions.
 
 ## To verify
 
-- Complete NTFS and share ACL entries and inheritance beyond verified Finance/IT Modify entries and IT `Everyone` Full share permission
-- Current file-access behavior beyond the verified Jhon drive-mapping results
+- Complete NTFS and share ACL entries and inheritance beyond the five verified resource-group entries and all five `Everyone: Full` share permissions
+- Current file-access behavior for users beyond the latest tested `CORP\jsmith` results
 - Whether any permissions are assigned directly to users
 
 ## Related documentation
