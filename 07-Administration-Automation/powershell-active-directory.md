@@ -232,3 +232,91 @@ A final Active Directory query returned no matching accounts, confirming that th
 ### Result
 
 Bulk Active Directory provisioning from CSV was successfully implemented and tested, demonstrating repeatable user onboarding, duplicate protection, secure password handling, optional group assignment, validation, and cleanup.
+
+## Lab 4 — System Health Reporting with PowerShell
+
+### Objective
+
+Build and test a reusable PowerShell script for collecting common Windows system and server health information.
+
+### Script
+
+The reusable script is stored at:
+
+`Scripts/Get-SystemHealth.ps1`
+
+### Health Checks Implemented
+
+The script reports:
+
+- Computer name
+- Windows operating system and build number
+- System uptime
+- Total, used, and available RAM
+- Fixed-disk capacity and available space
+- Percentage of free disk space
+- Warning when a fixed disk has less than 15% free space
+- Active IPv4 address
+- Default gateway
+- DNS server configuration
+- Role-appropriate Windows service status
+
+Optical media and mounted ISO volumes are excluded from disk-space monitoring to prevent false low-space warnings.
+
+### Role-Aware Service Checks
+
+The script selects services based on the computer on which it is executed.
+
+For `CORP-DC01`:
+
+- DNS
+- Active Directory Domain Services (`NTDS`)
+- Netlogon
+
+For `CORP-FS01`:
+
+- Server (`LanmanServer`)
+
+Other systems use the DNS Client service as the default check.
+
+### Testing — CORP-DC01
+
+The script was tested successfully on the domain controller.
+
+Testing confirmed:
+
+- Windows Server 2022 Standard Evaluation
+- Build 20348
+- 4 GB RAM detected
+- System uptime reported correctly
+- `C:` disk capacity and available space reported
+- IPv4 address `10.10.20.10`
+- Default gateway `10.10.20.1`
+- DNS servers `::1` and `10.10.20.10`
+- DNS, NTDS, and Netlogon services running
+
+An initial test incorrectly treated the mounted VirtualBox Guest Additions ISO as a disk with 0% free space. The script was improved to monitor only fixed disks, removing this false-positive warning.
+
+### Testing — CORP-FS01
+
+The same script was tested on the file server without modifying the script.
+
+Testing confirmed:
+
+- Windows Server 2022 Standard Evaluation
+- Build 20348
+- Approximately 3 GB RAM detected
+- System uptime reported correctly
+- `C:` disk information reported
+- IPv4 address `10.10.20.20`
+- Default gateway `10.10.20.1`
+- DNS server `10.10.20.10`
+- Server (`LanmanServer`) service running
+
+This demonstrated that the script could adapt its service checks to different server roles.
+
+### Result
+
+A reusable Windows system-health reporting script was successfully created and tested across the domain controller and file server.
+
+The exercise demonstrated practical PowerShell use for system information gathering, resource monitoring, network verification, service-health checks, conditional logic, calculated values, and basic alerting.
