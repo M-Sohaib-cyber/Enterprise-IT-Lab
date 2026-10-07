@@ -4,6 +4,67 @@
 
 This is the authoritative build and configuration record for `Corp-DC01`, the Windows Server 2022 domain controller and DNS server for `corp.internal` (`CORP`). Detailed OU, user, group, and GPO information belongs in the [Active Directory documentation](../04-Active-Directory/).
 
+## Build from zero
+
+This procedure implements the recorded DC identity and promotion settings. The existing history and live verification below remain the evidence record. Steps and expected checkpoints do not claim a new live test. Use your own passwords; text in angle brackets represents a reader-supplied value, not a literal password.
+
+### 1. Create the VM and install Windows Server
+
+1. Complete the [host prerequisites](../00-Project-Overview/environment.md#prerequisites-for-a-fresh-build), [network creation](../02-Network-Design/network-plan.md#create-the-virtualbox-networks), and [NAT Network gateway checkpoint](../02-Network-Design/network-plan.md#nat-network-gateway-verification-checkpoint).
+2. Create `Corp-DC01` using the [Batch 1 VM baseline](../01-Enterprise-Planning/device-inventory.md#fresh-build-vm-baseline): 4096 MB RAM, 2 vCPU, approximately 80 GB VDI, and Adapter 1 attached to **NAT Network / Corp-Core** with cable connected. The recorded build uses EFI disabled and TPM None; other uninspected VM choices retain their existing verification status.
+3. Attach Windows Server 2022 installation media, start the VM, and boot from the virtual optical drive. Select the recorded English language/UK keyboard and **Windows Server 2022 Standard Evaluation (Desktop Experience)** when the media offers an edition choice. Product-key or licensing prompts depend on the reader's media; no key is supplied.
+4. Accept the applicable license terms, choose **Custom** installation, and select the fresh approximately 80 GB system disk. Allow setup to create its required partitions. Exact original partition sizes were not recorded; do not copy snapshot disks or assume a partition layout from a screenshot.
+5. Finish setup, set a reader-chosen `<local-Administrator-password>`, and sign in as the local Administrator. Remove installation media when installation has finished so subsequent boots use the system disk. Microsoft's [Windows Server media-installation guide](https://learn.microsoft.com/en-us/windows-server/get-started/install-windows-server) covers the setup controls.
+
+### 2. Rename and set static IPv4
+
+1. Open **Server Manager > Local Server**, select the computer-name link, choose **Change**, enter `Corp-DC01`, and restart when prompted. Sign in locally again.
+2. Run `ncpa.cpl`, identify the enabled adapter connected to `Corp-Core`, open its **Properties**, select **Internet Protocol Version 4 (TCP/IPv4)**, and open **Properties**. Adapter display names are environment dependent; do not assume a particular name such as Ethernet.
+3. Select **Use the following IP address** and **Use the following DNS server addresses**; enter the table below and confirm the dialogs.
+
+| Setting | Required/verified value |
+|---|---|
+| IPv4 address | `10.10.20.10` |
+| Subnet mask / prefix | `255.255.255.0` / `/24` |
+| Default gateway | `10.10.20.1` |
+| Preferred DNS | `10.10.20.10` |
+| Alternate DNS | No alternate value established; this procedure leaves it blank |
+
+The preferred DNS points to the server's own intended DNS service, matching the verified final design. Before that role is installed, DNS queries to it may fail; do not treat that as evidence that the static address is wrong or substitute a public resolver for domain DNS. The original alternate-DNS field was not recorded.
+
+Run `hostname` and `ipconfig /all` in Command Prompt and confirm `Corp-DC01`, static IPv4, mask, gateway, and preferred DNS. At this point the computer is not yet a domain controller. If pfSense guest configuration is incomplete, use the browser on DC01 for [initial pfSense WebGUI access](pfsense.md#3-reach-initial-webgui-management), finish that setup, and then return here. This provides management without introducing another VM or changing the lab architecture.
+
+### 3. Install AD DS/DNS and create the forest
+
+1. As local Administrator, open **Server Manager > Manage > Add Roles and Features**. Choose **Role-based or feature-based installation**, select `Corp-DC01`, add **Active Directory Domain Services** and **DNS Server**, accept the associated management tools, and install. Review completion before proceeding; do not add the Windows DHCP Server role, which is verified not installed in this lab.
+2. Use Server Manager's notification flag and select **Promote this server to a domain controller**. Choose **Add a new forest** and enter root domain `corp.internal`.
+3. On **Domain Controller Options**, select **Windows Server 2016** for both forest and domain functional levels, matching the verified `Windows2016Forest` / `Windows2016Domain`. Keep **DNS Server** and **Global Catalog** selected. This is a writable first DC, not an RODC. Enter your own `<DSRM-password>` and its confirmation.
+4. Review **DNS Options**. This guide does not configure an unrecorded parent-zone delegation. If a warning about creating a delegation appears, read it in the context of the new private forest; do not enter a guessed parent DNS server.
+5. On **Additional Options**, confirm the NetBIOS name is `CORP`. Review the database, log, and SYSVOL paths: their historical selections were not recorded. Default paths are a fresh-build reader choice, not verified original locations.
+6. Review the configuration and prerequisite results, resolve blocking errors, then select **Install**. Allow the promotion restart to complete. Sign in using `CORP\Administrator` and the password set for this new installation; the repository does not supply that password.
+
+Microsoft's [AD DS installation reference](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/deploy/install-active-directory-domain-services--level-100-) describes the role-installation and promotion controls. These steps create the domain only; detailed OU/group, DNS reverse-zone, and GPO work remains in the linked topic guides.
+
+### 4. Post-promotion checkpoints and handoff
+
+After services have started, recheck IPv4 properties and ensure preferred DNS is `10.10.20.10`, including if promotion changed the displayed DNS address. Use an elevated PowerShell window for the checks below; the Command Prompt commands also run from PowerShell.
+
+| Check | Expected result |
+|---|---|
+| `hostname`; `ipconfig /all` | `Corp-DC01`; static `10.10.20.10/24`, gateway `10.10.20.1`, preferred DNS `10.10.20.10` |
+| `Get-WindowsFeature AD-Domain-Services,DNS,DHCP` | AD DS and DNS Installed; DHCP Server not installed |
+| `Get-Service NTDS,DNS,Netlogon` | All three services Running |
+| `Get-ADDomain \| Select-Object DNSRoot,NetBIOSName,DomainMode` | `corp.internal`, `CORP`, `Windows2016Domain` |
+| `Get-ADForest \| Select-Object RootDomain,ForestMode` | `corp.internal`, `Windows2016Forest` |
+| `nslookup corp.internal 10.10.20.10`; `nslookup Corp-DC01.corp.internal 10.10.20.10` | Both resolve to `10.10.20.10` |
+| `dcdiag`; `dcdiag /test:dns` | Review for successful core AD/DNS tests; investigate failures before joining other machines |
+
+An initial DNS-server name of Unknown in `nslookup` can precede the later reverse-zone/PTR setup; evaluate the returned answer rather than assuming a missing PTR means forward DNS failed. The historical `::1` timeout and WinRM WSMAN SPN warning remain documented below and are not claimed resolved by this procedure. `ping 10.10.20.1` is an optional local gateway diagnostic, not a replacement for AD/DNS checks or proof that every firewall rule permits ICMP.
+
+Proceed to [FS01](file-server.md#build-from-zero) and the [AD configuration guide](../04-Active-Directory/active-directory-installation.md) once DC identity, roles, services, and forward DNS are correct. Follow the [DNS guide](../04-Active-Directory/dns.md) for later reverse-zone/PTR work and the [README build path](../README.md#build-from-zero) for the remaining stages.
+
+Unrecorded details remain reader choices or later verification items: exact ISO/build and partition layout, product keys and passwords, database/log/SYSVOL paths, alternate DNS, current live disk/firmware options, and patch state beyond the existing recorded KBs. No AD object inventory, GPO, backup, or time-service configuration is changed by these instructions.
+
 ## Server inventory
 
 | Setting | Recorded value |
