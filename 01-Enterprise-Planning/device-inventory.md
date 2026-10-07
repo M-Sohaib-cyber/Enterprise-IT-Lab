@@ -28,6 +28,30 @@ This is the authoritative inventory of devices and virtual machines confirmed by
 
 Host hardware, VDI/snapshot state, Guest Additions, and retained snapshot metadata are recorded in the [environment](../00-Project-Overview/environment.md).
 
+## Fresh-build VM baseline
+
+Use these resource allocations when creating the four VMs. RAM, CPU, and network attachments retain the verified 2026-10-06 values above. Disk sizes are approximate build capacities; they are not sizes of snapshot differencing files or newly measured live disk capacities.
+
+| VM | RAM | CPU | Approximate system disk | Additional disk | Network attachments |
+|---|---|---|---|---|---|
+| `Corp-FW01` | 2048 MB | 2 vCPU | 20 GB VDI | None required by this baseline | Adapter 1: NAT; Adapter 2: NAT Network `Corp-Core`; Adapter 3: NAT Network `Corp-Clients` |
+| `Corp-DC01` | 4096 MB | 2 vCPU | 80 GB VDI | None required by this baseline | Adapter 1: NAT Network `Corp-Core` |
+| `Corp-FS01` | 3075 MB | 2 vCPU | 60 GB VDI | Separate 20 GB `Corp-FS01-Backup.vdi` | Adapter 1: NAT Network `Corp-Core` |
+| `Corp-CL01` | 4096 MB | 2 vCPU | 80 GB VDI | None required by this baseline | Adapter 1: NAT Network `Corp-Clients` |
+
+The 20 GB FW01 and 80 GB DC01 disks are supported by their existing build records; the separate 20 GB FS01 backup disk is verified in the [file-server record](../03-Virtual-Infrastructure/file-server.md). The approximately 60 GB FS01 system disk and 80 GB CL01 disk are rebuild targets for this guide. The existing FS01 record verifies a 60.32 GB `C:` volume, not an exact system VDI capacity; the existing client record leaves live disk capacity **To verify**. These targets do not supersede those live-inventory uncertainties. Dynamic allocation is recorded for FW01, DC01, and the backup VDI; allocation mode for the other fresh system disks is a reader choice pending verification.
+
+### Create the VMs
+
+1. In VirtualBox Manager, select **New**, enter the exact VM name from the table, and choose a host storage folder with the capacity described in the [prerequisites](../00-Project-Overview/environment.md#prerequisites-for-a-fresh-build).
+2. Select the guest OS type/version matching the intended installation media: FreeBSD 64-bit for pfSense, Windows Server 2022 for the servers, and Windows 11 for the client. Labels vary by VirtualBox version. If unattended installation is offered, choose a manual installation so the later guest setup can be followed explicitly; this is a guide workflow choice, not a verified historical setting.
+3. Set RAM and CPU to the table values. If CPU selection is not in the creation wizard, set it afterward under **Settings > System > Processor**.
+4. Create a new VDI system disk with the listed approximate capacity. For FS01, add a separate 20 GB VDI using **Settings > Storage** and a SATA controller, matching the recorded backup-disk attachment. Its formatting and Windows Server Backup configuration belong to the later backup stage.
+5. With the VM powered off, check RAM under **Settings > System**, disk attachments under **Settings > Storage**, and configure adapters using the [network procedure](../02-Network-Design/network-plan.md#configure-vm-network-adapters).
+6. Attach the appropriate installation media to the virtual optical drive. Review guest-specific settings in the [pfSense record](../03-Virtual-Infrastructure/pfsense.md), [DC build record](../03-Virtual-Infrastructure/windows-server-build-guide.md), and [Windows 11 client record](../05-Client-Management/windows11-client.md) before starting installation. DC01 records EFI disabled/TPM None; CL01 records EFI, Secure Boot, and TPM 2.0 enabled. Unspecified FS01 firmware/display settings and other unverified VM options remain reader choices or later verification items.
+
+Create fresh base disks. Historical snapshots and differencing VDIs are not prerequisites, installation disks, or templates for a new build. The repository does not supply prebuilt VM images. Exact MAC addresses do not need to match the original lab; retain unique addresses and compare your client MAC with its later DHCP lease.
+
 ## Inventory notes
 
 - `Corp-CL01` IP information is supported by `Screenshots/Verifications/01-Corp-CL01 ipconfig.png`.

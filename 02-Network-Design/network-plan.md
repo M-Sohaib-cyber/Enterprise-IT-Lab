@@ -27,6 +27,50 @@ The older `northtech.local`, `SRV-*`, and `FW01` values are obsolete and must no
 
 `Corp-DC01` and `Corp-CL01` are confirmed on their respective server and client segments. `Corp-FS01` is live verified at static `10.10.20.20/24`, gateway `10.10.20.1`; its `Corp-Core` VirtualBox attachment was verified on 2026-10-06.
 
+## Create the VirtualBox networks
+
+Complete the [host prerequisites](../00-Project-Overview/environment.md#prerequisites-for-a-fresh-build) first. These steps reproduce the verified NAT Network names, prefixes, and disabled VirtualBox DHCP. They do not resolve the separate gateway uncertainty described below.
+
+1. Open VirtualBox Manager's **Network Manager** / **Network** tool, commonly under **File > Tools > Network Manager**. Select **NAT Networks**; menu labels depend on the installed version.
+2. Select **Create**, open the new network's **Properties**, set its name to `Corp-Core`, and set the IPv4 prefix/network CIDR to `10.10.20.0/24`.
+3. Enable the network and clear **Enable DHCP** / the DHCP option. Save or apply the properties.
+4. Create `Corp-Clients` with IPv4 prefix `10.10.30.0/24`; enable this network and disable its VirtualBox DHCP option too. Save or apply.
+5. Reopen both networks and confirm the names, prefixes, enabled state, and disabled DHCP. The verified design uses these two **NAT Networks** for internal VM attachments. pfSense Adapter 1 uses the separate **NAT** attachment mode, which does not require creating a third named NAT Network.
+
+The lab is intentionally IPv4-focused. The internal VirtualBox NAT Networks' IPv6 options, port-forwarding properties, and NAT service gateway settings were not established by the supplied verification; do not label defaults as verified lab settings. Oracle's [VirtualBox networking guide](https://docs.oracle.com/en/virtualization/virtualbox/7.2/user/networkingdetails.html) describes the Network Manager and distinguishes NAT from NAT Network. That reference explains the software controls, not the original host's unrecorded settings.
+
+### NAT Network gateway verification checkpoint
+
+**To verify before configuring guest gateways:** The repository confirms both NAT Network prefixes and disabled VirtualBox DHCP, but it does not record their NAT service gateway addresses or how those services coexist with pfSense LAN `10.10.20.1` and OPT1 `10.10.30.1`. Disabling DHCP does not by itself establish the NAT service gateway configuration. The **Oracle VirtualBox NAT Network Service** section of Oracle's [networking documentation](https://docs.oracle.com/en/virtualization/virtualbox/7.2/user/networkingdetails.html) describes a gateway assigned by the NAT service; this is distinct from the lab's pfSense gateway.
+
+Inspect the NAT service gateway values on the build host and compare them with the intended pfSense `.1` addresses. The read-only `VBoxManage list natnetworks` command can help inspect the network configuration if `VBoxManage` is available on the host; use the installed version's documentation if the gateway is not exposed there. Record the values before continuing. If either NAT service claims a pfSense address, pause guest addressing until the coexistence detail is verified. This guide does not prescribe an unverified gateway change, substitute Internal Network for the recorded NAT Networks, or claim that the original lab had an address conflict.
+
+### Configure VM network adapters
+
+Create the VMs using the [resource baseline](../01-Enterprise-Planning/device-inventory.md#fresh-build-vm-baseline). With each VM powered off, open **Settings > Network**, select each listed adapter, enable it, and set **Attached to** and **Name** as follows:
+
+| VM | Adapter | Attached to | Name | Intended connection |
+|---|---|---|---|---|
+| `Corp-FW01` | 1 | NAT | No named NAT Network selection | pfSense WAN |
+| `Corp-FW01` | 2 | NAT Network | `Corp-Core` | pfSense LAN |
+| `Corp-FW01` | 3 | NAT Network | `Corp-Clients` | pfSense OPT1 |
+| `Corp-DC01` | 1 | NAT Network | `Corp-Core` | Server network |
+| `Corp-FS01` | 1 | NAT Network | `Corp-Core` | Server network |
+| `Corp-CL01` | 1 | NAT Network | `Corp-Clients` | Client network |
+
+Check **Cable Connected** for these adapters and save the settings. Cable connected is verified for CL01; checking it on the other fresh VM adapters is an explicit build instruction. Adapter hardware models for FW01 and the servers remain **To verify**; select hardware supported by the guest and record the choice. The CL01 screenshot shows Intel PRO/1000 MT Desktop. Each adapter should have a unique MAC address; record the pfSense adapter MACs to help correlate WAN/LAN/OPT1 during guest setup. The documented pfSense interface names are `em0`, `em1`, and `em2`; interface names can differ if a reader chooses different virtual adapter hardware.
+
+For a fresh build, leave additional adapters disabled unless a later documented step requires one. Extra adapters and unrelated Host-Only networks are not prerequisites for this baseline. Check each attachment again before booting: selecting plain NAT instead of the named NAT Network on a server or client would not reproduce the documented shared segment.
+
+### Foundation checks and handoff
+
+- Both named NAT Networks exist with the correct `/24` prefixes and VirtualBox DHCP disabled.
+- The NAT service gateway checkpoint has been inspected; any address overlap remains unresolved until verified, rather than guessed away.
+- FW01 has the three adapters above; each Windows VM has its listed network attachment and connected cable.
+- Continue with the [pfSense deployment record](../03-Virtual-Infrastructure/pfsense.md) for guest installation, interface addressing, routing, and client DHCP. Those settings are not configured merely by attaching VirtualBox adapters.
+- Once pfSense is configured, it provides routing between `Corp-Core` and `Corp-Clients` and DHCP on `Corp-Clients`, with pool `10.10.30.100-10.10.30.199`, gateway `10.10.30.1`, and DNS `10.10.20.10`. Windows servers use the documented static addresses. Initial connectivity rules must be in place before client domain joining; detailed pfSense steps belong to the next build stage.
+- Before pfSense DHCP is ready, a fresh DHCP client may not receive a lab address; this is not a reason to enable VirtualBox DHCP. Later checks are documented in [DHCP verification](../04-Active-Directory/dhcp.md) and the [firewall test matrix](../08-Security/firewall-rules.md#connectivity-from-corp-cl01).
+
 ## Service flow
 
 ```text
