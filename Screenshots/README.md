@@ -2,6 +2,10 @@
 
 This index describes what the existing screenshots visibly demonstrate. A screenshot supports only the claim stated here; it is not a complete configuration export or proof that a setting remains current.
 
+The verified current display name is **Jhon Smith** (`jsmith`). Historical captures and filenames sometimes use **John Smith**; the descriptions below preserve that variation where it appears in the evidence. No image or filename has been changed to conceal it.
+
+Recent backup/time, AD, and pfSense verification also has written records without corresponding new screenshots. Use the linked authoritative documents for those results; this index does not imply an image exists for every later check.
+
 ## Active Directory and Group Policy
 
 | Screenshot | What is visible | Claim supported | Related documentation |
@@ -28,7 +32,7 @@ This index describes what the existing screenshots visibly demonstrate. A screen
 
 | Screenshot | What is visible | Claim supported | Related documentation |
 |---|---|---|---|
-| [01-pfSense-firewall rules.png](Security/01-pfSense-firewall%20rules.png) | OPT1 rule editor with IPv4, protocol Any, source Any, and description `Allow OPT1 to Any` | Historical permissive rule editor; live verification on 2026-09-16 confirmed the current IPv4 allow rule from OPT1 subnets to any; rule order remains to verify | [Firewall rules](../08-Security/firewall-rules.md) |
+| [01-pfSense-firewall rules.png](Security/01-pfSense-firewall%20rules.png) | OPT1 rule editor with IPv4, protocol Any, source Any, and description `Allow OPT1 to Any` | Historical permissive rule editor, not the final ruleset. Ordered hardening was verified in the written 2026-09-20 record and reconfirmed on 2026-10-07; this image does not prove that later order | [Current rule design and verification](../08-Security/firewall-rules.md#current-evidenced-opt1-rule-design) |
 | [01-Corp-CL01 ipconfig.png](Verifications/01-Corp-CL01%20ipconfig.png) | `Corp-CL01` `ipconfig /all` output | Domain suffix `corp.internal`, DHCP client `10.10.30.100`, gateway/DHCP server `10.10.30.1`, and DNS `10.10.20.10` | [Windows client](../05-Client-Management/windows11-client.md) |
 
 ## Server and file-service evidence
@@ -58,5 +62,5 @@ This index describes what the existing screenshots visibly demonstrate. A screen
 - Screenshots are point-in-time records and do not establish current live state.
 - Editor dialogs do not always prove that a change was saved or applied.
 - Several screenshots support only part of a written workflow.
-- The two Windows Server images numbered 06 and 07 are byte-for-byte duplicates with misleading filenames; they are retained in place to preserve repository history and existing references.
+- File hashes confirm `Servers/06-Windows server name change.png` and `Servers/07-Windows server internet protocol.png` are byte-for-byte duplicates. Their misleading filenames are retained to preserve existing references; they are redundant historical pre-configuration evidence, not two independent build checks.
 - No screenshot is treated as a substitute for a current configuration export or live verification.

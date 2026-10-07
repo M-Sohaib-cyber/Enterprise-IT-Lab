@@ -233,6 +233,81 @@ The temporary IT test file was removed after testing. These results verify the A
 
 ## Backup and recovery - implemented 2026-10-06; automatic execution verified 2026-10-07
 
+### Rebuild the backup and recovery setup
+
+These are fresh-build instructions for the recorded design, separate from the historical results below. Complete FS01 domain membership, shares, and permissions first. Use authorized administration and reader-supplied credentials. This documentation update performs no backup, disk operation, or restore.
+
+#### 1. Install Windows Server Backup and check time
+
+Run in elevated PowerShell on FS01:
+
+```powershell
+Install-WindowsFeature -Name Windows-Server-Backup
+Get-WindowsFeature -Name Windows-Server-Backup
+```
+
+Confirm success and `InstallState = Installed`; follow any restart requirement reported by your installation. The reference installation required no restart. Open **Server Manager > Tools > Windows Server Backup > Local Backup**.
+
+Before scheduling, check `tzutil /g` and `w32tm /query /source` in an elevated Command Prompt. The required final zone is `GMT Standard Time`; the recorded source is `Corp-DC01.corp.internal`. If the zone differs, correct it and resynchronise:
+
+```cmd
+tzutil /s "GMT Standard Time"
+w32tm /resync
+tzutil /g
+w32tm /query /source
+w32tm /query /status
+```
+
+Confirm the zone/source and successful synchronization. Investigate a different source or failed resync; do not invent a manual NTP peer or change DC time configuration. `GMT Standard Time` is the Windows time-zone identifier, not a command to disable daylight saving. These commands are a rebuild method, not a claim that the original correction used these exact commands. See Microsoft's [tzutil](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tzutil) and [Windows Time tools](https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings).
+
+#### 2. Attach and prepare the separate disk
+
+1. If Batch 1 already attached the backup VDI, inspect it instead of adding another. Otherwise shut FS01 down normally, open **VirtualBox > Corp-FS01 > Settings > Storage**, select the SATA controller, and add a new dynamically allocated **20 GB VDI** named `Corp-FS01-Backup.vdi`. Retain the system disk and start FS01.
+2. Open **Disk Management** (`diskmgmt.msc`). Identify the new RAW disk by capacity and its VirtualBox attachment. The original was Disk 1; a rebuild's numbering can differ. Never initialize/format based only on an assumed disk number.
+3. On this new empty disk choose **Initialize Disk > GPT**, then **New Simple Volume**, use the available capacity, format **NTFS**, and use initial label `FS01-Backup`. The original initial letter was `B:`; use it only if available, otherwise record your temporary letter as a rebuild difference. Allocation-unit size and other format selections were not recorded and remain reader choices.
+4. Check that the system volume is unchanged and the separate volume is approximately 20 GB. Disk initialization, formatting, and the next dedication step are destructive to the selected disk: use only this identified new disposable VDI, never a disk containing existing data/backups.
+
+`B:`/`FS01-Backup` describe initial preparation, not a required current drive letter/label after dedication. Historical versions surviving the reference setup below are not a guarantee that formatting a target preserves its contents.
+
+#### 3. Create the daily schedule
+
+1. In **Windows Server Backup > Local Backup > Backup Schedule**, select **Custom**.
+2. Under **Select Items for Backup > Add Items**, select only `C:\Shares`, including its five child folders. Do not add an inferred system-state, bare-metal, or whole-server scope.
+3. Open **Advanced Settings**, retain **no file exclusions**, and select **VSS Copy Backup** on the VSS settings tab, matching the recorded wizard option.
+4. Set **Once a day** at **23:00**, in FS01's corrected local time zone.
+5. Choose **Back up to a hard disk that is dedicated for backups** and select the separate 20 GB disk after checking its identity. Read/accept the reformat/dedication warning only for this intended disposable target. The dedicated disk normally stops appearing as an ordinary File Explorer drive.
+6. Finish and inspect the summary: Custom, `C:\Shares`, daily 23:00, dedicated backup disk. To recheck an existing job, reopen **Backup Schedule** and inspect it; do not format/rededicate a target merely to verify it.
+
+The post-dedication letter/label, disk/volume identifiers, retention count, and capacity for future workloads were not established. The 20 GB target matches this small lab, not a retention/offsite guarantee. Do not assume its initial letter remains a valid command-line destination.
+
+#### 4. Verify manual and automatic execution
+
+1. Choose **Backup Once > Scheduled backup options**, review the same scope/target, start the manual backup, and confirm successful completion. This is an initial job test, not scheduled-run proof.
+2. Run these read commands in elevated Command Prompt and inspect the new version's time, target, and file-recovery capability:
+
+```cmd
+wbadmin get versions
+wbadmin get status
+```
+
+3. Use version identifiers exactly as returned, not historical timestamps copied from this guide. A catalog listing alone does not prove the target is accessible or recovery works; confirm the attached target and perform the restore test below. See Microsoft's [version-listing reference](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wbadmin-get-versions).
+4. For automatic verification, leave the host awake and FS01 running across the next 23:00 trigger, with DC01 available for domain time. Do not click Backup Once or manually run a task around that trigger. Review WSB success details and the backup task's history under **Task Scheduler > Task Scheduler Library > Microsoft > Windows > Backup**. The exact task name/ID and original history-enabled state were not recorded; inspect the generated task and enable history before testing if needed. Correlate automatic initiation, completion time, and a new version. Schedule creation or a success timestamp alone does not prove automatic execution.
+5. Recheck daily 23:00 after testing. The reference lab temporarily used 10:00 on 2026-10-07; that was historical verification, not the final schedule or proof of a separately observed 23:00 run.
+
+`wbadmin get status` reports a running operation and may wait for completion; no operation between runs is normal. `wbadmin get policy` was unsupported in the reference session: inspect the GUI schedule instead. See Microsoft's [status reference](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wbadmin-get-status).
+
+#### 5. Perform a safe file-level restore test
+
+1. As an administrator on FS01, create a new disposable `C:\Shares\Public\recovery-test.txt` containing `Enterprise IT Lab - Backup Recovery Test`. If the path already exists, stop and choose/document a unique filename; never overwrite an existing file. Public is read-only for the normal domain user, so place the file through authorized administration.
+2. Read/note its contents. Optionally inspect `Get-Acl -LiteralPath 'C:\Shares\Public\recovery-test.txt'` before backup for a separate security comparison; substitute your filename if different.
+3. Run **Backup Once** using the scheduled options. Confirm completion and that the new version contains the file in the recovery browser **before deleting anything**.
+4. Delete only this test file in File Explorer. Open **Windows Server Backup > Recover**, choose **This server**, select the backup containing it, and choose **Files and folders**.
+5. Select only the test file, choose **Original location**, and enable **Restore ACL permissions**. Review the selection/location before recovery; do not select a broader folder or overwrite unrelated files.
+6. Confirm recovery success, reopen the file, and check its exact contents. If you captured its ACL before backup, compare security separately. The historical test enabled Restore ACL permissions but did not report a separate ACL comparison; the checkbox alone does not prove complete security equivalence.
+7. Remove the disposable restored file after recording the result. Preserve the job/backups and continue with the [final acceptance checklist](../09-Documentation/final-verification.md#backup-and-recovery).
+
+This follows the recorded GUI restore workflow. Microsoft's [file-recovery reference](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wbadmin-start-recovery) explains ACL handling. The original command-line backup invocation was not retained, so no target identifier or original switches are invented here.
+
 ### Earlier gap and subsequent implementation
 
 Earlier checks on 2026-10-06 found Windows Server Backup `InstallState = Available` (not installed), no shadow copies from `vssadmin list shadows`, and no verified backup solution for `C:\Shares`. Built-in scheduled task `RegIdleBackup` existed but was not a file-server backup solution. These observations describe the state before the implementation below.

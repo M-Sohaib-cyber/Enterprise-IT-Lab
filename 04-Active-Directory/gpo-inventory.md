@@ -28,9 +28,7 @@ Use [Group Policy implementation instructions](group-policy.md#implement-the-rec
 
 ## Live application results - 2026-09-16
 
-`gpresult` on `Corp-CL01` confirmed these computer GPOs: `GPO - Workstation Security`, `GPO - Removable Storage Restrictions`, `GPO - Local Administrators`, `GPO - Windows Update Policy`, and `Default Domain Policy`.
-
-For Jhon Smith (`jsmith`), `gpresult` confirmed these user GPOs: `GPO - Drive Mappings`, `GPO - Company Desktop`, and `GPO - User Restrictions`. See [Group Policy Operation and Verification](group-policy.md) for the checked settings and mapping results.
+Computer/user application for Corp-CL01 and Jhon was verified through `gpresult`. The authoritative detailed applied-GPO list, checked policy values and drive results are in [Group Policy live verification](group-policy.md#live-verification---2026-09-16); the inventory table above summarizes each policy's purpose, recorded scope and evidence limits.
 
 ## Default domain password/lockout policy - verified 2026-10-06
 

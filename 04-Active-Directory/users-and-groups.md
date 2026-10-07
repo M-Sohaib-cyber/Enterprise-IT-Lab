@@ -125,7 +125,7 @@ Latest supplied verification on 2026-10-06 confirmed Finance `DL_Finance_RW`, HR
 - [Groups](../Screenshots/Active%20Directory/01-Groups.png)
 - [New user password setup](../Screenshots/Active%20Directory/02-New%20user%20password%20setup.png)
 - [Adding user to group](../Screenshots/Active%20Directory/03-Adding%20user%20to%20group.png)
-- [John Smith group output](../Screenshots/Troubleshooting/01-whoami-groups.png)
+- [Historical jsmith group output](../Screenshots/Troubleshooting/01-whoami-groups.png)
 
 ## Related procedures
 

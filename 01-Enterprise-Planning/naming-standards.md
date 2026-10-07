@@ -17,17 +17,18 @@ The implemented names use a `Corp-` prefix, role abbreviation, and two-digit ins
 
 Documented usernames use an initial-plus-surname pattern:
 
-- John Smith: `jsmith`
+- Jhon Smith: `jsmith`
+- Mohammad Sohail: `msohail`
 - Sarah Ahmed: `sahmed`
 
-No broader naming rule is claimed from two examples.
+No broader naming rule is claimed from these examples. The verified current display name is **Jhon Smith**; some historical screenshots/filenames spell it **John Smith**. Both refer to the documented `jsmith` account; evidence filenames are retained unchanged.
 
 ## Groups
 
 - Department groups use `GG_`, for example `GG_IT` and `GG_Finance`.
 - Resource groups use a `DL_` prefix and access suffix, for example `DL_IT_RW` and `DL_Public_RO`.
 
-The `DL_` prefix describes the intended naming pattern only. The groups were reportedly created with Global rather than Domain Local scope; see [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md).
+The verified current configuration uses **Global Security** for the listed `GG_*` groups and **Domain Local Security** for all six listed `DL_*` resource groups. The original DL groups were mistakenly created as Global and corrected through Universal to Domain Local on 2026-09-16; scopes and nesting were reconfirmed on 2026-10-06. That mistake is a historical lesson, not the current required scope. See [Users and Groups](../04-Active-Directory/users-and-groups.md) and [Group-Based File Permissions](../04-Active-Directory/agdlp-and-permissions.md).
 
 ## Shares
 

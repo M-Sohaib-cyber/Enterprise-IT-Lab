@@ -116,6 +116,10 @@ Details: [Group Policy Operation and Verification](../04-Active-Directory/group-
 - The temporary `recovery.test` account was successfully restored to Company Users in a disabled state, then deleted again; final lookup returned object not found. Broader backup/recovery and uninspected AD settings remain open.
 - **Details:** [AD configuration](../04-Active-Directory/active-directory-installation.md), [Users and Groups](../04-Active-Directory/users-and-groups.md), and [Account Recovery](../06-Helpdesk/account-recovery.md).
 
+## Reproduction limits and acceptance
+
+The [final acceptance checklist](final-verification.md) provides the finished-lab checks in dependency order. Its [reproduction limits](final-verification.md#reproduction-limits) consolidate the outstanding NAT service gateway, exact ACL, GPO, firewall and other historical-setting gaps, with links to the authoritative build guides. These remain documentation/verification gaps, not assumed live failures. Reader choices and a functional rebuild must not be reported as an exact match to unrecorded fields.
+
 ## Status convention
 
 - **Documented:** Supported by repository records or evidence.

@@ -18,11 +18,11 @@ This document separates controls evidenced in the current lab from unresolved co
 | User restrictions | Control Panel and PC settings access blocked in the documented test | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Removable storage | Deny-all removable-storage policy produced an access-denied test | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | File access | Departmental/public share access and denial behavior tested on `Corp-CL01` | [File server](../03-Virtual-Infrastructure/file-server.md) |
-| File backup/recovery | Windows Server Backup Installed; dedicated 20 GB backup VDI; manual command-line and GUI backups succeeded, and deleted-file recovery with content verification succeeded. Daily 23:00 schedule configured; first automatic run is pending. | [File server](../03-Virtual-Infrastructure/file-server.md) |
+| File backup/recovery | Windows Server Backup installed; manual backups and file-level restore verified. Automatic execution succeeded on 2026-10-07 during temporary 10:00 testing; daily 23:00 schedule restored. | [Backup/recovery record and build procedure](../03-Virtual-Infrastructure/file-server.md#backup-and-recovery---implemented-2026-10-06-automatic-execution-verified-2026-10-07) |
 | Windows Update | Automatic Updates option 3 recorded and verified through `AUOptions=0x3` | [GPO inventory](../04-Active-Directory/gpo-inventory.md) |
 | Account lifecycle | Manual disable, password reset, unlock, and forced password-change exercises documented | [Offboarding](../05-Client-Management/offboarding.md) and [account recovery](../06-Helpdesk/account-recovery.md) |
 
-These records include historical tests and the supplied live verification results from 2026-09-16, 2026-09-20, and 2026-10-06. Current settings still require live verification where identified in the linked documents. OPT1 server-network segmentation is verified, but the final allow-to-any rule remains broad; this is not a claim that the entire firewall is fully hardened or least privilege. IPv6 interface observations do not complete a comprehensive IPv6 security review.
+These records include historical tests and supplied live verification through 2026-10-07. Current settings still require live verification where identified in the linked documents. OPT1 server-network segmentation is verified, but the final allow-to-any rule remains broad; this is not a claim that the entire firewall is fully hardened or least privilege. IPv6 interface observations do not complete a comprehensive IPv6 security review.
 
 ## Defender observations - 2026-10-06
 
@@ -37,7 +37,7 @@ The authoritative issue register is [Known Issues and Verification Items](../09-
 - `DL_*` scopes were corrected through Universal to Domain Local and all six memberships verified on 2026-09-16. Latest 2026-10-06 checks confirm all five resource-group NTFS entries and intentional `Everyone: Full` share permissions, with NTFS providing authorization. Jhon tested IT read/write, Public read-only, and Finance/HR/Sales denial; complete ACL/inheritance review remains open.
 - `GPO - Local Administrators` intentionally grants workstation local Administrator membership to `CORP\GG_IT`; Jhon's resulting rights on `Corp-CL01` are verified. Broader least-privilege review remains open.
 - The applied 600-second inactivity value is now verified; the earlier approximately five-minute lock/display observation remains unexplained.
-- `dcdiag` generally passed but reported a WinRM WSMAN SPN warning for later investigation.
+- Standard `dcdiag` passed all reported tests on 2026-10-06; the earlier WinRM WSMAN SPN warning remains a historical observation for targeted investigation, without a proven cause/remediation.
 - The pfSense GUI showed older firewall-log entries during the 2026-09-20 test, although fresh blocks were confirmed in `/var/log/filter.log`. No root cause was proven.
 
 Group corrections were completed during the supplied live work. This documentation update performs no remediation.
@@ -50,8 +50,8 @@ Future practical work may:
 - Review the membership and requirement for workstation local Administrator access.
 - Verify DHCP exclusions and uninspected DHCP/VirtualBox settings beyond the 2026-10-06 checks; OPT1 options, lease times, absence of reservations, and disabled VirtualBox DHCP on both lab NAT networks are verified. See [DHCP](../04-Active-Directory/dhcp.md).
 - Export and review current GPO, DNS, firewall, directory, and permission state.
-- Verify the first automatic file-server backup: schedule CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION, once daily at 23:00, first due 06/10/2026 at 23:00. Manual backups and a deleted-file restore are verified. Broader recovery remains untested. See [file server](../03-Virtual-Infrastructure/file-server.md).
-- Define backup, recovery, centralized logging, monitoring, and patch-verification requirements. Remote syslog is not configured; verified local firewall logging does not complete centralized logging or broader monitoring.
+- Extend recovery testing beyond the verified file restore and automatic scheduled execution; practical volume recovery, offsite protection, and disaster recovery remain untested. See [file server](../03-Virtual-Infrastructure/file-server.md#backup-and-recovery---implemented-2026-10-06-automatic-execution-verified-2026-10-07).
+- Define broader recovery, centralized logging, monitoring, and patch-verification requirements. Remote syslog is not configured; verified local firewall logging does not complete centralized logging or broader monitoring.
 
 These are planned verification or improvement activities only. No result is claimed until configuration work and evidence exist.
 

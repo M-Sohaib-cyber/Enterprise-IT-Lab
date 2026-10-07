@@ -154,27 +154,9 @@ These are preserved historical test results, not new tests performed during this
 
 ## Live verification - 2026-09-16
 
-Live verification on 2026-09-16 used `gpresult` on `Corp-CL01` and for Jhon Smith (`CORP\jsmith`).
+Computer and user `gpresult` checks confirmed the recorded policies applied to Corp-CL01 and Jhon Smith (`CORP\jsmith`). Jhon received I:/P: with F: absent after IT targeting was corrected; the recorded restrictions, wallpaper, 600-second inactivity value, update mode 3 and intentional IT local-administrator membership were verified.
 
-| Scope | Confirmed applied GPOs |
-|---|---|
-| Computer (`Corp-CL01`) | `GPO - Workstation Security`; `GPO - Removable Storage Restrictions`; `GPO - Local Administrators`; `GPO - Windows Update Policy`; `Default Domain Policy` |
-| User (Jhon) | `GPO - Drive Mappings`; `GPO - Company Desktop`; `GPO - User Restrictions` |
-
-- Workstation Security inactivity limit: 600 seconds (10 minutes). `Corp-CL01` registry value `InactivityTimeoutSecs = 0x258` confirmed the applied value.
-- Removable Storage Restrictions: `All Removable Storage classes: Deny all access` enabled.
-- Windows Update: Configure Automatic Updates mode 3, Auto download and notify for install.
-- Company Desktop wallpaper: `\\Corp-FS01\Public\company-wallpaper.jpg`; the file successfully opened from `Corp-CL01`.
-- User Restrictions: Control Panel/PC Settings blocked; practically tested successfully on `Corp-CL01`.
-- Local Administrators: `GG_IT` intentionally receives workstation local Administrators membership through `GPO - Local Administrators`. Jhon is confirmed in `Domain Users` and `GG_IT`, so he receives local administrator rights on `Corp-CL01`.
-
-| Drive | Configured path | Verified targeting/result |
-|---|---|---|
-| `I:` | `\\Corp-FS01\IT` | Corrected during verification to item-level targeting for `CORP\GG_IT`; mapped for Jhon after `gpupdate` |
-| `P:` | `\\Corp-FS01\Public` | Mapped for Jhon after `gpupdate`; targeting details beyond this result remain to verify |
-| `F:` | `\\Corp-FS01\Finance` | Already targets `CORP\GG_Finance`; correctly absent for Jhon |
-
-These are the supplied live-check results. This documentation update changes no GPO or lab configuration.
+The authoritative detailed application list, policy values and mapping results are retained in [Group Policy live verification](../04-Active-Directory/group-policy.md#live-verification---2026-09-16). Use that record and the [GPO inventory](../04-Active-Directory/gpo-inventory.md) rather than a second detailed status table here. These are historical results, not new live tests or configuration changes.
 
 ## DNS verification - 2026-09-20
 

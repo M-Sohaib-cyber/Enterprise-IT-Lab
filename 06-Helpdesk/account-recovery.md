@@ -2,7 +2,7 @@
 
 ## Scope
 
-This document records the historical password-reset and account-unlock exercise performed for John Smith (`jsmith`) using Active Directory Users and Computers, plus the supplied 2026-10-06 AD Recycle Bin enablement and temporary-account restore test. No self-service tool or ticketing integration is claimed.
+This document records the historical password-reset and account-unlock exercise for `jsmith`, whose verified current display name is Jhon Smith, using Active Directory Users and Computers, plus the supplied 2026-10-06 AD Recycle Bin enablement and temporary-account restore test. Historical captures use the alternate spelling John Smith; their filenames/content are retained. No self-service tool or ticketing integration is claimed.
 
 ## Starting condition
 
@@ -14,7 +14,7 @@ Evidence: [Account locked out](../Screenshots/Active%20Directory/11-Account-Lock
 
 The existing exercise records that the administrator:
 
-1. Opened John Smith's account in Active Directory Users and Computers on `Corp-DC01`.
+1. Opened the `jsmith` account in Active Directory Users and Computers on `Corp-DC01`.
 2. Confirmed and cleared the locked state.
 3. Reset the password to a temporary value.
 4. Enabled **User must change password at next logon**.

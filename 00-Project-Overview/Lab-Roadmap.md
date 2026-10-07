@@ -15,21 +15,13 @@ Status includes the supplied live verification results from 2026-09-16, 2026-09-
 | DNS | Verified 2026-09-20: core DNS works through `Corp-DC01` at `10.10.20.10`; running AD-integrated forward zones, inspected host records, external resolution without explicit forwarders, tested client forward/reverse lookups, and successful `dcdiag /test:dns /v`. Server-network reverse zone and DC PTR implemented; see [DNS](../04-Active-Directory/dns.md). |
 | Windows client | `Corp-CL01` is joined to the domain and domain authentication was tested. |
 | File services | `Corp-FS01`, departmental SMB shares, access testing, and mapped drives are documented. |
-| File backup/recovery | Verified 2026-10-06: Windows Server Backup installed; dedicated 20 GB backup VDI; command-line and GUI backups succeeded. A deleted file was restored and its contents verified; this file-level restore test remains verified. On 2026-10-07, the schedule was temporarily changed from 23:00 to 10:00 specifically to verify automatic execution; the backup automatically completed successfully at 10:00 without a manual trigger. The daily 23:00 schedule was then restored; `C:\Shares` and the dedicated backup disk remain unchanged. See [file server](../03-Virtual-Infrastructure/file-server.md). |
+| File backup/recovery | Manual backups/file restore verified 2026-10-06; automatic execution verified 2026-10-07 during temporary 10:00 testing, then daily 23:00 restored. See the authoritative [backup record and build procedure](../03-Virtual-Infrastructure/file-server.md#backup-and-recovery---implemented-2026-10-06-automatic-execution-verified-2026-10-07). |
 | Identity administration | OU, user, group, onboarding, offboarding, lockout, unlock, and password-reset exercises documented. On 2026-10-06, two subnet objects were registered to the single AD site and Recycle Bin enabled; a temporary-account restore succeeded and the test account was deleted afterward. See [AD configuration](../04-Active-Directory/active-directory-installation.md). |
 | Group Policy | Drive mappings, company desktop, workstation security, user restrictions, password/lockout, removable storage, local administrators, and Windows Update policies are documented. |
 
-Live verification on 2026-09-16 also confirmed:
+Detailed dated network/server/group checks remain in the linked component records rather than being repeated here. The authoritative [GPO application record](../04-Active-Directory/group-policy.md#live-verification---2026-09-16) preserves the client/user policy and mapping results. [Firewall Rules](../08-Security/firewall-rules.md) preserves the 2026-09-20 connectivity/logging tests and 2026-10-07 final review, with their limits.
 
-- pfSense WAN `em0`, DHCP `10.0.2.15/24`, gateway `10.0.2.2`; LAN `em1`, `10.10.20.1/24`; OPT1 `em2`, `10.10.30.1/24`.
-- pfSense DHCP enabled on OPT1, pool `10.10.30.100-10.10.30.199`.
-- `Corp-DC01` static addressing, domain/DC DNS resolution, and ownership of all five FSMO roles; `dcdiag` generally passed with the warning below.
-- `Corp-FS01` Windows Server 2022 Standard Evaluation build 20348, static `10.10.20.20/24`, domain/network settings, and Finance, HR, IT, Public, and Sales shares.
-- All `DL_*` scopes corrected through Universal to Domain Local; six resource-group memberships and Finance/IT NTFS Modify entries verified.
-- Computer/user GPO application for `Corp-CL01` and Jhon, 600-second inactivity limit and `0x258` registry value, removable-storage deny-all setting, and Windows Update mode 3.
-- Wallpaper path/file access and practical Control Panel/PC Settings block verified; I: targeting corrected to `CORP\GG_IT`, with I:/P: present and F: absent for Jhon after `gpupdate`.
-
-Final firewall verification on 2026-09-20 confirmed automatic outbound NAT without a configuration change; client DC reachability, DNS, SMB over TCP 445, and internet connectivity; and blocked ICMP to `Corp-FS01`. Logging enabled specifically on **Block OPT1 to Server Network** produced fresh raw-log block entries. The OPT1 server-network segmentation objective is verified. WAN DHCP6/Unique Local IPv6 and internal link-local-only observations were recorded without IPv6 changes. See [Firewall Rules](../08-Security/firewall-rules.md) for the results and their limits.
+The rebuild route is in [README](../README.md#build-from-zero); finish with the [final acceptance checklist](../09-Documentation/final-verification.md). Passing functional checks does not fill unrecorded configuration fields.
 
 ## Needs Verification
 
