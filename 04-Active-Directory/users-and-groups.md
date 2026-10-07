@@ -8,6 +8,53 @@ This is the authoritative inventory of Active Directory objects named in current
 - NetBIOS name: `CORP`
 - Domain controller: `Corp-DC01`
 
+## Implement users and security groups
+
+Complete the [OU foundation](active-directory-installation.md#implement-the-directory-foundation) first. Use **Active Directory Users and Computers** on DC01. The tables below are the inventory to reproduce; these instructions do not authorize extra accounts or infer undisclosed attributes.
+
+### Create the documented accounts
+
+1. In `Company Users`, choose **New > User**. Create Jhon Smith with logon name `jsmith`, then Mohammad Sohail with logon name `msohail`; use the `corp.internal` logon suffix and verify the pre-Windows 2000 names match the listed usernames. Preserve the recorded spelling **Jhon**.
+2. Supply your own passwords satisfying the domain policy. Passwords, password-expiry flags, and the original first-logon selections for these two users are unrecorded; do not treat wizard defaults as historical facts. Both accounts must be enabled in the final state. If your setup requires a first-logon password change, complete it before client tests.
+3. To reproduce the final Sarah record directly, create Sarah Ahmed (`sahmed`) in `Disabled Users`, supply a reader-chosen password if prompted, and ensure **Account is disabled** is selected in the account properties. Do not add her to `GG_Finance` in the final state. Alternatively, reproduce [onboarding](../05-Client-Management/onboarding.md) and then [offboarding](../05-Client-Management/offboarding.md); the latter must be completed to reach the documented final state.
+4. Check each user's **Member Of** tab. Retain the normal `Domain Users` membership; add only the verified memberships described below. Do not create replacement Administrator, Guest, or krbtgt accounts, enable Guest/krbtgt, populate the reserved OUs, or recreate the cleaned-up recovery-test account.
+
+Display names/usernames and final OU/enabled states are recorded. Exact given-name/surname fields, UPNs beyond the rebuild convention above, descriptions, department attributes, password settings, and additional memberships remain **To verify**.
+
+### Create groups and implement AGDLP
+
+1. In `Groups`, choose **New > Group** for each of `GG_IT`, `GG_HR`, `GG_Finance`, `GG_Sales`, and `GG_HelpDesk`. Select **Global** scope and **Security** type. The `Groups` OU is the documented group location; a current complete OU-content export is not available.
+2. Create `DL_Finance_RW`, `DL_HelpDesk_RW`, `DL_HR_RW`, `DL_IT_RW`, `DL_Public_RO`, and `DL_Sales_RW` with **Domain local** scope and **Security** type. For a fresh build, create the correct scope directly.
+3. Open `GG_IT > Properties > Members > Add` and add `jsmith` and `msohail`; use **Check Names** before saving. Leave the other four GG groups with no direct users to match the latest verified inventory.
+4. Open each DL group's **Members** tab and add the exact member from the resource-group table below. In particular, add the existing Global group `Domain Users` to `DL_Public_RO`; do not invent a `GG_Public` group. Do not assign an undocumented HelpDesk share or ACL.
+5. Reopen group properties to confirm scopes, types, and direct members. The required chain is **Accounts -> Global groups -> Domain Local groups -> NTFS permissions**. `jsmith -> GG_IT -> DL_IT_RW -> IT Modify` is the verified department example; `Domain Users -> DL_Public_RO -> Public Read & Execute` provides public read access.
+
+The historical DL scope error and Global -> Universal -> Domain Local correction remain below as a lesson. They are not steps required for a new build. If repairing an existing wrong-scope group, check conversion eligibility and memberships first; do not recreate groups and lose their permission identities. Microsoft's [security-group reference](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups) explains scope rules.
+
+### Configuration checkpoints
+
+Run these read checks in PowerShell on DC01 and compare their output with the inventory below:
+
+```powershell
+Get-ADGroup -Filter 'Name -like "GG_*" -or Name -like "DL_*"' | Select-Object Name,GroupScope,GroupCategory
+Get-ADGroupMember GG_IT
+Get-ADGroupMember GG_Finance
+Get-ADGroupMember GG_HR
+Get-ADGroupMember GG_Sales
+Get-ADGroupMember GG_HelpDesk
+Get-ADGroupMember DL_Finance_RW
+Get-ADGroupMember DL_HelpDesk_RW
+Get-ADGroupMember DL_HR_RW
+Get-ADGroupMember DL_IT_RW
+Get-ADGroupMember DL_Public_RO
+Get-ADGroupMember DL_Sales_RW
+Get-ADUser jsmith -Properties Enabled,MemberOf | Select-Object SamAccountName,Enabled,DistinguishedName,MemberOf
+Get-ADUser msohail -Properties Enabled,MemberOf | Select-Object SamAccountName,Enabled,DistinguishedName,MemberOf
+Get-ADUser sahmed -Properties Enabled,MemberOf | Select-Object SamAccountName,Enabled,DistinguishedName,MemberOf
+```
+
+`MemberOf` does not list a user's primary group; check `Domain Users` through ADUC rather than interpreting its omission as missing membership. Refresh a user's logon session after membership changes before checking `whoami /groups` on CL01. Proceed to [share permissions](../03-Virtual-Infrastructure/file-server.md#implement-shares-and-resource-permissions) once scopes and nesting match.
+
 ## Organizational units
 
 All OUs listed below were verified on 2026-10-06, including `IT Admins` nested beneath `Admins`.

@@ -17,6 +17,15 @@ Accounts
 
 Examples documented in the original design include `GG_IT` to `DL_IT_RW` and `GG_Finance` to `DL_Finance_RW`. Live verification on 2026-09-16 confirmed these group scopes and nesting after correction.
 
+## Implement the verified permission chain
+
+1. Follow [Users and Groups](users-and-groups.md#implement-users-and-security-groups) to create Global Security GG groups and Domain Local Security DL groups, then add the direct members shown below. New DL groups must start as Domain Local; the historical conversion is a correction lesson, not a required build step.
+2. Follow the [FS01 folder, share, and NTFS procedure](../03-Virtual-Infrastructure/file-server.md#implement-shares-and-resource-permissions). Share permissions are intentionally `Everyone: Full Control`; the DL-group NTFS rights implement authorization.
+3. Review inherited permissions before exposing the shares. The correct DL entry alone cannot establish isolation if another Allow grants broad access. Complete ACLs, administrative application flags, and inheritance choices remain unrecorded; the FS01 procedure flags those exact-match limits rather than supplying guessed settings.
+4. Verify scopes and direct nesting on DC01, then use a fresh CL01 logon to check allowed IT access, read-only Public access, and denied Finance/HR/Sales access as Jhon. The positive/negative test steps are in the linked FS01 procedure; historical Finance tests require the earlier enabled Sarah state, not her current disabled state.
+
+Proceed to GPO drive mappings after UNC access succeeds. A drive-map target controls whether a preference is applied; it is not a replacement for NTFS authorization. `DL_HelpDesk_RW` is a verified nested group, but its resource use is not established and no HelpDesk ACL is prescribed.
+
 ## Recorded implementation
 
 Live verification on 2026-09-16 confirmed all `DL_*` security groups were corrected from Global to Domain Local using Universal as the intermediate scope (Global -> Universal -> Domain Local). Verification on 2026-10-06 reconfirmed all six listed `DL_*` groups as DomainLocal Security groups and the following direct nesting; each resource group contains the listed member:

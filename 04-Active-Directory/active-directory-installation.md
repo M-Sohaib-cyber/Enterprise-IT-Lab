@@ -4,6 +4,50 @@
 
 This document records the Active Directory configuration associated with the completed `corp.internal` deployment. The authoritative server build, networking, promotion settings, and verification record are maintained in [Corp-DC01 Build and Configuration](../03-Virtual-Infrastructure/windows-server-build-guide.md).
 
+## Implement the directory foundation
+
+Start after [DC01 promotion and verification](../03-Virtual-Infrastructure/windows-server-build-guide.md#build-from-zero). These are fresh-build instructions for the recorded state, not additional live-test results. Use an authorized directory administrator account; credentials are reader supplied.
+
+### Create the OU tree and place computers
+
+1. On DC01, open **Server Manager > Tools > Active Directory Users and Computers** and expand `corp.internal`.
+2. Right-click the domain, choose **New > Organizational Unit**, and create `Admins`, `Company Users`, `Disabled Users`, `Groups`, `Servers`, `Service Accounts`, and `Workstations`. Create only missing objects; do not recreate the existing `Domain Controllers` OU created by promotion.
+3. Right-click `Admins` and create its child OU `IT Admins`. Keep `Admins`, `IT Admins`, and `Service Accounts` empty to match the verified user inventory.
+4. Locate the joined `CORP-FS01` computer, right-click **Move**, and select `Servers`. Move `CORP-CL01` to `Workstations` once it has joined. Leave `CORP-DC01` in `Domain Controllers`.
+5. Compare the tree and computer locations with the verified tables below. OU protection/delegation settings were not recorded; wizard defaults are fresh-build choices, not verified historical settings. Do not add inferred delegation or extra OUs.
+
+Continue with [user creation, group scopes, and nesting](users-and-groups.md#implement-users-and-security-groups), then [DNS](dns.md#implement-the-recorded-dns-configuration), [shares and permissions](../03-Virtual-Infrastructure/file-server.md#implement-shares-and-resource-permissions), and [Group Policy](group-policy.md#implement-the-recorded-policies). If CL01 is not built yet, return to its build guide after the user/group stage.
+
+### Register the two AD subnets
+
+1. Open **Server Manager > Tools > Active Directory Sites and Services**. Confirm `Default-First-Site-Name` exists and contains DC01; do not create another site or DC.
+2. Right-click **Subnets > New Subnet**. Enter prefix `10.10.20.0/24`, select `Default-First-Site-Name`, and save.
+3. Repeat for `10.10.30.0/24`, associated with the same site. If either subnet already exists, inspect its association instead of duplicating it.
+4. In PowerShell on DC01, run the following read checks. Both subnet objects must report the same site; `repadmin` is a topology check, not a multi-DC replication test.
+
+```powershell
+Get-ADReplicationSubnet -Filter * -Properties Site | Select-Object Name,Site
+Get-ADReplicationSite -Filter * | Select-Object Name
+repadmin /showrepl
+repadmin /replsummary
+```
+
+The recorded design has one DC and no replication partners. Do not infer site links, additional replication topology, or changes to other Sites and Services properties.
+
+### Enable and verify AD Recycle Bin
+
+1. Open **Server Manager > Tools > Active Directory Administrative Center** with an account authorized to enable forest-wide features. Select `corp.internal` and choose **Enable Recycle Bin** in Tasks if it is not already enabled.
+2. Read and accept the confirmation for this forest. Enabling Recycle Bin is irreversible; it is a required part of reproducing the recorded final forest. Refresh ADAC after completion.
+3. Run the check below on DC01. `EnabledScopes` must be populated for this forest. Do not recreate the deleted `recovery.test` account as a permanent user.
+
+```powershell
+Get-ADOptionalFeature -Filter 'Name -eq "Recycle Bin Feature"' | Select-Object Name,EnabledScopes
+Get-ADOrganizationalUnit -Filter * | Select-Object Name,DistinguishedName
+Get-ADComputer -Filter * | Select-Object Name,Enabled,DistinguishedName
+```
+
+For an optional deletion/restore exercise, follow [Account Recovery](../06-Helpdesk/account-recovery.md), which preserves the actual test and its cleanup. Microsoft's [Recycle Bin instructions](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/adac/active-directory-recycle-bin) explain the enablement controls; they do not add lab-specific settings.
+
 ## Domain
 
 | Item | Confirmed value |

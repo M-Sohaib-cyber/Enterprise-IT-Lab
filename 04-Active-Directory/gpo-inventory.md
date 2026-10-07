@@ -20,6 +20,12 @@ This inventory includes repository records and supplied live verification result
 | `GPO - Local Administrators` | `Workstations` | Restricted Groups adds `CORP\GG_IT` to local `Administrators` | Live: intentional `GG_IT` assignment confirmed; Jhon receives local admin rights | Broad local-administrator assignment is a known security concern |
 | `GPO - Windows Update Policy` | `Workstations` | Configure Automatic Updates option 3: auto-download and notify for install | Live: computer GPO applies and mode 3 confirmed; historical `AUOptions=0x3` | Other Windows Update settings To verify |
 
+## Rebuild procedure and evidence limits
+
+Use [Group Policy implementation instructions](group-policy.md#implement-the-recorded-policies) for creation/linking, editor paths, recorded values, asset prerequisites, and checkpoints. It preserves the distinction between verified application and missing configuration fields.
+
+`Default Domain Controllers Policy` is a built-in policy to inspect after promotion, not an additional verified custom policy in the table above. Its exact settings and current link/filtering metadata were not recorded; no custom values are prescribed. The local Administrators Restricted Groups identity and both membership lists, complete drive-map options/targeting trees, and wallpaper style also require verification before an exact-match claim. The historical drive-map screenshot establishes I:'s Update action; P:/F: actions remain unknown. The original wallpaper asset is not supplied and must be provided or replaced by the reader as explained in the implementation guide.
+
 ## Live application results - 2026-09-16
 
 `gpresult` on `Corp-CL01` confirmed these computer GPOs: `GPO - Workstation Security`, `GPO - Removable Storage Restrictions`, `GPO - Local Administrators`, `GPO - Windows Update Policy`, and `Default Domain Policy`.

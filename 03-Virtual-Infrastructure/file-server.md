@@ -137,6 +137,58 @@ Live verification on 2026-09-16 confirmed Finance/IT NTFS Modify entries and IT 
 
 All `DL_*` security groups were corrected from Global through Universal to Domain Local, and all six resource-group memberships were verified; see [Users and Groups](../04-Active-Directory/users-and-groups.md). Complete ACLs and inheritance remain to verify.
 
+## Implement shares and resource permissions
+
+Start after FS01 has joined `corp.internal`, its File Server role is installed, and [groups/scopes/nesting](../04-Active-Directory/users-and-groups.md#implement-users-and-security-groups) match the verified inventory. Use authorized administrative access on FS01. This section adds a fresh-build workflow; it does not change the VM build or backup procedure.
+
+### Create the folders and inspect inherited access
+
+1. In File Explorer create `C:\Shares` and its five child folders: `Finance`, `HR`, `IT`, `Public`, and `Sales`. Use the existing system volume; do not invent a separate data disk or HelpDesk share.
+2. Before publishing shares, open each folder's **Properties > Security > Advanced**. Inspect every principal, permission, **Inherited from**, and **Applies to** value, including inherited entries from `C:\` or `C:\Shares`. Broad inherited user access can defeat departmental isolation even when the correct DL group is added.
+3. Preserve administrative/system access while reviewing broad nonadministrative entries. If a broad entry is inherited, it cannot be removed independently while inheritance is enabled. The GUI offers **Disable inheritance > Convert inherited permissions into explicit permissions** as a fresh-build review technique; conversion preserves entries for inspection and does not itself remove broad access. Do not blindly select removal of all inherited entries or replacement of all child ACLs.
+4. Remove or narrow only identified unwanted user access after reviewing its effects and retaining administrative access. Do not add a blanket Deny to `Everyone` or `Domain Users`: authorized department users belong to those populations too. Check effective access on each folder and a child file before sharing it.
+
+**Exact ACL reproduction remains gated by verification.** The repository establishes the five resource-group rights and administrative principals, but not the final `C:\Shares` ACL, complete child-folder ACLs, owners, explicit/inherited flags, or `Applies to`/propagation choices. It does not establish whether the final build disabled inheritance, converted entries, or removed them at the parent. The review technique above is not a historical assertion. Before applying recursive permissions or claiming an exact ACL match, obtain those fields from the reference lab; otherwise record the rebuild's ACL choices as differences, not verified original settings.
+
+The [historical HR security screenshot](../Screenshots/Servers/02-Setting%20department%20and%20security.png) shows inherited `SYSTEM` and local Administrators Full Control from `C:\`, plus broad Users and CREATOR OWNER entries. It is an earlier point-in-time editor view, not the final departmental ACL or a template to copy. Latest verification retains `SYSTEM`, `BUILTIN\Administrators`, and `Domain Admins`, but does not establish each one's exact final rights/application flags. The historical Full Control statement and CREATOR OWNER entry remain in the record above; do not infer current values from them.
+
+### Add the verified resource permissions
+
+1. For each child folder, open **Properties > Security > Advanced > Add > Select a principal**. Resolve the corresponding `CORP\DL_*` group from the verified permissions table above with **Check Names**.
+2. Add an **Allow** entry with **Modify** for Finance, HR, IT, and Sales, and **Read & execute** for Public. Grant resource permissions to DL groups rather than directly to individual users or GG groups.
+3. The entry's **Applies to** choice and any child propagation must be established through the ACL verification checkpoint above; no exact original selection is recorded. Confirm the resulting effective rights on both folder and content, and preserve system/administrative access. Adding a DL entry does not cancel an existing broad Allow.
+4. Reopen the ACL after applying it. Check the principal/right against the verified table and verify there are no other entries giving the test user unwanted access. Do not infer Full Control for department groups, Public write access, or a HelpDesk resource permission.
+
+### Publish the five SMB shares
+
+1. After the NTFS review, open each folder's **Properties > Sharing > Advanced Sharing** and select **Share this folder**.
+2. Use its exact folder name as the share name: `Finance`, `HR`, `IT`, `Public`, or `Sales`. Confirm the paths remain those in the storage table above.
+3. Open **Permissions**, select/add `Everyone`, and allow **Full Control**. This is the verified intentional share permission on all five shares. NTFS controls actual authorization; share-level Full Control does not override an NTFS restriction.
+4. Save and repeat for the remaining folders. Other share ACL entries/properties such as caching, limits, and access-based enumeration were not recorded; do not invent their historical settings.
+5. In elevated PowerShell on FS01, inspect the resulting shares, share permissions, and NTFS ACLs. Repeat the last two commands for each of the other four names/paths.
+
+```powershell
+Get-SmbShare -Name Finance,HR,IT,Public,Sales | Select-Object Name,Path
+Get-SmbShareAccess -Name IT
+Get-Acl -LiteralPath 'C:\Shares\IT' | Format-List Owner,AreAccessRulesProtected,AccessToString
+```
+
+### Positive and negative access checkpoints
+
+Use a normal, unelevated session on CL01 as `CORP\jsmith` after a fresh sign-in. Test UNC paths first; mapped-drive absence alone does not prove NTFS denial. Keep FS01 running. Jhon's workstation-local administrator membership is not permission to administer FS01 or override its SMB ACLs.
+
+| Test | Expected outcome based on the 2026-10-06 verification |
+|---|---|
+| Open `\\Corp-FS01\IT`; create, read, then delete a reader-named temporary file | Read/write succeeds; remove the test file |
+| Open `\\Corp-FS01\Public` and read an administrator-provided file; try creating a temporary file | Read succeeds; create is denied |
+| Open `\\Corp-FS01\Finance`, `\\Corp-FS01\HR`, and `\\Corp-FS01\Sales` | Access denied |
+
+Do not accept successful unauthorized access as completion: review the user's token/nesting and effective ACLs, especially inherited broad entries. Under the hardened firewall, CL01 ping to FS01 is intentionally blocked; test SMB instead.
+
+The historical Finance test used Sarah while enabled and in `GG_Finance`: Finance create/delete succeeded and IT access was denied. Sarah is now disabled and removed from Finance, so a fresh final-state sign-in is expected to fail. To repeat that lifecycle, follow [onboarding](../05-Client-Management/onboarding.md) and [offboarding](../05-Client-Management/offboarding.md), returning her to the verified final state. Do not invent enabled HR/Sales users merely to claim those departments were tested.
+
+Proceed to [drive mappings and other GPOs](../04-Active-Directory/group-policy.md#implement-the-recorded-policies) once the documented allowed and denied access works. Full ACL/inheritance equivalence remains unverified until the missing fields above are checked.
+
 ## Drive mappings
 
 The existing `GPO - Drive Mappings` record documents:

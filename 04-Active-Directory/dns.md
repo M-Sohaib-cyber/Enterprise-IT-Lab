@@ -6,6 +6,45 @@
 
 Authoritative address information is maintained in [IP Addressing, DHCP, and DNS](../02-Network-Design/ip-addressing.md).
 
+## Implement the recorded DNS configuration
+
+Start after [AD DS/DNS promotion](../03-Virtual-Infrastructure/windows-server-build-guide.md#build-from-zero), with FS01 and CL01 joined when checking their host records. These instructions implement the inspected records; they do not assume a complete DNS export.
+
+### Check the forward zones and register hosts
+
+1. On DC01, open **Server Manager > Tools > DNS**, expand `Corp-DC01 > Forward Lookup Zones`, and inspect `corp.internal` and `_msdcs.corp.internal`. They are created by AD DS/DNS promotion; do not create duplicate zones or manually recreate the AD service-record hierarchy.
+2. Inspect `corp.internal` for the records listed in the verified host table below: the zone-root record and DC01 at `10.10.20.10`, FS01 at `10.10.20.20`, and CL01 at its actual DHCP address. `10.10.30.100` is the historical observed lease, not a reservation or a required static A record for every rebuild.
+3. Confirm each Windows machine uses DNS `10.10.20.10` and has the intended domain suffix. On the relevant machine, run `ipconfig /registerdns` in an elevated Command Prompt to request host registration, then refresh DNS Manager and verify the resulting record. On DC01, `nltest /dsregdns` requests DC-specific record registration if diagnostics show missing registration. These are fresh-build recovery methods, not claims about the original record-creation mechanism.
+4. If a host record is still missing, investigate its registration and DNS errors first. DNS Manager's **New Host (A or AAAA)** can create a known host's A record using its exact hostname and verified current address, but manual creation is a reader-selected fallback, not an established historical method. Do not manually pin CL01 to an old lease or assume pfSense dynamically updates Windows DNS.
+5. Inspect server **Properties > Forwarders**: the verified design has no explicit forwarders. Do not add public resolvers or an invented forwarding target. Forward-zone replication/dynamic-update properties, aging/scavenging, and the original mechanism that created each host record were not historically recorded; retain the promotion-created configuration and flag any exact-match requirement for live verification.
+
+### Create the server-network reverse zone and DC01 PTR
+
+1. In DNS Manager, right-click **Reverse Lookup Zones > New Zone**. Choose **Primary zone** and **Store the zone in Active Directory**.
+2. Select replication to **all DNS servers running on domain controllers in this domain: corp.internal**.
+3. Choose **IPv4 Reverse Lookup Zone**, enter Network ID `10.10.20`, and confirm the generated name `20.10.10.in-addr.arpa` for `10.10.20.0/24`.
+4. Select **Allow only secure dynamic updates** and finish. If the zone already exists, inspect these properties instead of recreating it.
+5. In that zone choose **New Pointer (PTR)**. Enter the host address for `10.10.20.10` (host portion `10` where the dialog already supplies the network prefix), and host name `Corp-DC01.corp.internal`. Save and refresh. Do not add unverified reverse zones or PTRs for other hosts/networks.
+
+The choices above are the recorded reverse-zone settings. Microsoft's [DNS-zone instructions](https://learn.microsoft.com/en-us/windows-server/networking/dns/manage-dns-zones) explain the wizard.
+
+### DNS checkpoints
+
+On DC01 and then CL01, run the lookups below. The DC/domain answers must be `10.10.20.10`, FS01 must be `10.10.20.20`, CL01 must match its current DHCP lease, and the reverse lookup must return `Corp-DC01.corp.internal`.
+
+```cmd
+ipconfig /all
+nslookup corp.internal 10.10.20.10
+nslookup Corp-DC01.corp.internal 10.10.20.10
+nslookup Corp-FS01.corp.internal 10.10.20.10
+nslookup Corp-CL01.corp.internal 10.10.20.10
+nslookup 10.10.20.10 10.10.20.10
+nslookup -type=SRV _ldap._tcp.dc._msdcs.corp.internal 10.10.20.10
+nslookup google.com 10.10.20.10
+```
+
+Run `dcdiag /test:dns /v` on DC01 with administrative rights and review failures before proceeding. AD/DC service discovery must identify DC01. External lookup tests require working WAN connectivity; they do not imply a forwarder is configured. The original local `::1` timeout remains a historical observation below. A missing reverse name before PTR creation is distinct from failure to resolve a forward record.
+
 ## Confirmed configuration
 
 | Item | Confirmed value |
