@@ -100,3 +100,71 @@ A final `Get-ADUser -Identity pstest` query returned an object-not-found error, 
 Successfully completed common Active Directory user lifecycle and group-management tasks using PowerShell.
 
 The temporary account and group membership changes were removed after testing, leaving the existing lab configuration unchanged.
+
+## Lab 2 — Automated AD User Provisioning
+
+### Objective
+
+Build and test a reusable PowerShell script for provisioning Active Directory users with validation, secure password handling, error handling, verification, and optional security-group assignment.
+
+### Script
+
+The reusable script is stored at:
+
+`Scripts/New-ADUser.ps1`
+
+### Automation Implemented
+
+The script accepts administrator-supplied parameters for:
+
+- First name
+- Last name
+- Username
+- Optional AD security group
+
+It automatically:
+
+- Builds the user's full name and UPN
+- Checks whether the username already exists
+- Stops safely if a duplicate account is detected
+- Requests the account password securely at runtime
+- Creates the account in the `Company Users` OU
+- Enables the new account
+- Handles account-creation errors
+- Queries Active Directory to verify successful creation
+- Optionally adds the new user to a specified AD security group
+- Reports group-assignment errors without automatically deleting the created account
+
+Passwords are not hard-coded or stored in the repository.
+
+### Testing
+
+The script was syntax-checked before execution.
+
+A temporary account named `autotest` was successfully created with:
+
+- Name: `Automation Test`
+- UPN: `autotest@corp.internal`
+- Enabled: `True`
+- OU: `Company Users`
+
+The same provisioning command was executed again to test duplicate protection. The script detected the existing `autotest` account, stopped before requesting another password, and made no additional account.
+
+A second temporary account named `grouptest` was created using the optional group parameter with `GG_IT`.
+
+Independent verification confirmed that `grouptest` was a member of:
+
+- `Domain Users`
+- `GG_IT`
+
+### Cleanup
+
+Both temporary accounts, `autotest` and `grouptest`, were deleted after testing.
+
+A final Active Directory query returned no matching accounts, confirming successful cleanup.
+
+### Result
+
+The automated provisioning script successfully completed user creation, duplicate detection, secure password handling, account verification, and optional security-group assignment.
+
+This exercise moved the lab from individual PowerShell administration commands to reusable Active Directory automation.

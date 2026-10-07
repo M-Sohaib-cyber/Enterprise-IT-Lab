@@ -19,6 +19,7 @@ Status includes the supplied live verification results from 2026-09-16, 2026-09-
 | Identity administration | OU, user, group, onboarding, offboarding, lockout, unlock, and password-reset exercises documented. On 2026-10-06, two subnet objects were registered to the single AD site and Recycle Bin enabled; a temporary-account restore succeeded and the test account was deleted afterward. See [AD configuration](../04-Active-Directory/active-directory-installation.md). |
 | Group Policy | Drive mappings, company desktop, workstation security, user restrictions, password/lockout, removable storage, local administrators, and Windows Update policies are documented. |
 | PowerShell administration | PowerShell-based Active Directory user and group administration tested using a temporary account, including user creation, group membership management, account disable/enable, password reset, verification, and cleanup. See [PowerShell Active Directory Administration](../07-Administration-Automation/powershell-active-directory.md). |
+| PowerShell automation | Reusable Active Directory user-provisioning automation implemented and tested with secure password input, duplicate-account protection, error handling, post-creation verification, and optional security-group assignment. See [PowerShell Active Directory Administration](../07-Administration-Automation/powershell-active-directory.md) and [New-ADUser.ps1](../07-Administration-Automation/Scripts/New-ADUser.ps1). |
 
 Detailed dated network/server/group checks remain in the linked component records rather than being repeated here. The authoritative [GPO application record](../04-Active-Directory/group-policy.md#live-verification---2026-09-16) preserves the client/user policy and mapping results. [Firewall Rules](../08-Security/firewall-rules.md) preserves the 2026-09-20 connectivity/logging tests and 2026-10-07 final review, with their limits.
 
@@ -47,7 +48,6 @@ The consolidated status and supporting links are maintained in [Known Issues and
 
 | Documentation/work item | Intended outcome |
 |---|---|
-| PowerShell automation | Add scripts and evidence only when practical automation work is completed. |
 | Helpdesk platform and workflows | Document only after a ticketing platform or tested workflow is implemented. |
 | Centralized logging and monitoring | Remote syslog is not configured; local firewall logging verification does not complete centralized logging or broader monitoring. |
 
