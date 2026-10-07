@@ -42,7 +42,7 @@ Final firewall verification on 2026-09-20 confirmed automatic outbound NAT witho
 | DNS review | Initial local `::1` query timeout remains unexplained despite eventual success; DNS settings/records beyond the tested scope remain open. See [DNS](../04-Active-Directory/dns.md). |
 | DC diagnostic warning | Standard `dcdiag` passed all reported tests on 2026-10-06; retain the historical WinRM WSMAN SPN warning for targeted investigation because no cause or specific remediation was established. |
 | Historical inactivity timing | Applied 600 seconds is verified; explain the earlier approximately five-minute lock/display observation. |
-| Firewall policy | Ordered OPT1 server-network segmentation is verified; the final allow-to-any remains broad. Broader ruleset, aliases, individual generated NAT rules, and comprehensive IPv6 security review remain open. |
+| Firewall policy | Verified 2026-10-07: live OPT1 ruleset matches the documented hardened ruleset; Block OPT1 to Server Network logging is enabled. Aliases are not configured and are intentionally unused for this small lab. OPT1 IPv6 Configuration Type is None; the lab is intentionally IPv4-focused. Existing IPv4 NAT/internet connectivity had already been verified; no pfSense configuration changes were required during this review. The final allow-to-any remains broad; WAN/LAN rulesets, OPT1 fields beyond the documented design, individual generated NAT rules, and comprehensive IPv6 security review remain open. |
 | Firewall GUI logs | Fresh blocks were verified in `/var/log/filter.log`, but the GUI showed older entries; no root cause was proven. |
 | Local administrator delegation | Intentional `GG_IT` assignment and Jhon's local admin rights are confirmed; broader least-privilege review remains. |
 

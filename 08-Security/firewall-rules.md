@@ -85,13 +85,21 @@ Remote/centralized logging and broader monitoring implementation remain incomple
 
 WAN uses DHCP6, with an observed `fd17:.../64` address and an IPv6 link-local address; DHCPv6 prefix delegation size is `/64`. The WAN address is within `fd00::/8` (Unique Local IPv6), not evidence of globally routed public IPv6 connectivity. Only IPv6 link-local addresses were observed on LAN and OPT1; no routed IPv6 addressing was observed on either internal interface. The implemented server/client design and segmentation are IPv4-based. No IPv6 configuration change was made, and IPv6 is not documented as fully disabled. A comprehensive IPv6 security review remains open. See the [pfSense interface review](../03-Virtual-Infrastructure/pfsense.md#interface-review---2026-09-20).
 
+## Final verification - 2026-10-07
+
+- The live OPT1 firewall ruleset was reviewed and matches the documented hardened ruleset above.
+- Logging is enabled on **Block OPT1 to Server Network**.
+- Firewall aliases are currently not configured and are intentionally unused for this small lab.
+- OPT1 **IPv6 Configuration Type** is set to **None**; the lab is intentionally IPv4-focused.
+- Existing IPv4 NAT and internet connectivity had already been verified; this review does not record a new connectivity test.
+- No pfSense configuration changes were required during this review.
+
 ## To verify
 
 - Complete WAN and LAN rulesets, and OPT1 fields beyond the ordered design recorded above
 - Enabled/disabled state of other rules
 - Individual generated NAT rules beyond the verified automatic mode and client connectivity
-- Aliases
-- IPv6 policy
+- IPv6 policy beyond the verified OPT1 Configuration Type of None
 - Logging state of other custom rules and the cause of the stale GUI log display
 
 ## Related documentation

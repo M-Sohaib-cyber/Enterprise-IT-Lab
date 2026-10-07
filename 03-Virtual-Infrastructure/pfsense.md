@@ -51,6 +51,10 @@ Authoritative lab addressing is maintained in [IP Addressing, DHCP, and DNS](../
 
 The implemented server/client design and firewall segmentation are IPv4-based. No routed IPv6 addressing was observed on LAN or OPT1. The WAN address is within `fd00::/8` (Unique Local IPv6), which is not evidence of globally routed public IPv6 connectivity. No IPv6 configuration change was made, and IPv6 is not documented as fully disabled. All other unspecified IPv6 settings remain **To verify**. A comprehensive IPv6 security review remains open beyond these observations.
 
+### Interface review - 2026-10-07
+
+OPT1 **IPv6 Configuration Type** is set to **None**. The lab is intentionally IPv4-focused; no pfSense configuration changes were required during this review.
+
 ## Outbound NAT verification - 2026-09-20
 
 Outbound NAT mode is **Automatic outbound NAT rule generation**. `Corp-CL01` retains working internet connectivity through pfSense. No NAT configuration change was required.
@@ -109,7 +113,9 @@ Existing documentation records successful checks for:
 
 Final verification on 2026-09-20 confirmed outbound NAT mode and continued client internet access. Packet logging was enabled specifically on the existing **Block OPT1 to Server Network** rule, which previously had per-rule logging disabled. A ping from `Corp-CL01` (`10.10.30.100`) to `Corp-FS01` (`10.10.20.20`) was blocked, and fresh ICMP block entries were confirmed in `/var/log/filter.log`. The GUI continued to show older 2026-09-16 entries; its display issue remains unresolved. See [Firewall Rules](../08-Security/firewall-rules.md) for the test and logging settings.
 
-The repository does not contain a current pfSense configuration export. Individual generated NAT rules, aliases, DNS resolver settings, fields beyond the recorded OPT1 design, and the complete WAN/LAN rulesets remain **To verify**. Remote syslog is not configured; broader monitoring is not complete.
+Final review on 2026-10-07 confirmed that the live OPT1 firewall ruleset matches the documented hardened ruleset and that logging is enabled on **Block OPT1 to Server Network**. Firewall aliases are currently not configured and are intentionally unused for this small lab. Existing IPv4 NAT and internet connectivity had already been verified. No pfSense configuration changes were required during this review. See [final firewall verification](../08-Security/firewall-rules.md#final-verification---2026-10-07).
+
+The repository does not contain a current pfSense configuration export. Individual generated NAT rules, DNS resolver settings, fields beyond the recorded OPT1 design, and the complete WAN/LAN rulesets remain **To verify**. Remote syslog is not configured; broader monitoring is not complete.
 
 ## Evidence
 
