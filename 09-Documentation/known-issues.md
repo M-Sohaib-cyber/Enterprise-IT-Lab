@@ -118,7 +118,7 @@ Details: [Group Policy Operation and Verification](../04-Active-Directory/group-
 
 ## Reproduction limits and acceptance
 
-The [final acceptance checklist](final-verification.md) provides the finished-lab checks in dependency order. Its [reproduction limits](final-verification.md#reproduction-limits) consolidate the outstanding NAT service gateway, exact ACL, GPO, firewall and other historical-setting gaps, with links to the authoritative build guides. These remain documentation/verification gaps, not assumed live failures. Reader choices and a functional rebuild must not be reported as an exact match to unrecorded fields.
+The [final acceptance checklist](final-verification.md) provides the finished-lab checks in dependency order. The NAT Network gateways, enabled state, and disabled DHCP/IPv6 were verified on 2026-10-07; compare fresh builds with the [tested network baseline](../02-Network-Design/network-plan.md#nat-network-gateway-verification-checkpoint). Its displayed `.1` gateways are not an unresolved build blocker. The checklist's [reproduction limits](final-verification.md#reproduction-limits) consolidate the outstanding exact ACL, GPO, firewall and other historical-setting gaps, with links to the authoritative build guides. These remain documentation/verification gaps, not assumed live failures. Reader choices and a functional rebuild must not be reported as an exact match to unrecorded fields.
 
 ## Status convention
 

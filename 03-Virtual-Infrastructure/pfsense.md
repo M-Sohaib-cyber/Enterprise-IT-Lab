@@ -8,7 +8,7 @@ This document records the configuration supported by current repository document
 
 ## Build from zero
 
-The steps below implement the recorded design; they are instructions for a fresh build, not a new live verification. Required addresses and attachments come from the repository. Passwords and unrecorded setup options are reader choices. Complete the [Batch 1 prerequisites](../00-Project-Overview/environment.md#prerequisites-for-a-fresh-build) and [NAT Network gateway checkpoint](../02-Network-Design/network-plan.md#nat-network-gateway-verification-checkpoint) first. Unresolved overlap with the intended pfSense `.1` addresses must be investigated before assigning them.
+The steps below implement the recorded design; they are instructions for a fresh build, not a new live verification. Required addresses and attachments come from the repository. Passwords and unrecorded setup options are reader choices. Complete the [Batch 1 prerequisites](../00-Project-Overview/environment.md#prerequisites-for-a-fresh-build) and compare your host's configuration with the [verified NAT Network baseline](../02-Network-Design/network-plan.md#nat-network-gateway-verification-checkpoint) first. The displayed `.1` gateways match the tested working lab and are not themselves a reason to stop assigning the documented pfSense addresses.
 
 ### 1. Prepare and install Corp-FW01
 
@@ -73,7 +73,7 @@ Before final verification, replace the bootstrap policy with the [documented ord
 | Client networking, after DC01 is ready | On CL01 run `ipconfig /all`, `ping 10.10.20.10`, `nslookup corp.internal`, and `ping 8.8.8.8`; inspect **Status > DHCP Leases** | Client receives the intended subnet/gateway/DNS; DC and internet checks succeed before domain joining |
 | Final security handoff | Run the [firewall test matrix](../08-Security/firewall-rules.md#connectivity-from-corp-cl01) after hardening and file-service setup | DC/DNS and SMB work; ping from CL01 to FS01 is blocked as intended |
 
-If management or routing fails, inspect adapter assignments, link state, rule placement, and the unresolved NAT service gateway detail before continuing. The checkpoints are expected fresh-build results, not additional historical test claims. No exact current WAN lease, generated NAT rule export, full WAN/LAN ruleset, management certificate, or uninspected IPv6 policy is inferred.
+If management or routing fails, inspect adapter assignments, link state, rule placement, and differences from the verified NAT Network baseline before continuing. The checkpoints are expected fresh-build results, not additional historical test claims. No exact current WAN lease, generated NAT rule export, full WAN/LAN ruleset, management certificate, or uninspected IPv6 policy is inferred.
 
 ## Virtual machine record
 

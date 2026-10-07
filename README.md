@@ -31,7 +31,7 @@ Corp-FW01 (pfSense)
         `-- Corp-CL01: DHCP, observed 10.10.30.100 / Windows 11
 ```
 
-The domain is `corp.internal` (`CORP`). pfSense routes between the server and client networks and provides DHCP for `Corp-Clients`; domain members use `Corp-DC01` for DNS. The internal VirtualBox NAT Networks have VirtualBox DHCP disabled. See the [network plan and setup procedure](02-Network-Design/network-plan.md), including the unresolved NAT Network gateway detail that must be checked during a fresh build.
+The domain is `corp.internal` (`CORP`). pfSense routes between the server and client networks and provides DHCP for `Corp-Clients`; domain members use `Corp-DC01` for DNS. The internal VirtualBox NAT Networks have VirtualBox DHCP disabled. See the [network plan and setup procedure](02-Network-Design/network-plan.md), including the verified NAT Network baseline to compare during a fresh build.
 
 ## Current implemented state
 
@@ -53,7 +53,7 @@ This table records only work supported by existing documentation or evidence. De
 
 ## Build From Zero
 
-Follow this dependency order. Linked guides provide implementation steps alongside the original verification records. Exact settings that were not recorded remain explicitly flagged; see the [reproduction limits](09-Documentation/final-verification.md#reproduction-limits). Resolve the network gateway checkpoint in step 2 before relying on the documented pfSense gateway addresses.
+Follow this dependency order. Linked guides provide implementation steps alongside the original verification records. Exact settings that were not recorded remain explicitly flagged; see the [reproduction limits](09-Documentation/final-verification.md#reproduction-limits). Compare your NAT Network configuration with the verified baseline in step 2.
 
 1. **Prerequisites and planning:** Read the [prerequisites and host guidance](00-Project-Overview/environment.md#prerequisites-for-a-fresh-build), [VM baseline](01-Enterprise-Planning/device-inventory.md#fresh-build-vm-baseline), and [IP addressing reference](02-Network-Design/ip-addressing.md).
 2. **Create VirtualBox networks:** Follow [Create the VirtualBox networks](02-Network-Design/network-plan.md#create-the-virtualbox-networks), then review the [gateway verification checkpoint](02-Network-Design/network-plan.md#nat-network-gateway-verification-checkpoint).
