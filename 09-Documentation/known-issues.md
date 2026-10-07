@@ -38,15 +38,22 @@ This is the authoritative summary of unresolved documentation and practical veri
 - **Status:** GUI display observation remains open. No root cause was proven; successful raw-log verification does not resolve the GUI issue.
 - **Details:** [Firewall Rules](../08-Security/firewall-rules.md)
 
-### FS-01: File-server backup/recovery - manual recovery verified; first scheduled run pending
+### FS-01: File-server backup/recovery - manual recovery and automatic execution verified
 
 - **Storage verified 2026-10-06:** `C:` is NTFS, 60.32 GB with 49.2 GB free, Healthy/OK. Shares remain under `C:\Shares` with no separate data volume. A second SATA-attached disk, `Corp-FS01-Backup.vdi`, is a dynamically allocated 20 GB VDI dedicated to Windows Server Backup.
 - **Earlier gap:** Windows Server Backup was Available (not installed), no shadow copies were found, and no file-server backup was verified. `RegIdleBackup` remains a built-in task, not a file-server backup solution.
 - **Implemented and verified:** Windows Server Backup is Installed with no restart required. Command-line and GUI manual backups succeeded; VSS was created during the command-line backup. Deleted `Public\recovery-test.txt` was restored to its original location with Restore ACL permissions enabled, and its contents were verified. The 06/10/2026 04:33 and 04:43 manual versions remained visible to `wbadmin` after schedule configuration.
-- **CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION:** Custom backup of `C:\Shares`, once daily at 23:00 to the dedicated disk, no exclusions, with VSS Copy Backup shown during configuration. The wizard confirmed schedule creation; first run is due 06/10/2026 at 23:00 and has not run yet in the supplied verification.
-- **Remaining scope:** Verify first automatic execution. Practical volume recovery and broader disaster recovery remain untested; no offsite/cloud, replication, encryption, or retention guarantees are established.
+- **Automatic execution verified 2026-10-07:** The schedule was temporarily changed from 23:00 to 10:00 specifically to verify automatic execution. Windows Server Backup automatically completed successfully at 10:00 without a manual trigger; the intended daily 23:00 schedule was then restored. Scope and target remain unchanged: `C:\Shares` to the dedicated backup disk. The previously completed file-level restore test remains verified.
+- **Time corrected 2026-10-07:** `Corp-FS01` was configured with `Pacific Standard Time`; `w32tm /query /source` confirmed `Corp-DC01.corp.internal`. The time zone was corrected to `GMT Standard Time` and Windows Time was resynchronised.
+- **Remaining scope:** Practical volume recovery and broader disaster recovery remain untested; no offsite/cloud, replication, encryption, or retention guarantees are established.
 - **Diagnostic observations:** No operation running from `wbadmin get status` is normal. Unsupported `wbadmin get policy` displayed help; it is not a backup failure.
 - **Details:** [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md)
+
+### FS-02: Corp-FS01 black-screen/Explorer startup incident
+
+- **Observed 2026-10-07:** `Corp-FS01` experienced a black-screen/Explorer startup incident. Normal interactive and ACPI shutdown methods were unsuccessful; a forced power-off was eventually required.
+- **Subsequent event:** Event ID 41 (Kernel-Power) was observed and is consistent with the forced shutdown.
+- **Status:** Retained as a troubleshooting observation. No root cause was established.
 
 ### SEC-04: Corp-FS01 Reputation-based protection
 

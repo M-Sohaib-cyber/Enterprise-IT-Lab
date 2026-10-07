@@ -32,7 +32,11 @@ The earlier 2026-10-06 no-backup gap was superseded by Windows Server Backup ins
 
 The disk was initially `B:` / `FS01-Backup`, then dedicated through the schedule wizard with its reformat/dedication warning intentionally accepted. Both manual versions remained visible to `wbadmin` afterward. Initial disk details should not be presented as its current drive letter or label.
 
-Schedule creation does not prove automatic execution: the daily 23:00 schedule is CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION, with its first run due 06/10/2026 at 23:00 and not yet run in the supplied verification. `wbadmin get status` showing no operation is normal; unsupported `wbadmin get policy` showing help is not a backup failure. `RegIdleBackup` is not the file-server backup solution. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md) for configuration and tested scope.
+Schedule creation does not prove automatic execution. On 2026-10-07, the daily schedule was temporarily changed from 23:00 to 10:00 specifically to verify automatic execution. Windows Server Backup automatically completed successfully at 10:00 without a manual trigger, then the intended daily 23:00 schedule was restored. `C:\Shares` and the dedicated backup disk remain the scope and target, and the earlier file-level restore test remains verified.
+
+During the same day's verification, `Corp-FS01` was found using `Pacific Standard Time`, while `w32tm /query /source` confirmed `Corp-DC01.corp.internal` as its time source. The time zone was corrected to `GMT Standard Time` and Windows Time was resynchronised.
+
+`wbadmin get status` showing no operation is normal; unsupported `wbadmin get policy` showing help is not a backup failure. `RegIdleBackup` is not the file-server backup solution. See [Corp-FS01 File Server](../03-Virtual-Infrastructure/file-server.md) for configuration and tested scope.
 
 ## Evidence-aware documentation
 

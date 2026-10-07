@@ -106,7 +106,7 @@ Latest supplied testing from `Corp-CL01` as `CORP\jsmith` (Jhon Smith) confirmed
 
 The temporary IT test file was removed after testing. These results verify the AGDLP/NTFS permission model end-to-end for the tested user; they do not establish access behavior for other users or a current Finance-user test.
 
-## Backup and recovery - implemented and verified 2026-10-06
+## Backup and recovery - implemented 2026-10-06; automatic execution verified 2026-10-07
 
 ### Earlier gap and subsequent implementation
 
@@ -147,9 +147,9 @@ This verifies an end-to-end backup -> deletion -> recovery -> data verification 
 
 Both manual versions remained visible to `wbadmin` after schedule configuration; disk dedication did not erase these versions in the observed results. Post-patch verification on 2026-10-06 reconfirmed both versions were recognised and recoverable. File recovery was practically tested as described above; volume recovery was reported as supported but was not practically tested.
 
-### Daily schedule - CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION
+### Daily schedule - automatic execution verified 2026-10-07
 
-The Backup Schedule Wizard reported that the schedule was successfully created with:
+The Backup Schedule Wizard confirmed schedule creation. Configuration and latest execution verification are recorded below:
 
 | Setting | Verified configuration |
 |---|---|
@@ -159,19 +159,23 @@ The Backup Schedule Wizard reported that the schedule was successfully created w
 | Destination | Dedicated 20 GB backup disk |
 | Files excluded | None |
 | Advanced option shown during configuration | VSS Copy Backup |
-| First scheduled backup due | 06/10/2026 at 23:00 |
+| Verified automatic backup | 07/10/2026 at 10:00 during temporary schedule testing |
 
-The first automatic scheduled backup has **not run yet** in the supplied verification. Schedule creation is verified; successful automatic execution at 23:00 remains pending.
+On 2026-10-07, the schedule was temporarily changed from 23:00 to 10:00 specifically to verify automatic scheduled execution. Windows Server Backup automatically completed successfully at 10:00 without a manual trigger. After successful verification, the daily schedule was restored to the intended 23:00 time. The backup scope and target remain unchanged: `C:\Shares` to the dedicated backup disk. The previously completed file-level restore test remains verified.
+
+### Time zone and Windows Time - corrected 2026-10-07
+
+`Corp-FS01` was found configured with the Windows time zone `Pacific Standard Time`. `w32tm /query /source` confirmed its time source was `Corp-DC01.corp.internal`. The time zone was corrected to `GMT Standard Time` and Windows Time was resynchronised.
 
 ### Additional verification and scope
 
 `wbadmin get status` reported no backup or recovery operation currently running, which is normal between operations. `wbadmin get policy` was attempted, but this version did not support that command and displayed supported-command help instead; this is not a backup failure.
 
-The earlier no-backup gap is superseded by successful local manual backups and the tested file restore. First scheduled-run verification remains open. These findings do not establish offsite/cloud backup, replication, encryption, retention guarantees, or disaster recovery.
+The earlier no-backup gap is superseded by successful local manual backups, the tested file restore, and automatic scheduled execution verified on 2026-10-07. These findings do not establish offsite/cloud backup, replication, encryption, retention guarantees, or disaster recovery.
 
 ## Patch and post-update verification - 2026-10-06
 
-`Corp-FS01` was previously at a March 2022 patch baseline and updated successfully on 2026-10-06. It now shows `KB5122881`, `KB5122882`, and `KB5126050`. Finance, HR, IT, Public, and Sales SMB shares remained present at the expected `C:\Shares` paths listed above. Existing Windows Server Backup versions remained recognised and recoverable; first automatic scheduled execution remains pending.
+`Corp-FS01` was previously at a March 2022 patch baseline and updated successfully on 2026-10-06. It now shows `KB5122881`, `KB5122882`, and `KB5126050`. Finance, HR, IT, Public, and Sales SMB shares remained present at the expected `C:\Shares` paths listed above. Existing Windows Server Backup versions remained recognised and recoverable; automatic scheduled execution was subsequently verified on 2026-10-07 as described above.
 
 The update proceeded considerably more smoothly than on `Corp-DC01`. Guest Additions, successful bidirectional clipboard testing, and the new powered-off snapshot are recorded in the [environment](../00-Project-Overview/environment.md#virtual-storage-and-snapshots---verified-2026-10-06). Defender observations are maintained in [security hardening](../08-Security/security-hardening.md#defender-observations---2026-10-06).
 
@@ -182,7 +186,7 @@ The update proceeded considerably more smoothly than on `Corp-DC01`. Guest Addit
 - Share properties beyond the confirmed names, paths, and `Everyone: Full` permissions
 - Complete NTFS and share ACLs and inheritance beyond the verified entries above
 - Quotas and drive redundancy
-- First automatic scheduled backup execution; recovery beyond the tested file, including practical volume recovery
+- Recovery beyond the tested file, including practical volume recovery
 - Current Finance-user mapping and file-access tests; access behavior for users beyond `CORP\jsmith`
 
 ## Evidence

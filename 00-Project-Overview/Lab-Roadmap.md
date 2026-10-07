@@ -1,6 +1,6 @@
 # Lab Roadmap
 
-Status includes the supplied live verification results from 2026-09-16, 2026-09-20, and 2026-10-06 and existing repository evidence.
+Status includes the supplied live verification results from 2026-09-16, 2026-09-20, 2026-10-06, and 2026-10-07 and existing repository evidence.
 
 ## Completed
 
@@ -15,7 +15,7 @@ Status includes the supplied live verification results from 2026-09-16, 2026-09-
 | DNS | Verified 2026-09-20: core DNS works through `Corp-DC01` at `10.10.20.10`; running AD-integrated forward zones, inspected host records, external resolution without explicit forwarders, tested client forward/reverse lookups, and successful `dcdiag /test:dns /v`. Server-network reverse zone and DC PTR implemented; see [DNS](../04-Active-Directory/dns.md). |
 | Windows client | `Corp-CL01` is joined to the domain and domain authentication was tested. |
 | File services | `Corp-FS01`, departmental SMB shares, access testing, and mapped drives are documented. |
-| Manual file backup/recovery | Verified 2026-10-06: Windows Server Backup installed; dedicated 20 GB backup VDI; command-line and GUI backups succeeded. A deleted file was restored and its contents verified. See [file server](../03-Virtual-Infrastructure/file-server.md). Automatic execution remains pending below. |
+| File backup/recovery | Verified 2026-10-06: Windows Server Backup installed; dedicated 20 GB backup VDI; command-line and GUI backups succeeded. A deleted file was restored and its contents verified; this file-level restore test remains verified. On 2026-10-07, the schedule was temporarily changed from 23:00 to 10:00 specifically to verify automatic execution; the backup automatically completed successfully at 10:00 without a manual trigger. The daily 23:00 schedule was then restored; `C:\Shares` and the dedicated backup disk remain unchanged. See [file server](../03-Virtual-Infrastructure/file-server.md). |
 | Identity administration | OU, user, group, onboarding, offboarding, lockout, unlock, and password-reset exercises documented. On 2026-10-06, two subnet objects were registered to the single AD site and Recycle Bin enabled; a temporary-account restore succeeded and the test account was deleted afterward. See [AD configuration](../04-Active-Directory/active-directory-installation.md). |
 | Group Policy | Drive mappings, company desktop, workstation security, user restrictions, password/lockout, removable storage, local administrators, and Windows Update policies are documented. |
 
@@ -44,7 +44,6 @@ Final firewall verification on 2026-09-20 confirmed automatic outbound NAT witho
 | Historical inactivity timing | Applied 600 seconds is verified; explain the earlier approximately five-minute lock/display observation. |
 | Firewall policy | Ordered OPT1 server-network segmentation is verified; the final allow-to-any remains broad. Broader ruleset, aliases, individual generated NAT rules, and comprehensive IPv6 security review remain open. |
 | Firewall GUI logs | Fresh blocks were verified in `/var/log/filter.log`, but the GUI showed older entries; no root cause was proven. |
-| Scheduled file backup | CONFIGURED / PENDING FIRST AUTOMATIC EXECUTION: Custom backup of `C:\Shares`, daily at 23:00 to the dedicated 20 GB disk, no exclusions, VSS Copy Backup shown. First run due 06/10/2026 at 23:00 has not run yet; verify automatic completion. Manual backups and tested file recovery are verified. |
 | Local administrator delegation | Intentional `GG_IT` assignment and Jhon's local admin rights are confirmed; broader least-privilege review remains. |
 
 These are verification or remediation items, not claims that the lab is currently broken.
